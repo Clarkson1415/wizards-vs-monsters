@@ -1,0 +1,101 @@
+[gd_scene load_steps=14 format=3 uid="uid://cvmqdgknhsdca"]
+
+[ext_resource type="Texture2D" uid="uid://nx0moggc601" path="res://monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre/dark outline/ogre - attack.png" id="1_v5ei5"]
+[ext_resource type="Texture2D" uid="uid://bm7mu6kpvdrl6" path="res://monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre/dark outline/ogre - idle.png" id="2_18hxh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_offou"]
+atlas = ExtResource("1_v5ei5")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rw5dj"]
+atlas = ExtResource("1_v5ei5")
+region = Rect2(48, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8tc31"]
+atlas = ExtResource("1_v5ei5")
+region = Rect2(96, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c1ba8"]
+atlas = ExtResource("1_v5ei5")
+region = Rect2(144, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u8uni"]
+atlas = ExtResource("1_v5ei5")
+region = Rect2(192, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n2bd0"]
+atlas = ExtResource("1_v5ei5")
+region = Rect2(240, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i7lmq"]
+atlas = ExtResource("2_18hxh")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l8bpt"]
+atlas = ExtResource("2_18hxh")
+region = Rect2(48, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tw78w"]
+atlas = ExtResource("2_18hxh")
+region = Rect2(96, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_an4vi"]
+atlas = ExtResource("2_18hxh")
+region = Rect2(144, 48, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h3np5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_offou")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rw5dj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8tc31")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c1ba8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u8uni")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n2bd0")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 8.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i7lmq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l8bpt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tw78w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_an4vi")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}]
+
+[node name="Enemy" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_h3np5")
+animation = &"idle"
+autoplay = "idle"
+frame = 2
+frame_progress = 0.8164004

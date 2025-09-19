@@ -1,10 +1,10 @@
 [gd_scene load_steps=25 format=3 uid="uid://beo7n41qd3xs7"]
 
-[ext_resource type="Script" uid="uid://2e1lw8iexlfj" path="res://Wizard.cs" id="1_hqmcy"]
-[ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://wizard spritesheets_BlackAndRed_Blue_PinkMaybe/black outline/100% (32x32)/Blue/good wizard - death.png" id="2_bixx5"]
-[ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://wizard spritesheets_BlackAndRed_Blue_PinkMaybe/black outline/100% (32x32)/Blue/good wizard - hit.png" id="3_s68lm"]
-[ext_resource type="Texture2D" uid="uid://06jmvfu4a5iw" path="res://wizard spritesheets_BlackAndRed_Blue_PinkMaybe/black outline/100% (32x32)/Blue/good wizard - idle.png" id="4_586gj"]
-[ext_resource type="Texture2D" uid="uid://cyi46nvnrm80y" path="res://wizard spritesheets_BlackAndRed_Blue_PinkMaybe/black outline/100% (32x32)/Blue/good wizard - spell 1.png" id="5_8q5ep"]
+[ext_resource type="Script" uid="uid://2e1lw8iexlfj" path="res://scripts/Wizard.cs" id="1_hqmcy"]
+[ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://heros/wizard spritesheets_BlackAndRed_Blue_PinkMaybe/black outline/100% (32x32)/Blue/good wizard - death.png" id="2_bixx5"]
+[ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://heros/wizard spritesheets_BlackAndRed_Blue_PinkMaybe/black outline/100% (32x32)/Blue/good wizard - hit.png" id="3_s68lm"]
+[ext_resource type="Texture2D" uid="uid://06jmvfu4a5iw" path="res://heros/wizard spritesheets_BlackAndRed_Blue_PinkMaybe/black outline/100% (32x32)/Blue/good wizard - idle.png" id="4_586gj"]
+[ext_resource type="Texture2D" uid="uid://cyi46nvnrm80y" path="res://heros/wizard spritesheets_BlackAndRed_Blue_PinkMaybe/black outline/100% (32x32)/Blue/good wizard - spell 1.png" id="5_8q5ep"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_thjc5"]
 atlas = ExtResource("2_bixx5")
