@@ -1081,6 +1081,7 @@ limit_enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 script = ExtResource("7_6v30a")
+controlSceme = 2
 
 [node name="Blu" parent="." instance=ExtResource("1_78s5d")]
 position = Vector2(-39, -47)

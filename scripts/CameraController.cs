@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 
 public partial class CameraController : Camera2D
 {
@@ -33,6 +34,9 @@ public partial class CameraController : Camera2D
     private Vector2 mouse_start_pos;
     private Vector2 screen_start_position;
 
+    private Dictionary<long, Vector2> _touches = new();
+    private float _lastDistance = 0f;
+
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
@@ -43,6 +47,52 @@ public partial class CameraController : Camera2D
             if (@event is InputEventScreenDrag dragEvent)
             {
                 mobilePan(dragEvent);
+            }
+
+            // handle zoom 
+
+            if (@event is InputEventScreenTouch touchEvent)
+            {
+                if (touchEvent.Pressed)
+                {
+                    // Finger down → store position
+                    _touches[touchEvent.Index] = touchEvent.Position;
+                }
+                else
+                {
+                    // Finger up → remove
+                    _touches.Remove(touchEvent.Index);
+                    _lastDistance = 0f;
+                }
+            }
+            else if (@event is InputEventScreenDrag anotherDRAG)
+            {
+                // Update finger position while dragging
+                _touches[anotherDRAG.Index] = anotherDRAG.Position;
+
+                if (_touches.Count == 2)
+                {
+                    // Get the two touches
+                    var enumerator = _touches.Values.GetEnumerator();
+                    enumerator.MoveNext();
+                    Vector2 p1 = enumerator.Current;
+                    enumerator.MoveNext();
+                    Vector2 p2 = enumerator.Current;
+
+                    float currentDistance = p1.DistanceTo(p2);
+
+                    if (_lastDistance > 0f)
+                    {
+                        float zoomChange = currentDistance / _lastDistance;
+
+                        Zoom *= zoomChange;
+
+                        // Clamp zoom
+                        Zoom = Zoom.Clamp(new Vector2(0.1f, 0.1f), new Vector2(20f, 20f));
+                    }
+
+                    _lastDistance = currentDistance;
+                }
             }
 
             return;
