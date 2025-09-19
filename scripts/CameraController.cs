@@ -8,11 +8,14 @@ public partial class CameraController : Camera2D
 
     private static float moveSpeed = 50;
 
-    [Export] private bool wasdMovement = false;
+    private enum CONTROL_SCHEME
+    {
+        KEYBOARD_WASD,
+        KEYBOARD_CLICKDRAG,
+        MOBILE
+    }
 
-    [Export] private bool clickDrag = true;
-
-    [Export] private bool mobileControls = false;
+    [Export] private CONTROL_SCHEME controlSceme;
 
     private bool dragging = false;
 
@@ -22,7 +25,7 @@ public partial class CameraController : Camera2D
     {
         var floatDelta = (float)delta;
 
-        if (wasdMovement)
+        if (controlSceme == CONTROL_SCHEME.KEYBOARD_WASD)
         {
             processWasdMovement(floatDelta);
         }
@@ -36,36 +39,31 @@ public partial class CameraController : Camera2D
     {
         base._Input(@event);
 
-        if (@event.IsAction("drag"))
+        if (controlSceme == CONTROL_SCHEME.MOBILE)
         {
-            if (@event.IsPressed())
-            {
-                mouse_start_pos = GetGlobalMousePosition();
-                screen_start_position = GlobalPosition;
-                dragging = true;
-            }
-            else
-            {
-                dragging = false;
-            }
+            // TODO
+            return;
         }
-        else if (@event is InputEventMouseMotion && dragging)
+
+        if (controlSceme == CONTROL_SCHEME.KEYBOARD_CLICKDRAG)
         {
-            //Vector2 mouseDelta = mouse_start_pos - GetGlobalMousePosition();
-            //Vector2 mouseDelta = (mouse_start_pos - GetGlobalMousePosition()) / Zoom;
-            //GlobalPosition = screen_start_position + mouseDelta;
-            //this.GlobalPosition = (mouse_start_pos - GetGlobalMousePosition()) + screen_start_position;
-
-            // How much the mouse moved in screen pixels
-            Vector2 mouseDeltaScreen = -((InputEventMouseMotion)@event).Relative;
-
-            // Convert to world units and move camera
-            GlobalPosition += mouseDeltaScreen / Zoom;
-
-            //// Calculate how much the mouse moved in world space
-            //Vector2 mouseDelta = mouse_start_pos - GetGlobalMousePosition();
-            //// Move the camera by that delta
-            //GlobalPosition = screen_start_position + mouseDelta;
+            if (@event.IsAction("drag"))
+            {
+                if (@event.IsPressed())
+                {
+                    mouse_start_pos = GetGlobalMousePosition();
+                    screen_start_position = GlobalPosition;
+                    dragging = true;
+                }
+                else
+                {
+                    dragging = false;
+                }
+            }
+            else if (@event is InputEventMouseMotion && dragging)
+            {
+                pan(@event);
+            }
         }
 
         if (@event is InputEventMouseButton mouseEvent)
@@ -81,6 +79,14 @@ public partial class CameraController : Camera2D
         }
     }
 
+    private void pan(InputEvent @event)
+    {
+        // How much the mouse moved in screen pixels
+        Vector2 mouseDeltaScreen = -((InputEventMouseMotion)@event).Relative;
+
+        // Convert to world units and move camera
+        GlobalPosition += mouseDeltaScreen / Zoom;
+    }
 
     private void zoomIn()
 	{
