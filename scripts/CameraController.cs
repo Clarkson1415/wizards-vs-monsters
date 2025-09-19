@@ -1,6 +1,4 @@
 using Godot;
-using System;
-using System.Diagnostics;
 
 public partial class CameraController : Camera2D
 {
@@ -29,7 +27,7 @@ public partial class CameraController : Camera2D
         {
             processWasdMovement(floatDelta);
         }
-        
+
     }
 
     private Vector2 mouse_start_pos;
@@ -41,7 +39,12 @@ public partial class CameraController : Camera2D
 
         if (controlSceme == CONTROL_SCHEME.MOBILE)
         {
-            // TODO
+
+            if (@event is InputEventScreenDrag dragEvent)
+            {
+                mobilePan(dragEvent);
+            }
+
             return;
         }
 
@@ -79,6 +82,15 @@ public partial class CameraController : Camera2D
         }
     }
 
+    private void mobilePan(InputEventScreenDrag dragEvent)
+    {
+        // How much the finger moved in screen pixels
+        Vector2 fingerDeltaScreen = -dragEvent.Relative;
+
+        // Convert to world units and move camera
+        GlobalPosition += fingerDeltaScreen / Zoom;
+    }
+
     private void pan(InputEvent @event)
     {
         // How much the mouse moved in screen pixels
@@ -89,7 +101,7 @@ public partial class CameraController : Camera2D
     }
 
     private void zoomIn()
-	{
+    {
         this.Zoom = this.Zoom + (Vector2.One / zoomAmount);
     }
 
@@ -122,7 +134,7 @@ public partial class CameraController : Camera2D
 
     #region WASD movement
     private void zoomOut()
-	{
+    {
         this.Zoom = this.Zoom - (Vector2.One / zoomAmount);
     }
 
