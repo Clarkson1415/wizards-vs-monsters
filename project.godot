@@ -11,7 +11,8 @@ config_version=5
 [application]
 
 config/name="WizardsVsMonster"
-config/features=PackedStringArray("4.5", "GL Compatibility")
+run/main_scene="uid://ca8br0m3c03eo"
+config/features=PackedStringArray("4.5", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [dotnet]
@@ -20,5 +21,6 @@ project/assembly_name="WizardsVsMonster"
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
