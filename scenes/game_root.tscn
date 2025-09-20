@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=25 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="PackedScene" uid="uid://beo7n41qd3xs7" path="res://scenes/goodWizard.tscn" id="1_78s5d"]
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://Forest Tileset.png" id="1_uebra"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://btgyapipih4ny" path="res://ui/Holder.png" id="10_1brn0"]
 [ext_resource type="PackedScene" uid="uid://cvmqdgknhsdca" path="res://scenes/ogre.tscn" id="12_5dyip"]
 [ext_resource type="Texture2D" uid="uid://bf02h1e01jj43" path="res://towers/blueTopTower.png" id="13_ywsqi"]
+[ext_resource type="Texture2D" uid="uid://4nioem6ttxcv" path="res://monsters/small monsters 1 - spritesheets/100x100 (48x48)/archer beast/dark outline/archer beast - death.png" id="14_i7pw8"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -1081,12 +1082,11 @@ limit_enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 script = ExtResource("7_6v30a")
-controlSceme = 2
 
-[node name="Blu" parent="." instance=ExtResource("1_78s5d")]
+[node name="ukimian" parent="." instance=ExtResource("1_78s5d")]
 position = Vector2(-39, -47)
 
-[node name="Old" parent="." instance=ExtResource("2_ni5ms")]
+[node name="fladnagians" parent="." instance=ExtResource("2_ni5ms")]
 position = Vector2(-31, -2)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -1115,9 +1115,13 @@ position = Vector2(14.5, 12.75)
 scale = Vector2(0.15362784, 0.15362784)
 texture = ExtResource("13_ywsqi")
 
-[node name="Enemy" parent="." instance=ExtResource("12_5dyip")]
+[node name="ogres of kerhs" parent="." instance=ExtResource("12_5dyip")]
 position = Vector2(41, -43)
 
 [node name="BlueTopTower" type="Sprite2D" parent="."]
 position = Vector2(-48, -110)
 texture = ExtResource("13_ywsqi")
+
+[node name="demons of ananab" type="Sprite2D" parent="."]
+position = Vector2(113, 44)
+texture = ExtResource("14_i7pw8")
