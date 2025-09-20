@@ -4,10 +4,15 @@
       "commandName": "Project",
       "workingDirectory": "C:\\Users\\georg\\OneDrive\\Desktop\\GODOT\\Godot_v4.5-stable_mono_win64"
     },
-    "Profile 1": {
+    "PC": {
       "commandName": "Executable",
       "executablePath": "C:\\Users\\georg\\OneDrive\\Desktop\\GODOT\\Godot_v4.5-stable_mono_win64\\Godot_v4.5-stable_mono_win64\\Godot_v4.5-stable_mono_win64.exe",
       "workingDirectory": "D:\\github\\wizards-vs-monster"
+    },
+    "laptop": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\georg\\OneDrive\\Desktop\\GODOT\\Godot_v4.5-stable_mono_win64\\Godot_v4.5-stable_mono_win64\\Godot_v4.5-stable_mono_win64.exe",
+      "workingDirectory": "D:\\Github\\wizards-vs-monsters"
     }
   }
 }

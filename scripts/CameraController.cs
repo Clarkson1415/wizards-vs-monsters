@@ -7,118 +7,108 @@ public partial class CameraController : Camera2D
 
     private static float moveSpeed = 50;
 
-    private enum CONTROL_SCHEME
-    {
-        KEYBOARD_WASD,
-        KEYBOARD_CLICKDRAG,
-        MOBILE
-    }
-
-    [Export] private CONTROL_SCHEME controlSceme;
-
-    private bool dragging = false;
-
-    private Vector2 dragStart;
+    private bool mouseCurrentlyDragging = false;
+    private Vector2 mouse_start_pos;
+    private Vector2 screen_start_position;
+    private Dictionary<long, Vector2> _touches = new();
+    private float _lastDistance = 0f;
 
     public override void _Process(double delta)
     {
         var floatDelta = (float)delta;
-
-        if (controlSceme == CONTROL_SCHEME.KEYBOARD_WASD)
-        {
-            processWasdMovement(floatDelta);
-        }
-
+        processWasdMovement(floatDelta);
     }
-
-    private Vector2 mouse_start_pos;
-    private Vector2 screen_start_position;
-
-    private Dictionary<long, Vector2> _touches = new();
-    private float _lastDistance = 0f;
 
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
 
-        if (controlSceme == CONTROL_SCHEME.MOBILE)
+        // mouse drag
+        handleMousePan(@event);
+        handleMouseScroolWheelZoom(@event);
+        handleTouchInput(@event);
+    }
+
+    private void handleTouchInput(InputEvent @event)
+    {
+        // dragging
+        if (@event is InputEventScreenDrag fingerDrag) // mobile drag
         {
-
-            if (@event is InputEventScreenDrag dragEvent)
-            {
-                mobilePan(dragEvent);
-            }
-
-            // handle zoom 
-
-            if (@event is InputEventScreenTouch touchEvent)
-            {
-                if (touchEvent.Pressed)
-                {
-                    // Finger down → store position
-                    _touches[touchEvent.Index] = touchEvent.Position;
-                }
-                else
-                {
-                    // Finger up → remove
-                    _touches.Remove(touchEvent.Index);
-                    _lastDistance = 0f;
-                }
-            }
-            else if (@event is InputEventScreenDrag anotherDRAG)
-            {
-                // Update finger position while dragging
-                _touches[anotherDRAG.Index] = anotherDRAG.Position;
-
-                if (_touches.Count == 2)
-                {
-                    // Get the two touches
-                    var enumerator = _touches.Values.GetEnumerator();
-                    enumerator.MoveNext();
-                    Vector2 p1 = enumerator.Current;
-                    enumerator.MoveNext();
-                    Vector2 p2 = enumerator.Current;
-
-                    float currentDistance = p1.DistanceTo(p2);
-
-                    if (_lastDistance > 0f)
-                    {
-                        float zoomChange = currentDistance / _lastDistance;
-
-                        Zoom *= zoomChange;
-
-                        // Clamp zoom
-                        Zoom = Zoom.Clamp(new Vector2(0.1f, 0.1f), new Vector2(20f, 20f));
-                    }
-
-                    _lastDistance = currentDistance;
-                }
-            }
-
-            return;
+            Vector2 fingerDeltaScreen = -fingerDrag.Relative;
+            panAny(fingerDeltaScreen);
         }
 
-        if (controlSceme == CONTROL_SCHEME.KEYBOARD_CLICKDRAG)
+        // Zooming
+        // mobile
+        if (@event is InputEventScreenTouch touchEvent)
         {
-            if (@event.IsAction("drag"))
+            if (touchEvent.Pressed)
             {
-                if (@event.IsPressed())
-                {
-                    mouse_start_pos = GetGlobalMousePosition();
-                    screen_start_position = GlobalPosition;
-                    dragging = true;
-                }
-                else
-                {
-                    dragging = false;
-                }
+                // Finger down → store position
+                _touches[touchEvent.Index] = touchEvent.Position;
             }
-            else if (@event is InputEventMouseMotion && dragging)
+            else
             {
-                pan(@event);
+                // Finger up → remove
+                _touches.Remove(touchEvent.Index);
+                _lastDistance = 0f;
             }
         }
+        else if (@event is InputEventScreenDrag anotherDRAG)
+        {
+            // Update finger position while dragging
+            _touches[anotherDRAG.Index] = anotherDRAG.Position;
 
+            if (_touches.Count == 2)
+            {
+                // Get the two touches
+                var enumerator = _touches.Values.GetEnumerator();
+                enumerator.MoveNext();
+                Vector2 p1 = enumerator.Current;
+                enumerator.MoveNext();
+                Vector2 p2 = enumerator.Current;
+
+                float currentDistance = p1.DistanceTo(p2);
+
+                if (_lastDistance > 0f)
+                {
+                    float zoomChange = currentDistance / _lastDistance;
+
+                    Zoom *= zoomChange;
+
+                    // Clamp zoom
+                    Zoom = Zoom.Clamp(new Vector2(0.1f, 0.1f), new Vector2(20f, 20f));
+                }
+
+                _lastDistance = currentDistance;
+            }
+        }
+    }
+
+    private void handleMousePan(InputEvent @event)
+    {
+        if (@event.IsAction("drag"))
+        {
+            if (@event.IsPressed())
+            {
+                mouse_start_pos = GetGlobalMousePosition();
+                screen_start_position = GlobalPosition;
+                mouseCurrentlyDragging = true;
+            }
+            else
+            {
+                mouseCurrentlyDragging = false;
+            }
+        }
+        else if (@event is InputEventMouseMotion mouseMotion && mouseCurrentlyDragging)
+        {
+            Vector2 mouseDeltaScreen = -mouseMotion.Relative;
+            panAny(mouseDeltaScreen);
+        }
+    }
+
+    private void handleMouseScroolWheelZoom(InputEvent @event)
+    {
         if (@event is InputEventMouseButton mouseEvent)
         {
             if (mouseEvent.ButtonIndex == MouseButton.WheelUp)
@@ -132,23 +122,28 @@ public partial class CameraController : Camera2D
         }
     }
 
-    private void mobilePan(InputEventScreenDrag dragEvent)
+    private void panAny(Vector2 screenChange)
     {
-        // How much the finger moved in screen pixels
-        Vector2 fingerDeltaScreen = -dragEvent.Relative;
-
-        // Convert to world units and move camera
-        GlobalPosition += fingerDeltaScreen / Zoom;
+        GlobalPosition += screenChange / Zoom;
     }
 
-    private void pan(InputEvent @event)
-    {
-        // How much the mouse moved in screen pixels
-        Vector2 mouseDeltaScreen = -((InputEventMouseMotion)@event).Relative;
+    //private void mobilePan(InputEventScreenDrag fingerDrag)
+    //{
+    //    // How much the finger moved in screen pixels
+    //    Vector2 fingerDeltaScreen = -fingerDrag.Relative;
 
-        // Convert to world units and move camera
-        GlobalPosition += mouseDeltaScreen / Zoom;
-    }
+    //    // Convert to world units and move camera
+    //    GlobalPosition += fingerDeltaScreen / Zoom;
+    //}
+
+    //private void pan(InputEventMouseMotion mouseDrag)
+    //{
+    //    // How much the mouse moved in screen pixels
+    //    Vector2 mouseDeltaScreen = -mouseDrag.Relative;
+
+    //    // Convert to world units and move camera
+    //    GlobalPosition += mouseDeltaScreen / Zoom;
+    //}
 
     private void zoomIn()
     {
