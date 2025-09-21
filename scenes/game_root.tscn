@@ -1,9 +1,7 @@
-[gd_scene load_steps=25 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=26 format=4 uid="uid://ca8br0m3c03eo"]
 
-[ext_resource type="PackedScene" uid="uid://beo7n41qd3xs7" path="res://scenes/goodWizard.tscn" id="1_78s5d"]
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://art/environment/Forest Tileset.png" id="1_uebra"]
 [ext_resource type="Texture2D" uid="uid://cblt0fbf63mu3" path="res://art/environment/Grass And Dirt Tileset 1.1/variation_tiles.png" id="2_a1rh6"]
-[ext_resource type="PackedScene" uid="uid://dw1g0yxq0m7qw" path="res://scenes/oldWizard.tscn" id="2_ni5ms"]
 [ext_resource type="Texture2D" uid="uid://csnvdeflarji6" path="res://squares/32Outline.png" id="2_ylec3"]
 [ext_resource type="Texture2D" uid="uid://b8eyjl6r3lsmx" path="res://art/environment/Grass And Dirt Tileset 1.1/grass_tileset.png" id="3_j7aru"]
 [ext_resource type="Texture2D" uid="uid://bb7reefovn2p3" path="res://art/environment/Grass And Dirt Tileset 1.1/dirt_tileset.png" id="4_ylec3"]
@@ -11,9 +9,12 @@
 [ext_resource type="Script" uid="uid://lsryn6hwpbe2" path="res://scripts/CameraController.cs" id="7_6v30a"]
 [ext_resource type="Texture2D" uid="uid://dq7osb5mnclyj" path="res://squares/checkered.png" id="7_melsq"]
 [ext_resource type="Texture2D" uid="uid://bfx3txvw7kvyc" path="res://ui/resizableItembar/edge.png" id="11_ywsqi"]
-[ext_resource type="PackedScene" uid="uid://cvmqdgknhsdca" path="res://scenes/ogre.tscn" id="12_5dyip"]
 [ext_resource type="Texture2D" uid="uid://cwxdfo8iqcjam" path="res://ui/resizableItembar/Slot.png" id="12_i7pw8"]
+[ext_resource type="PackedScene" uid="uid://beo7n41qd3xs7" path="res://scenes/Ukimian_Blue.tscn" id="13_i7pw8"]
+[ext_resource type="Texture2D" uid="uid://p8ngo1sj3tet" path="res://art/towers/BlueTowerButton.png" id="13_x5456"]
 [ext_resource type="Texture2D" uid="uid://bf02h1e01jj43" path="res://towers/blueTopTower.png" id="13_ywsqi"]
+[ext_resource type="PackedScene" uid="uid://dw1g0yxq0m7qw" path="res://scenes/fladnagian.tscn" id="14_i7pw8"]
+[ext_resource type="PackedScene" uid="uid://cvmqdgknhsdca" path="res://scenes/ogre_of_kersh.tscn" id="15_x5456"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -1083,21 +1084,12 @@ position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 script = ExtResource("7_6v30a")
 
-[node name="ukimian" parent="." instance=ExtResource("1_78s5d")]
-position = Vector2(-39, -47)
-
-[node name="fladnagians" parent="." instance=ExtResource("2_ni5ms")]
-position = Vector2(-31, -2)
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+follow_viewport_scale = 3.0
 
-[node name="Units" type="Control" parent="CanvasLayer"]
+[node name="Control" type="Control" parent="CanvasLayer"]
+self_modulate = Color(0.29803923, 1, 1, 1)
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Toolbar" type="HBoxContainer" parent="CanvasLayer"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1105,32 +1097,64 @@ offset_left = -20.0
 offset_right = 20.0
 offset_bottom = 40.0
 grow_horizontal = 2
+
+[node name="Toolbar" type="HBoxContainer" parent="CanvasLayer"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -32.99994
+offset_right = 33.00006
+offset_bottom = 40.0
+grow_horizontal = 2
+scale = Vector2(2.5, 2.5)
+pivot_offset = Vector2(33, 0)
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Toolbar"]
+[node name="front" type="TextureRect" parent="CanvasLayer/Toolbar"]
 layout_mode = 2
 texture = ExtResource("11_ywsqi")
+stretch_mode = 2
 
-[node name="TextureRect2" type="TextureRect" parent="CanvasLayer/Toolbar"]
+[node name="slot" type="TextureRect" parent="CanvasLayer/Toolbar"]
 layout_mode = 2
 texture = ExtResource("12_i7pw8")
+stretch_mode = 2
 
-[node name="TextureRect4" type="TextureRect" parent="CanvasLayer/Toolbar"]
-layout_mode = 2
-texture = ExtResource("12_i7pw8")
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Toolbar/slot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.200025
+offset_top = -11.2
+offset_right = 7.7999763
+offset_bottom = 10.799999
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("13_x5456")
+stretch_mode = 4
 
-[node name="TextureRect3" type="TextureRect" parent="CanvasLayer/Toolbar"]
+[node name="end" type="TextureRect" parent="CanvasLayer/Toolbar"]
 layout_mode = 2
 texture = ExtResource("11_ywsqi")
+stretch_mode = 2
 flip_h = true
-
-[node name="ogres of kerhs" parent="." instance=ExtResource("12_5dyip")]
-position = Vector2(41, -43)
 
 [node name="BlueTopTower" type="Sprite2D" parent="."]
 position = Vector2(-48, -110)
 texture = ExtResource("13_ywsqi")
 
 [node name="demons of ananab" type="Sprite2D" parent="."]
-position = Vector2(113, 44)
+position = Vector2(34, 54)
+
+[node name="ukimian_blue" parent="." instance=ExtResource("13_i7pw8")]
+position = Vector2(-59, -26)
+
+[node name="fladnagian" parent="." instance=ExtResource("14_i7pw8")]
+position = Vector2(-51, 15)
+
+[node name="ogre of kerhs" parent="." instance=ExtResource("15_x5456")]
+position = Vector2(57, -28)
