@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://cvmqdgknhsdca"]
 
-[ext_resource type="Texture2D" uid="uid://nx0moggc601" path="res://monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre/dark outline/ogre - attack.png" id="1_v5ei5"]
-[ext_resource type="Texture2D" uid="uid://bm7mu6kpvdrl6" path="res://monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre/dark outline/ogre - idle.png" id="2_18hxh"]
+[ext_resource type="Texture2D" path="res://monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre/dark outline/ogre - attack.png" id="1_v5ei5"]
+[ext_resource type="Texture2D" path="res://monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre/dark outline/ogre - idle.png" id="2_18hxh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_offou"]
 atlas = ExtResource("1_v5ei5")
