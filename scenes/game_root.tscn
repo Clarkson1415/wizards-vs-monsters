@@ -1235,9 +1235,6 @@ layout_mode = 2
 texture = ExtResource("11_ywsqi")
 stretch_mode = 2
 
-[node name="slot2" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
-layout_mode = 2
-
 [node name="slot3" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("12_k6861")
