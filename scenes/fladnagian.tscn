@@ -212,6 +212,7 @@ animations = [{
 [node name="fladnagian" type="Node2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(8, -7)
 sprite_frames = SubResource("SpriteFrames_265y4")
 animation = &"new_animation_1"
 autoplay = "new_animation_1"

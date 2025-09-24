@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://bpydidcfm61rb"]
+
+[ext_resource type="Texture2D" uid="uid://bf02h1e01jj43" path="res://towers/blueTopTower.png" id="1_kqa8w"]
+[ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scenes/UnitIndicator.cs" id="2_01m4j"]
+
+[sub_resource type="Gradient" id="Gradient_01m4j"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_t0uhh"]
+gradient = SubResource("Gradient_01m4j")
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -27)
+texture = ExtResource("1_kqa8w")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(0, 0.3529412, 0.9137255, 1)
+energy = 0.5
+range_z_min = -5
+range_z_max = -5
+texture = SubResource("GradientTexture2D_t0uhh")
+script = ExtResource("2_01m4j")
+unitSquareSize = 128
+isPlayer = true

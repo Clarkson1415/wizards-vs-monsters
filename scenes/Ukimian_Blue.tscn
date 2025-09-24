@@ -1,10 +1,11 @@
-[gd_scene load_steps=25 format=3 uid="uid://beo7n41qd3xs7"]
+[gd_scene load_steps=29 format=3 uid="uid://beo7n41qd3xs7"]
 
-[ext_resource type="Script" uid="uid://2e1lw8iexlfj" path="res://scripts/Wizard.cs" id="1_myjlv"]
 [ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - death.png" id="2_hw5ae"]
 [ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - hit.png" id="3_6yh18"]
 [ext_resource type="Texture2D" uid="uid://06jmvfu4a5iw" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - idle.png" id="4_r5g6r"]
 [ext_resource type="Texture2D" uid="uid://cyi46nvnrm80y" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - spell 1.png" id="5_wbwqt"]
+[ext_resource type="Script" uid="uid://5rlojexeef8u" path="res://scenes/ClickableUnitComponent.cs" id="6_6yh18"]
+[ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scenes/UnitIndicator.cs" id="6_hw5ae"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_thjc5"]
 atlas = ExtResource("2_hw5ae")
@@ -155,11 +156,52 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="Gradient" id="Gradient_hw5ae"]
+offsets = PackedFloat32Array(0.0018903592, 0.27977315)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6yh18"]
+gradient = SubResource("Gradient_hw5ae")
+width = 16
+height = 16
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hw5ae"]
+size = Vector2(16, 16)
+
 [node name="ukimian_blue" type="Node2D"]
-script = ExtResource("1_myjlv")
+
+[node name="Control" type="Button" parent="." node_paths=PackedStringArray("unitIndicatorLight", "area2d")]
+custom_minimum_size = Vector2(16, 16)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+flat = true
+script = ExtResource("6_6yh18")
+unitIndicatorLight = NodePath("../UnitIndicator")
+area2d = NodePath("../Footprint")
+pathToData = "res://GameUnitDataResources/Ukimian_Blue_data.tres"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(1, -9)
 sprite_frames = SubResource("SpriteFrames_l6rff")
 animation = &"idleEast"
 autoplay = "idleEast"
 frame_progress = 0.19779074
+
+[node name="UnitIndicator" type="PointLight2D" parent="."]
+texture = SubResource("GradientTexture2D_6yh18")
+script = ExtResource("6_hw5ae")
+isPlayer = true
+metadata/_custom_type_script = "uid://pwwrb0yq7w2g"
+
+[node name="Footprint" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Footprint"]
+shape = SubResource("RectangleShape2D_hw5ae")

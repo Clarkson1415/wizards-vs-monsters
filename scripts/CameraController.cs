@@ -127,24 +127,6 @@ public partial class CameraController : Camera2D
         GlobalPosition += screenChange / Zoom;
     }
 
-    //private void mobilePan(InputEventScreenDrag fingerDrag)
-    //{
-    //    // How much the finger moved in screen pixels
-    //    Vector2 fingerDeltaScreen = -fingerDrag.Relative;
-
-    //    // Convert to world units and move camera
-    //    GlobalPosition += fingerDeltaScreen / Zoom;
-    //}
-
-    //private void pan(InputEventMouseMotion mouseDrag)
-    //{
-    //    // How much the mouse moved in screen pixels
-    //    Vector2 mouseDeltaScreen = -mouseDrag.Relative;
-
-    //    // Convert to world units and move camera
-    //    GlobalPosition += mouseDeltaScreen / Zoom;
-    //}
-
     private void zoomIn()
     {
         this.Zoom = this.Zoom + (Vector2.One / zoomAmount);
