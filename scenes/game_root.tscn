@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=32 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://art/environment/Forest Tileset.png" id="1_uebra"]
 [ext_resource type="Texture2D" uid="uid://cblt0fbf63mu3" path="res://art/environment/Grass And Dirt Tileset 1.1/variation_tiles.png" id="2_a1rh6"]
@@ -8,17 +8,19 @@
 [ext_resource type="Texture2D" uid="uid://c0712qhe4nejb" path="res://squares/16Outline.png" id="6_6v30a"]
 [ext_resource type="Script" uid="uid://lsryn6hwpbe2" path="res://scripts/CameraController.cs" id="7_6v30a"]
 [ext_resource type="Texture2D" uid="uid://dq7osb5mnclyj" path="res://squares/checkered.png" id="7_melsq"]
-[ext_resource type="Script" uid="uid://b8w6r6k3sgafu" path="res://scenes/PropertyPanel.cs" id="11_1vvmy"]
+[ext_resource type="Script" uid="uid://b8w6r6k3sgafu" path="res://scripts/PropertyPanel.cs" id="11_1vvmy"]
 [ext_resource type="FontFile" uid="uid://b8hbmmi6oyqch" path="res://ui/monogram.ttf" id="11_x42w8"]
 [ext_resource type="Texture2D" uid="uid://bfx3txvw7kvyc" path="res://ui/resizableItembar/edge.png" id="11_ywsqi"]
 [ext_resource type="Resource" uid="uid://35raccy63gdv" path="res://GameUnitDataResources/Ukimian_Blue_data.tres" id="12_k6861"]
 [ext_resource type="PackedScene" uid="uid://dnwy38nh48ccy" path="res://scenes/slot.tscn" id="12_x5456"]
 [ext_resource type="Texture2D" uid="uid://c070y4qjh282x" path="res://ui/FrameBlue.png" id="13_6puu6"]
+[ext_resource type="Script" uid="uid://cc8w0ietsb751" path="res://scripts/UIScripts/ToggleVisibilityButton.cs" id="13_35vvr"]
 [ext_resource type="PackedScene" uid="uid://beo7n41qd3xs7" path="res://scenes/Ukimian_Blue.tscn" id="13_i7pw8"]
-[ext_resource type="Script" uid="uid://mdtteu5lpdeg" path="res://scenes/ToggleTime.cs" id="13_x42w8"]
+[ext_resource type="Script" uid="uid://mdtteu5lpdeg" path="res://scripts/ToggleTime.cs" id="13_x42w8"]
 [ext_resource type="PackedScene" uid="uid://dw1g0yxq0m7qw" path="res://scenes/fladnagian.tscn" id="14_i7pw8"]
 [ext_resource type="PackedScene" uid="uid://cvmqdgknhsdca" path="res://scenes/ogre_of_kersh.tscn" id="15_x5456"]
-[ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scenes/ClickToSpawn.cs" id="16_6puu6"]
+[ext_resource type="Resource" uid="uid://bh1ovubptci53" path="res://GameUnitDataResources/Ogre_of_Kerhs.tres" id="16_0aloa"]
+[ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/ClickToSpawn.cs" id="16_6puu6"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -1101,7 +1103,7 @@ script = ExtResource("16_6puu6")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 follow_viewport_scale = 3.0
 
-[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer" node_paths=PackedStringArray("name", "description", "armour", "health", "dps")]
+[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range")]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -1114,17 +1116,18 @@ texture = ExtResource("13_6puu6")
 stretch_mode = 4
 script = ExtResource("11_1vvmy")
 name = NodePath("Name")
-description = NodePath("desc")
-armour = NodePath("astat")
-health = NodePath("healthstat")
-dps = NodePath("dpsstat")
+description = NodePath("Description/desc")
+armour = NodePath("Stats/astat")
+health = NodePath("Stats/healthstat")
+dps = NodePath("Stats/dpsstat")
+range = NodePath("Stats/rangestat")
 
 [node name="Name" type="Label" parent="CanvasLayer/PropertyPanel"]
 layout_mode = 0
-offset_left = 10.333332
-offset_top = 7.666667
-offset_right = 93.97606
-offset_bottom = 36.666668
+offset_left = 9.333332
+offset_top = 4.3333335
+offset_right = 92.97606
+offset_bottom = 33.333332
 scale = Vector2(0.84884834, 0.84884834)
 theme_override_constants/line_spacing = 0
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1132,89 +1135,137 @@ theme_override_font_sizes/font_size = 16
 text = "Ukimian Ice Mage"
 autowrap_mode = 2
 
-[node name="desc" type="Label" parent="CanvasLayer/PropertyPanel"]
-layout_mode = 0
-offset_left = 7.6666656
-offset_top = 31.66667
-offset_right = 120.426796
-offset_bottom = 101.20209
-scale = Vector2(0.7094705, 0.7094705)
-theme_override_constants/line_spacing = 0
-theme_override_fonts/font = ExtResource("11_x42w8")
-theme_override_font_sizes/font_size = 16
-text = "A medium length description a d dllkjd lkjld ljd ldkj ld ldjld jdldkj dlj d"
-autowrap_mode = 2
+[node name="Stats" type="Control" parent="CanvasLayer/PropertyPanel"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="armour" type="Label" parent="CanvasLayer/PropertyPanel"]
+[node name="armour" type="Label" parent="CanvasLayer/PropertyPanel/Stats"]
 layout_mode = 0
-offset_left = 13.999998
-offset_top = 87.666664
-offset_right = 66.6214
-offset_bottom = 106.40725
+offset_left = 11.0
+offset_top = 34.0
+offset_right = 63.6214
+offset_bottom = 52.740578
 scale = Vector2(0.7094705, 0.7094705)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="astat" type="Label" parent="CanvasLayer/PropertyPanel"]
+[node name="astat" type="Label" parent="CanvasLayer/PropertyPanel/Stats"]
 layout_mode = 0
-offset_left = 51.333332
-offset_top = 87.666664
-offset_right = 103.95473
-offset_bottom = 106.40725
+offset_left = 48.333344
+offset_top = 34.0
+offset_right = 100.95474
+offset_bottom = 52.740578
 scale = Vector2(0.7094705, 0.7094705)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="health" type="Label" parent="CanvasLayer/PropertyPanel"]
+[node name="health" type="Label" parent="CanvasLayer/PropertyPanel/Stats"]
 layout_mode = 0
-offset_left = 13.999998
-offset_top = 100.33333
-offset_right = 66.6214
-offset_bottom = 119.07391
+offset_left = 11.0
+offset_top = 46.66667
+offset_right = 63.6214
+offset_bottom = 65.40726
 scale = Vector2(0.7094705, 0.7094705)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Health"
 autowrap_mode = 2
 
-[node name="healthstat" type="Label" parent="CanvasLayer/PropertyPanel"]
+[node name="healthstat" type="Label" parent="CanvasLayer/PropertyPanel/Stats"]
 layout_mode = 0
-offset_left = 51.333332
-offset_top = 100.33333
-offset_right = 103.95473
-offset_bottom = 119.07391
+offset_left = 48.333344
+offset_top = 46.66667
+offset_right = 100.95474
+offset_bottom = 65.40726
 scale = Vector2(0.7094705, 0.7094705)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="dps" type="Label" parent="CanvasLayer/PropertyPanel"]
+[node name="dps" type="Label" parent="CanvasLayer/PropertyPanel/Stats"]
 layout_mode = 0
-offset_left = 13.999998
-offset_top = 111.66666
-offset_right = 66.6214
-offset_bottom = 130.40726
+offset_left = 11.0
+offset_top = 58.0
+offset_right = 63.6214
+offset_bottom = 76.7406
 scale = Vector2(0.7094705, 0.7094705)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "DPS"
 autowrap_mode = 2
 
-[node name="dpsstat" type="Label" parent="CanvasLayer/PropertyPanel"]
+[node name="dpsstat" type="Label" parent="CanvasLayer/PropertyPanel/Stats"]
 layout_mode = 0
-offset_left = 51.333332
-offset_top = 111.66666
-offset_right = 103.95473
-offset_bottom = 130.40726
+offset_left = 48.333344
+offset_top = 58.0
+offset_right = 100.95474
+offset_bottom = 76.7406
 scale = Vector2(0.7094705, 0.7094705)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Armour"
+autowrap_mode = 2
+
+[node name="range" type="Label" parent="CanvasLayer/PropertyPanel/Stats"]
+layout_mode = 0
+offset_left = 11.3333435
+offset_top = 68.66667
+offset_right = 63.954727
+offset_bottom = 87.40726
+scale = Vector2(0.7094705, 0.7094705)
+theme_override_fonts/font = ExtResource("11_x42w8")
+theme_override_font_sizes/font_size = 16
+text = "Range"
+autowrap_mode = 2
+
+[node name="rangestat" type="Label" parent="CanvasLayer/PropertyPanel/Stats"]
+layout_mode = 0
+offset_left = 48.333344
+offset_top = 69.000015
+offset_right = 100.95473
+offset_bottom = 87.74062
+scale = Vector2(0.7094705, 0.7094705)
+theme_override_fonts/font = ExtResource("11_x42w8")
+theme_override_font_sizes/font_size = 16
+text = "Range"
+autowrap_mode = 2
+
+[node name="SwitchView" type="Button" parent="CanvasLayer/PropertyPanel" node_paths=PackedStringArray("description", "stats")]
+layout_mode = 0
+offset_left = 50.333344
+offset_top = 106.66667
+offset_right = 100.67169
+offset_bottom = 127.66667
+scale = Vector2(0.69028735, 0.69028735)
+theme_override_fonts/font = ExtResource("11_x42w8")
+text = "About"
+script = ExtResource("13_35vvr")
+description = NodePath("../Description")
+stats = NodePath("../Stats")
+
+[node name="Description" type="Control" parent="CanvasLayer/PropertyPanel"]
+visible = false
+anchors_preset = 0
+offset_left = 11.0
+offset_top = 34.0
+offset_right = 51.0
+offset_bottom = 74.0
+
+[node name="desc" type="Label" parent="CanvasLayer/PropertyPanel/Description"]
+layout_mode = 0
+offset_right = 112.29031
+offset_bottom = 65.0
+scale = Vector2(0.7094705, 0.7094705)
+theme_override_constants/line_spacing = 0
+theme_override_fonts/font = ExtResource("11_x42w8")
+theme_override_font_sizes/font_size = 16
+text = "A medium length description a d dllkjd lkjld ljd ldkj ld ldjld jdldkj dlj d"
 autowrap_mode = 2
 
 [node name="Toolbar" type="HBoxContainer" parent="CanvasLayer"]
@@ -1241,7 +1292,11 @@ gameUnitData = ExtResource("12_k6861")
 
 [node name="slot4" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
-gameUnitData = ExtResource("12_k6861")
+gameUnitData = ExtResource("16_0aloa")
+
+[node name="slot5" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
+layout_mode = 2
+gameUnitData = ExtResource("16_0aloa")
 
 [node name="end" type="TextureRect" parent="CanvasLayer/Toolbar"]
 layout_mode = 2
@@ -1269,14 +1324,11 @@ scale = Vector2(3, 3)
 text = "Clear/Del"
 script = ExtResource("13_x42w8")
 
-[node name="demons of ananab" type="Sprite2D" parent="."]
-position = Vector2(34, 54)
-
 [node name="fladnagian" parent="." instance=ExtResource("14_i7pw8")]
-position = Vector2(-90, 9)
+position = Vector2(-87, 2)
 
 [node name="ogre of kerhs" parent="." instance=ExtResource("15_x5456")]
-position = Vector2(57, -28)
+position = Vector2(56, -24)
 
 [node name="ukimian_blue" parent="." instance=ExtResource("13_i7pw8")]
-position = Vector2(-87, -39)
+position = Vector2(-72, -40)

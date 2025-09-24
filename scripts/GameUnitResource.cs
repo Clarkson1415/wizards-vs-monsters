@@ -13,7 +13,13 @@ public partial class GameUnitResource : Resource
 	[Export] private string name;
 	public string GetUnitName() { return name; }
 
-	[Export] private int DPS;
+    /// <summary>
+    /// The distance in tiles this unit will start attacking. 1 means adjacent tile.
+    /// </summary>
+    [Export] private int range;
+	public int GetRange() { return range; }
+
+    [Export] private int DPS;
 	public int GetDPS() { return DPS; }
 
 	[Export] private string description;

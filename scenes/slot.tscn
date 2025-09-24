@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://dnwy38nh48ccy"]
 
 [ext_resource type="Texture2D" uid="uid://cwxdfo8iqcjam" path="res://ui/resizableItembar/Slot.png" id="1_ic0fu"]
-[ext_resource type="Texture2D" uid="uid://lwuieafugr1k" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/BlueUkimianButton.png" id="2_ic0fu"]
-[ext_resource type="Script" uid="uid://bhftkc7jsjid7" path="res://scenes/ToolbarSlot.cs" id="2_vqyee"]
+[ext_resource type="Script" uid="uid://bhftkc7jsjid7" path="res://scripts/ToolbarSlot.cs" id="2_vqyee"]
+[ext_resource type="Texture2D" uid="uid://dpbot6ws03h3d" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/BlueWitchButton.png" id="3_5f2j7"]
 [ext_resource type="Script" uid="uid://dtr08krxhfn3y" path="res://scripts/ToolbarButton.cs" id="5_sjnr7"]
 
 [node name="slot" type="TextureRect"]
@@ -23,7 +23,7 @@ offset_right = 10.0
 offset_bottom = 7.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_ic0fu")
+texture = ExtResource("3_5f2j7")
 stretch_mode = 4
 
 [node name="Button" type="Button" parent="."]
