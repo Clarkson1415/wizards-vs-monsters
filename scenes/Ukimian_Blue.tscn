@@ -1,15 +1,15 @@
 [gd_scene load_steps=38 format=3 uid="uid://beo7n41qd3xs7"]
 
-[ext_resource type="Script" uid="uid://d3ljutmrqhbju" path="res://scenes/UkimianBlue.cs" id="1_2ra8t"]
+[ext_resource type="Script" uid="uid://d3ljutmrqhbju" path="res://UkimianBlue.cs" id="1_2ra8t"]
 [ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - death.png" id="2_hw5ae"]
-[ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scenes/UnitBody.cs" id="2_wbwqt"]
+[ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://UnitBody.cs" id="2_wbwqt"]
 [ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - hit.png" id="3_6yh18"]
 [ext_resource type="Texture2D" uid="uid://06jmvfu4a5iw" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - idle.png" id="4_r5g6r"]
 [ext_resource type="Texture2D" uid="uid://cyi46nvnrm80y" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - spell 1.png" id="5_wbwqt"]
 [ext_resource type="Script" uid="uid://5rlojexeef8u" path="res://scripts/ClickableUnitComponent.cs" id="6_6yh18"]
 [ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scripts/UnitIndicator.cs" id="6_hw5ae"]
-[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/HealthComponent.tscn" id="8_r5g6r"]
-[ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://scenes/AnimationComponent.cs" id="10_2ra8t"]
+[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="8_r5g6r"]
+[ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://AnimationComponent.cs" id="10_2ra8t"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hw5ae"]
 size = Vector2(16, 16)
@@ -132,7 +132,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jtyee")
 }],
-"loop": true,
+"loop": false,
 "name": &"idle",
 "speed": 8.0
 }, {
@@ -158,7 +158,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_o1try")
 }],
-"loop": true,
+"loop": false,
 "name": &"spell1East",
 "speed": 8.0
 }]
@@ -172,66 +172,60 @@ gradient = SubResource("Gradient_hw5ae")
 width = 16
 height = 16
 
-[sub_resource type="Animation" id="Animation_2ra8t"]
-resource_name = "hurt"
-length = 0.4
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatedSprite2D:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"hurt"]
-}
-
-[sub_resource type="Animation" id="Animation_lnd3i"]
-resource_name = "idle"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatedSprite2D:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"idle"]
-}
-
 [sub_resource type="Animation" id="Animation_ch327"]
 length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatedSprite2D:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"idle"]
-}
 
 [sub_resource type="Animation" id="Animation_kjbl8"]
 resource_name = "die"
 length = 0.625
-tracks/0/type = "value"
+tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatedSprite2D:animation")
+tracks/0/path = NodePath("AnimatedSprite2D")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"die"]
+"values": [{
+"args": [&"die", 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_2ra8t"]
+resource_name = "hurt"
+length = 0.4
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"hurt", 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_lnd3i"]
+resource_name = "idle"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"idle", 1.0, false],
+"method": &"play"
+}]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_lnd3i"]
@@ -242,14 +236,15 @@ _data = {
 &"idle": SubResource("Animation_lnd3i")
 }
 
-[node name="ukimian_blue" type="Node2D" node_paths=PackedStringArray("clickableUnitComponent", "unitsAreaOrBodyAndArmour")]
+[node name="ukimian_blue" type="Node2D" node_paths=PackedStringArray("clickableUnitComponent", "unitsAreaOrBodyAndArmour", "statusComponent")]
 script = ExtResource("1_2ra8t")
 clickableUnitComponent = NodePath("Control")
 unitsAreaOrBodyAndArmour = NodePath("body")
+initialStatuses = Array[int]([3])
+statusComponent = NodePath("statuscomponent")
 
-[node name="body" type="Area2D" parent="." node_paths=PackedStringArray("healthComponent", "animComponent")]
+[node name="body" type="Area2D" parent="." node_paths=PackedStringArray("animComponent")]
 script = ExtResource("2_wbwqt")
-healthComponent = NodePath("../HealthComponent")
 animComponent = NodePath("../AnimationPlayer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="body"]
@@ -274,15 +269,10 @@ unitIndicatorLight = NodePath("../UnitIndicator")
 area2d = NodePath("../body")
 pathToData = "res://GameUnitDataResources/Ukimian_Blue_data.tres"
 
-[node name="HealthComponent" parent="." instance=ExtResource("8_r5g6r")]
-offset_top = -21.0
-offset_bottom = -19.0
-
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -8)
 sprite_frames = SubResource("SpriteFrames_l6rff")
-animation = &"idle"
-autoplay = "idle"
+animation = &"die"
 
 [node name="UnitIndicator" type="PointLight2D" parent="."]
 texture = SubResource("GradientTexture2D_6yh18")
@@ -293,4 +283,9 @@ metadata/_custom_type_script = "uid://pwwrb0yq7w2g"
 libraries = {
 &"": SubResource("AnimationLibrary_lnd3i")
 }
+autoplay = "idle"
 script = ExtResource("10_2ra8t")
+
+[node name="statuscomponent" parent="." instance=ExtResource("8_r5g6r")]
+offset_top = -35.0
+offset_bottom = -33.0

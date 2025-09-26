@@ -6,21 +6,15 @@ using System.Collections.Generic;
 /// Units movement and attacking. Active behaviours.
 /// Unit passive things like taking damage go in unitarea.
 /// </summary>
-public partial class OgreOfKersh : GameUnit
+public partial class OgreOfKersh : MovingGameUnit
 {
-	private int unitBaseSpeed;
-
-	private int speedModifier = 1;
-
-	private Vector2 directionFacing = Vector2.Left;
-
-	private Vector2 velocity;
-
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		base._Ready();
-        unitBaseSpeed = this.GetInfo().GetSpeed();
+
+        // TODO other ready stuff.
+        // Ogre Stinky status?
     }
 
     [Export] private RayCast2D ray_left;
@@ -31,7 +25,7 @@ public partial class OgreOfKersh : GameUnit
     {
         targetsInRange.Clear();
 
-        // TODO: figure out raycast to use.
+        // TODO: when implement 4 directions, check all raycasters not just the left one.
         if (ray_left.IsColliding())
         {
             var target = ray_left.GetCollider();
@@ -42,7 +36,7 @@ public partial class OgreOfKersh : GameUnit
         }
     }
 
-    private int damage = 20;
+    private int damage = 5;
 
     /// <summary>
     /// When the animation frame that the attack animation should hit an enemy plays.
@@ -58,10 +52,10 @@ public partial class OgreOfKersh : GameUnit
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
 	{
+        base._Process(delta);
+
         // TODO this will go in a parent class. called FightingUnit.
-
         // TODO: will be able to manually assign targets. via clicking unit clicking enemy. and then will need to add if assignedTargets ignore targets and chase them.
-
 
         // TODO implement unit range? no need. will be done via the raycast 2d.
         UpdateTargetsInRange();

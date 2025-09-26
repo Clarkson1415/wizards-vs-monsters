@@ -4,21 +4,19 @@ using System.Reflection.Metadata.Ecma335;
 
 public partial class AnimationComponent : AnimationPlayer
 {
-    private bool isDead;
-
 	/// <summary>
 	/// For attacks
 	/// </summary>
 	/// <param name="animName"></param>
 	public void UpdateAnimation(string animName)
 	{
-        // If we’re already dead, don’t change animations
-        if (isDead)
+        if (CurrentAnimation.Contains("die"))
+        {
             return;
+        }
 
         if (animName.Contains("die"))
         {
-            isDead = true;
             Play(animName);
             return;
         }

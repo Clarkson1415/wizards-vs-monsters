@@ -5,34 +5,45 @@ using WizardsVsMonster.scripts;
 /// <summary>
 /// Represents the units area2d.
 /// Kind of like the units body. has armour and health.
-/// Deals with passive things. like taking damage.
+/// Deals with passive things. like taking damage. or effects and stuff.
 /// </summary>
 public partial class UnitBody : Area2D
 {
-	[Export] private HealthComponent healthComponent;
-
     [Export] private AnimationComponent animComponent;
 
     private int armour;
 
 	private float currentHealth;
 
-	public void Setup(GameUnitResource data)
-	{
-		this.armour = data.GetArmour();
+    private float maxHealth;
 
+    private StatusComponent statusComponent;
+
+    public void Setup(GameUnitResource data, StatusComponent statComponent)
+	{
+        this.statusComponent = statComponent;
+		this.armour = data.GetArmour();
 		currentHealth = data.GetHealth();
-        healthComponent.Setup(data.GetHealth());
+        maxHealth = data.GetHealth();
 	}
 
-	public void TakeDamage(int damage)
+    private bool isDead;
+
+    public void TakeDamage(int damage)
 	{
+        if (isDead)
+        {
+            return;
+        }
+
 		// TODO calculate armour and shit.
 		currentHealth -= damage;
-        healthComponent.UpdateHealthBar(currentHealth);
+        statusComponent.UpdateHealthPercentage(currentHealth / maxHealth);
 
         if (currentHealth <= 0) 
         {
+            isDead = true;
+            Monitorable = false;
             animComponent.UpdateAnimation("die");
         }
         else
@@ -43,11 +54,21 @@ public partial class UnitBody : Area2D
 
     public void UpdateAnimation(string animName)
     {
+        if (isDead)
+        {
+            return;
+        }
+
         animComponent.UpdateAnimation(animName);
     }
 
     public void UpdateAnimation(Vector2 velocity)
     {
+        if (isDead)
+        {
+            return;
+        }
+
         animComponent.UpdateAnimation(velocity);
     }
 }

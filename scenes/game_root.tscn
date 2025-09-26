@@ -1233,7 +1233,7 @@ text = "Clear/Del"
 script = ExtResource("13_x42w8")
 
 [node name="ogre of kerhs" parent="." instance=ExtResource("15_x5456")]
-position = Vector2(112, -24)
+position = Vector2(46, -24)
 
 [node name="ukimian_blue" parent="." instance=ExtResource("13_i7pw8")]
 position = Vector2(24, -24)

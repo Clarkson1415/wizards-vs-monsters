@@ -1,14 +1,14 @@
 [gd_scene load_steps=33 format=3 uid="uid://cvmqdgknhsdca"]
 
-[ext_resource type="Script" uid="uid://ddnr2wj0hagak" path="res://scripts/Behaviours/OgreOfKersh.cs" id="1_i43m7"]
+[ext_resource type="Script" uid="uid://ddnr2wj0hagak" path="res://scripts/Units/OgreOfKersh.cs" id="1_i43m7"]
 [ext_resource type="Texture2D" uid="uid://nx0moggc601" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - attack.png" id="1_v5ei5"]
 [ext_resource type="Texture2D" uid="uid://bm7mu6kpvdrl6" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - idle.png" id="2_18hxh"]
-[ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scenes/UnitBody.cs" id="2_q5tv2"]
+[ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://UnitBody.cs" id="2_q5tv2"]
 [ext_resource type="Script" uid="uid://5rlojexeef8u" path="res://scripts/ClickableUnitComponent.cs" id="3_1h347"]
 [ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scripts/UnitIndicator.cs" id="4_t6ix4"]
 [ext_resource type="Texture2D" uid="uid://cdibeerknc4s" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - walk.png" id="5_6idkb"]
-[ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://scenes/AnimationComponent.cs" id="6_b0664"]
-[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/HealthComponent.tscn" id="6_i43m7"]
+[ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://AnimationComponent.cs" id="6_b0664"]
+[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="6_i43m7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6ix4"]
 size = Vector2(16, 16)
@@ -224,27 +224,24 @@ colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_0uyrj"]
 gradient = SubResource("Gradient_t6ix4")
 
-[node name="ogre of kerhs" type="Node2D" node_paths=PackedStringArray("ray_left", "clickableUnitComponent", "unitsAreaOrBodyAndArmour")]
+[node name="ogre of kerhs" type="Node2D" node_paths=PackedStringArray("ray_left", "clickableUnitComponent", "unitsAreaOrBodyAndArmour", "statusComponent")]
 script = ExtResource("1_i43m7")
 ray_left = NodePath("RayCast2D")
 clickableUnitComponent = NodePath("ClickableUnitComponent")
 unitsAreaOrBodyAndArmour = NodePath("body")
+initialStatuses = Array[int]([3])
+statusComponent = NodePath("statcomp")
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(-8, 0)
 collide_with_areas = true
 
-[node name="body" type="Area2D" parent="." node_paths=PackedStringArray("healthComponent", "animComponent")]
+[node name="body" type="Area2D" parent="." node_paths=PackedStringArray("animComponent")]
 script = ExtResource("2_q5tv2")
-healthComponent = NodePath("../HealthComponent")
 animComponent = NodePath("../AnimationPlayer")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="body"]
 shape = SubResource("RectangleShape2D_t6ix4")
-
-[node name="HealthComponent" parent="." instance=ExtResource("6_i43m7")]
-offset_top = -18.0
-offset_bottom = -16.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -3)
@@ -280,8 +277,13 @@ pathToData = "res://GameUnitDataResources/Ogre_of_Kerhs.tres"
 metadata/_custom_type_script = "uid://5rlojexeef8u"
 
 [node name="UnitIndicator" type="PointLight2D" parent="."]
+visible = false
 color = Color(0.679014, 5.679429e-06, 3.3691526e-06, 1)
 energy = 2.0
 texture = SubResource("GradientTexture2D_0uyrj")
 script = ExtResource("4_t6ix4")
 metadata/_custom_type_script = "uid://pwwrb0yq7w2g"
+
+[node name="statcomp" parent="." instance=ExtResource("6_i43m7")]
+offset_top = -35.0
+offset_bottom = -33.0
