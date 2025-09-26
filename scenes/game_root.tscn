@@ -17,10 +17,10 @@
 [ext_resource type="Script" uid="uid://cc8w0ietsb751" path="res://scripts/UIScripts/ToggleVisibilityButton.cs" id="13_35vvr"]
 [ext_resource type="PackedScene" uid="uid://beo7n41qd3xs7" path="res://scenes/Ukimian_Blue.tscn" id="13_i7pw8"]
 [ext_resource type="Script" uid="uid://mdtteu5lpdeg" path="res://scripts/ToggleTime.cs" id="13_x42w8"]
-[ext_resource type="PackedScene" uid="uid://dw1g0yxq0m7qw" path="res://scenes/fladnagian.tscn" id="14_i7pw8"]
 [ext_resource type="PackedScene" uid="uid://cvmqdgknhsdca" path="res://scenes/ogre_of_kersh.tscn" id="15_x5456"]
 [ext_resource type="Resource" uid="uid://bh1ovubptci53" path="res://GameUnitDataResources/Ogre_of_Kerhs.tres" id="16_0aloa"]
 [ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/ClickToSpawn.cs" id="16_6puu6"]
+[ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -1103,7 +1103,7 @@ script = ExtResource("16_6puu6")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 follow_viewport_scale = 3.0
 
-[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range")]
+[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer" node_paths=PackedStringArray("description", "armour", "health", "dps", "range")]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -1115,7 +1115,6 @@ pivot_offset = Vector2(95, 0)
 texture = ExtResource("13_6puu6")
 stretch_mode = 4
 script = ExtResource("11_1vvmy")
-name = NodePath("Name")
 description = NodePath("Description/desc")
 armour = NodePath("Stats/astat")
 health = NodePath("Stats/healthstat")
@@ -1292,7 +1291,7 @@ gameUnitData = ExtResource("12_k6861")
 
 [node name="slot4" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
-gameUnitData = ExtResource("16_0aloa")
+gameUnitData = ExtResource("17_so1mv")
 
 [node name="slot5" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
@@ -1323,9 +1322,6 @@ offset_bottom = 181.0
 scale = Vector2(3, 3)
 text = "Clear/Del"
 script = ExtResource("13_x42w8")
-
-[node name="fladnagian" parent="." instance=ExtResource("14_i7pw8")]
-position = Vector2(-87, 2)
 
 [node name="ogre of kerhs" parent="." instance=ExtResource("15_x5456")]
 position = Vector2(56, -24)

@@ -7,6 +7,14 @@ public partial class GameUnitResource : Resource
 	[Export] private int health;
 	public int GetHealth() { return health; }
 
+	[Export] private int speed = 2;
+
+	/// <summary>
+	/// Tiles per second. 1 tile or meter is 16 pixels.
+	/// </summary>
+	/// <returns></returns>
+	public int GetSpeed() { return speed; }
+
 	[Export] private int armour;
 	public int GetArmour() { return armour; }
 
