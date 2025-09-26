@@ -6,9 +6,12 @@
 
 [resource]
 script = ExtResource("1_h8kfe")
-health = 20
+health = 50
 armour = 2
 name = "Ukimian (Ice Mage)"
+size = 1
+range = 1
+DPS = 50
 description = "Ice mage of Ukimia "
 gameUnit = ExtResource("3_6cp4b")
 toolbarImage = ExtResource("3_l3y7q")

@@ -12,6 +12,8 @@ public partial class PropertyPanel : TextureRect
 	[Export] private Label health;
 	[Export] private Label dps;
 	[Export] private Label range;
+    [Export] private Label speed;
+    [Export] private Label size;
 
     public override void _Ready()
 	{
@@ -46,6 +48,8 @@ public partial class PropertyPanel : TextureRect
 		health.Text = data.GetHealth().ToString();
 		dps.Text = data.GetDPS().ToString();
         range.Text = data.GetRange().ToString();
+        speed.Text = data.GetSpeed().ToString();
+		size.Text = data.GetSizeInUnits().ToString();
     }
 
 }

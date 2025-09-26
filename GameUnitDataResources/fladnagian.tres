@@ -9,6 +9,7 @@ script = ExtResource("1_x6trv")
 health = 35
 armour = 10
 name = "Fladnagian"
+size = 2
 range = 4
 DPS = 42
 description = "battle mage of fladnag. Powerfull opponents. Slow to move."

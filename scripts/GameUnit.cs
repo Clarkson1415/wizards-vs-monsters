@@ -1,28 +1,26 @@
 using Godot;
 using System;
+using WizardsVsMonster.scripts;
 
 /// <summary>
-/// The Game unit on the board.
+/// Represents the game unit on the board.
 /// </summary>
+[GlobalClass]
 public partial class GameUnit : Node2D
 {
-	[Export] public GameUnitResource resource;
+	[Export] private ClickableUnitComponent clickableUnitComponent;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		if (resource == null)
-		{
-			Logger.Log("resource on unit is null");
-		}
-		else
-		{
-			Logger.Log("resource valid");
-		}
-	}
+    [Export] protected UnitBody unitsAreaOrBodyAndArmour;
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+    public GameUnitResource GetInfo()
 	{
-	}
+		return this.clickableUnitComponent.GetInfo();
+    }
+
+    public override void _Ready()
+    {
+        base._Ready();
+
+        unitsAreaOrBodyAndArmour.Setup(this.GetInfo());
+    }
 }

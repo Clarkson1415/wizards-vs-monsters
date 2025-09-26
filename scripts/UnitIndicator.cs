@@ -17,7 +17,11 @@ public partial class UnitIndicator : PointLight2D
         var texture = this.Texture as GradientTexture2D;
 
         // set gradient to a white square
-        texture.Gradient.RemovePoint(0);
+        while (texture.Gradient.GetPointCount() > 1)
+        {
+            texture.Gradient.RemovePoint(0);
+        }
+
         texture.Gradient.SetColor(0, Godot.Color.Color8(255, 255, 255, 255));
 
         // set size

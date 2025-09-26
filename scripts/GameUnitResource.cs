@@ -21,6 +21,14 @@ public partial class GameUnitResource : Resource
 	[Export] private string name;
 	public string GetUnitName() { return name; }
 
+	[Export] private int size;
+
+	/// <summary>
+	/// size of 1 takes up 1 16x16 unit.
+	/// </summary>
+	/// <returns></returns>
+	public int GetSizeInUnits() { return size; }
+
     /// <summary>
     /// The distance in tiles this unit will start attacking. 1 means adjacent tile.
     /// </summary>

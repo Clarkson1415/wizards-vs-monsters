@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dq7osb5mnclyj"
-path="res://.godot/imported/checkered.png-feefa1e3ba3d7d61753a3cc0f964d42c.ctex"
+path="res://.godot/imported/checkered_16x16.png-d5e77c917c14c81361698115244166d2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://squares/checkered.png"
-dest_files=["res://.godot/imported/checkered.png-feefa1e3ba3d7d61753a3cc0f964d42c.ctex"]
+source_file="res://squares/checkered_16x16.png"
+dest_files=["res://.godot/imported/checkered_16x16.png-d5e77c917c14c81361698115244166d2.ctex"]
 
 [params]
 

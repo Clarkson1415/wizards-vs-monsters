@@ -8,10 +8,23 @@ using WizardsVsMonster.scripts;
 /// </summary>
 public partial class ClickToSpawn : Control
 {
-	public override void _Input(InputEvent @event)
-	{
+    private void SnapToGrid(GameUnit unit)
+    {
+        var snapSize = GlobalGameVariables.CELL_SIZE * unit.GetInfo().GetSizeInUnits();
+        var newPos = (unit.GlobalPosition / snapSize).Floor() * snapSize;
+        newPos += new Vector2(snapSize / 2, snapSize / 2); // centre it in tile.
+        unit.GlobalPosition = newPos;
+
+        // TODO store in positions dictionary of vectors 2s and units?
+        // or use the physics system to move them?
+    }
+
+    public override void _GuiInput(InputEvent @event)
+    {
+        base._GuiInput(@event);
+
         if (@event is InputEventScreenTouch touchEvent)
-		{
+        {
             if (touchEvent.Pressed)
             {
                 // TODO instead of pressed check for a fast tap and release.
@@ -20,11 +33,11 @@ public partial class ClickToSpawn : Control
             }
         }
 
-		// mouse click and release
-		if (@event.IsAction("leftClick"))
-		{
-			if (@event.IsPressed())
-			{
+        // mouse click and release
+        if (@event.IsAction("leftClick"))
+        {
+            if (@event.IsPressed())
+            {
                 var mouseClickPosition = GetGlobalMousePosition();
                 TrySpawnUnit(mouseClickPosition);
             }
@@ -84,9 +97,10 @@ public partial class ClickToSpawn : Control
             return;
         }
 
-        var newUnit = GlobalCurrentSelection.GetInstance().SelectedToolbarUnitsInfo.GetUnitScene().Instantiate<Node2D>();
+        var newUnit = GlobalCurrentSelection.GetInstance().SelectedToolbarUnitsInfo.GetUnitScene().Instantiate<GameUnit>();
         AddChild(newUnit);
         Logger.Log($"unit put at: {newUnit.GlobalPosition}");
         newUnit.GlobalPosition = tapPosition;
+        SnapToGrid(newUnit);
     }
 }

@@ -6,9 +6,11 @@
 
 [resource]
 script = ExtResource("1_e60bm")
-health = 20
+health = 30
 armour = 20
 name = "Ogre of Kerhs"
+size = 1
+range = 1
 DPS = 5
 description = "Robust but unenthusiastic. He just wants to go home to his swamp."
 gameUnit = ExtResource("1_lk6la")

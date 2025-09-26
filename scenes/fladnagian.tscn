@@ -1,10 +1,12 @@
-[gd_scene load_steps=36 format=3 uid="uid://dw1g0yxq0m7qw"]
+[gd_scene load_steps=38 format=3 uid="uid://dw1g0yxq0m7qw"]
 
 [ext_resource type="Texture2D" uid="uid://7nmm5xoq2hh1" path="res://art/heros/OldWizard_fladnagians/SPRITE_SHEET/ATTACK_1/Wizard_1Attack.png" id="1_3rep6"]
 [ext_resource type="Texture2D" uid="uid://77ax2f8cxuce" path="res://art/heros/OldWizard_fladnagians/SPRITE_SHEET/IDLE/Wizard_Idle.png" id="1_gqh4s"]
+[ext_resource type="Script" uid="uid://bwuvxj280qfn7" path="res://scripts/GameUnit.cs" id="1_hepif"]
 [ext_resource type="Texture2D" uid="uid://bx0dh0w3cvokx" path="res://art/heros/OldWizard_fladnagians/SPRITE_SHEET/ATTACK_2/Wizard_2Attack.png" id="3_mwwdj"]
 [ext_resource type="Script" uid="uid://5rlojexeef8u" path="res://scripts/ClickableUnitComponent.cs" id="4_msokx"]
 [ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scripts/UnitIndicator.cs" id="5_5xwy2"]
+[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/HealthComponent.tscn" id="7_my81w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_265y4"]
 atlas = ExtResource("1_3rep6")
@@ -218,7 +220,10 @@ gradient = SubResource("Gradient_hepif")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_m75j3"]
 
-[node name="fladnagian" type="Node2D"]
+[node name="fladnagian" type="Node2D" node_paths=PackedStringArray("clickableUnitComponent", "healthComponent")]
+script = ExtResource("1_hepif")
+clickableUnitComponent = NodePath("ClickableUnitComponent")
+healthComponent = NodePath("HealthComponent")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(9, -10)
@@ -240,7 +245,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("4_msokx")
 isGoodGuys = true
-unitSquareSize = 24
 unitIndicatorLight = NodePath("../UnitIndicator")
 area2d = NodePath("../Area2D")
 pathToData = "res://GameUnitDataResources/fladnagian.tres"
@@ -255,3 +259,7 @@ metadata/_custom_type_script = "uid://pwwrb0yq7w2g"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_m75j3")
+
+[node name="HealthComponent" parent="." instance=ExtResource("7_my81w")]
+offset_top = -27.0
+offset_bottom = -25.0

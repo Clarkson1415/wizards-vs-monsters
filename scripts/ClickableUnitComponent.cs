@@ -12,8 +12,6 @@ public partial class ClickableUnitComponent : Button
 
     public bool IsGoodGuys => isGoodGuys;
 
-    [Export] private int unitSquareSize = 16;
-
     [Export] private UnitIndicator unitIndicatorLight;
 
     [Export] private Area2D area2d;
@@ -36,6 +34,8 @@ public partial class ClickableUnitComponent : Button
         {
             Logger.LogError($"unit data resource not loaded for {this.Name}");
         }
+
+        var unitSquareSize = resource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE;
 
         // setup this button
         CustomMinimumSize = new Vector2(unitSquareSize, unitSquareSize);
