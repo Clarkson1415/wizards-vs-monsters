@@ -83,7 +83,7 @@ public partial class GameUnit : Node2D
         ClickableUnitComponent.Setup(resource);
         UnitBody.Setup(this.resource);
 
-        UnitBody.OnThisHit += OnThisHit;
+        UnitBody.OnThisHit += OnHit;
     }
 
     private enum unitState
@@ -114,7 +114,7 @@ public partial class GameUnit : Node2D
         targetDirectionUnitVector = dir;
     }
 
-    private void OnThisHit()
+    private void OnHit()
     {
         animationPlayer.UpdateAnimation(directionFacingUnitVector, "hurt");
         state = unitState.Dead;
