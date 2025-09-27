@@ -515,7 +515,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_jtyee")
 }],
-"loop": false,
+"loop": true,
 "name": &"idle_right",
 "speed": 8.0
 }, {
@@ -631,20 +631,6 @@ tracks/0/keys = {
 "values": [{
 "args": [&"attack_1_right", 1.0, false],
 "method": &"play"
-}]
-}
-tracks/1/type = "method"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.5),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"OnAttackFrame"
 }]
 }
 
@@ -869,7 +855,7 @@ area2d = NodePath("../body")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -8)
 sprite_frames = SubResource("SpriteFrames_l6rff")
-animation = &"idle_right"
+animation = &"walk_up"
 
 [node name="UnitIndicator" type="PointLight2D" parent="."]
 texture = SubResource("GradientTexture2D_6yh18")

@@ -64,7 +64,7 @@ public partial class AnimationComponent : AnimationPlayer
 
         var animToPlay = $"{animName}_{direction}";
 
-        if (GetAnimationList().Contains(animToPlay))
+        if (!GetAnimationList().Contains(animToPlay))
         {
             Logger.LogError($"Missing animation: {animToPlay} on character {GetParent().Name}");
             return;
