@@ -1,12 +1,14 @@
 using Godot;
 using System;
 using WizardsVsMonster.scripts;
+using WizardsVsMonster.scripts.UIScripts;
+using static Godot.TabContainer;
 
 /// <summary>
 /// Things the player can do like clicking on the board to spawn items.
 /// Only present in the setup phase
 /// </summary>
-public partial class ClickToSpawn : Control
+public partial class ClickToSpawn : Control, IGameInputControlNode
 {
     [Export] private PackedScene unitGroupScene;
 
@@ -18,42 +20,38 @@ public partial class ClickToSpawn : Control
         unit.GlobalPosition = newPos;
     }
 
-    public override void _GuiInput(InputEvent @event)
+    public void InputTap(Vector2 tapPosition)
     {
-        base._GuiInput(@event);
-
-        if (@event is InputEventScreenTouch touchEvent)
+        var spawned = TrySpawnUnit(tapPosition);
+        if (spawned)
         {
-            if (touchEvent.Pressed)
-            {
-                // TODO instead of pressed check for a fast tap and release.
-                // otherwise the player might be trying to scroll the screen.
-                TrySpawnUnit(touchEvent.Position);
-            }
-        }
-
-        // mouse click and release
-        if (@event.IsAction("leftClick"))
-        {
-            if (@event.IsPressed())
-            {
-                var mouseClickPosition = GetGlobalMousePosition();
-                TrySpawnUnit(mouseClickPosition);
-            }
+            GlobalCurrentSelection.GetInstance().SelectedUnitToSpawn = null;
         }
     }
 
-    private void TrySpawnUnit(Vector2 mouseClickPosition)
+    private bool TrySpawnUnit(Vector2 mouseClickPosition)
     {
         Logger.Log($"position: {mouseClickPosition}");
 
         if (GetAreaAtPoint(mouseClickPosition) != null)
         {
             Logger.Log("unit at position can't spawn item.");
-            return;
+            return false;
         }
 
-        SpawnGameUnitAt(mouseClickPosition);
+        var unitData = GlobalCurrentSelection.GetInstance().SelectedUnitToSpawn;
+        if (unitData == null)
+        {
+            return false;
+        }
+
+        var newUnitGroup = this.unitGroupScene.Instantiate<UnitGroup>();
+        AddChild(newUnitGroup);
+        Logger.Log($"unit put at: {newUnitGroup.GlobalPosition}");
+        newUnitGroup.GlobalPosition = mouseClickPosition;
+        SnapToGrid(newUnitGroup, unitData);
+        newUnitGroup.SpawnUnits(unitData, mouseClickPosition);
+        return true;
     }
 
     private Area2D GetAreaAtPoint(Vector2 globalPos)
@@ -87,21 +85,5 @@ public partial class ClickToSpawn : Control
         }
 
         return null;
-    }
-
-    public void SpawnGameUnitAt(Vector2 tapPosition)
-	{
-        if (GlobalCurrentSelection.GetInstance().SelectedUnitToSpawn == null)
-        {
-            return;
-        }
-
-        var newUnitGroup = this.unitGroupScene.Instantiate<UnitGroup>();
-        AddChild(newUnitGroup);
-        Logger.Log($"unit put at: {newUnitGroup.GlobalPosition}");
-        newUnitGroup.GlobalPosition = tapPosition;
-        var unitData = GlobalCurrentSelection.GetInstance().SelectedUnitToSpawn;
-        SnapToGrid(newUnitGroup, unitData);
-        newUnitGroup.SpawnUnits(unitData, tapPosition);
     }
 }

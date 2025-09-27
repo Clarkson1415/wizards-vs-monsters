@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.Linq;
 using System.Security;
 using WizardsVsMonster.scripts;
 
@@ -16,12 +17,10 @@ public partial class StatusComponent : Control
 	[Export] private VBoxContainer colLeft;
 	[Export] private VBoxContainer colRight;
 
-	// TODO: Public method to get statuses.
-	public Array<STATUS> GetActiveStatuses()
-	{
-		// TODO
-		return new Array<STATUS>();
-	}
+	public System.Collections.Generic.List<STATUS> GetActiveStatuses()
+    {
+        return activeStatuses.Keys.ToList();
+    }
 
     public void Setup()
 	{
@@ -79,11 +78,11 @@ public partial class StatusComponent : Control
 
 	public enum STATUS { dying, bracing, determined, fresh }
 
-	private Dictionary<STATUS, TextureRect> currentStatusTextures = [];
+	private Dictionary<STATUS, TextureRect> activeStatuses = [];
 
 	private bool TryAddStatus(STATUS newStat)
 	{
-		if (currentStatusTextures.ContainsKey(newStat))
+		if (activeStatuses.ContainsKey(newStat))
 		{
 			return false;
 		}
@@ -91,7 +90,7 @@ public partial class StatusComponent : Control
 		Logger.Log($"Status added: {newStat}");
 		var newTexture = new TextureRect();
 		newTexture.Texture = statusTextures[newStat];
-		currentStatusTextures.Add(newStat, newTexture);
+		activeStatuses.Add(newStat, newTexture);
 
         var colToAddTo = colLeft.GetChildCount() <= colRight.GetChildCount() ? colLeft : colRight;
 		colToAddTo.AddChild(newTexture);
@@ -100,16 +99,16 @@ public partial class StatusComponent : Control
 
     private void RemoveStatus(STATUS stat)
 	{
-		if (!currentStatusTextures.ContainsKey(stat))
+		if (!activeStatuses.ContainsKey(stat))
 		{
 			Logger.Log($"did not contain key: {stat}");
 			return;
 		}
 
-        var imageNode = currentStatusTextures[stat];
+        var imageNode = activeStatuses[stat];
 
         Logger.Log($"Removed status: {stat}");
         imageNode.Free();
-		currentStatusTextures.Remove(stat);
+		activeStatuses.Remove(stat);
     }
 }

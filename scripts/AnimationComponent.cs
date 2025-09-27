@@ -8,7 +8,7 @@ public partial class AnimationComponent : AnimationPlayer
 	/// For attacks
 	/// </summary>
 	/// <param name="animName"></param>
-	public void UpdateAnimation(string animName)
+	private void UpdateAnimation(string animName)
 	{
         if (CurrentAnimation.Contains("die"))
         {
@@ -21,27 +21,53 @@ public partial class AnimationComponent : AnimationPlayer
             return;
         }
 
-        if (CurrentAnimation == "hurt" && IsPlaying())
+        if (CurrentAnimation.Contains("hurt") && IsPlaying())
         {
             // wait till hurt animation is finished.
+            return;
+        }
+
+        if (CurrentAnimation.Contains("attack") && IsPlaying())
+        {
+            // wait till finished.
             return;
         }
 
         Play(animName);
     }
 
-    public void UpdateAnimation(Vector2 velocity)
+    public void UpdateAnimation(Vector2 directionFacing, string animName)
 	{
-		if (velocity.X < 0 && velocity.Y == 0)
-		{
-            UpdateAnimation("walk_left");
-		}
-		else if (velocity == Vector2.Zero)
+        string direction = "";
+        if (directionFacing.X < 0 && directionFacing.Y == 0)
+        {
+            direction = "left";
+        }
+        else if (directionFacing.X > 0 && directionFacing.Y == 0)
+        {
+            direction = "right";
+        }
+        else if (directionFacing.X == 0 && directionFacing.Y < 0)
+        {
+            direction = "up";
+        }
+        else if (directionFacing.X == 0 && directionFacing.Y > 0)
+        {
+            direction = "down";
+        }
+        else if (directionFacing == Vector2.Zero)
         {
             UpdateAnimation("idle");
-		}
+        }
 
-		// TODO more idle directions based on facing direction I guess.
+        var animToPlay = $"{direction}_{animName}";
+
+        if (GetAnimationList().Contains(animToPlay))
+        {
+            Logger.LogError($"Missing animation: {animToPlay} on character {GetParent().Name}");
+            return;
+        }
+
+        UpdateAnimation(animToPlay);
 	}
-
 }

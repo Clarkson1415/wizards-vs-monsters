@@ -1,8 +1,9 @@
-[gd_scene load_steps=23 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=25 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://art/environment/Forest Tileset.png" id="1_uebra"]
 [ext_resource type="Texture2D" uid="uid://dq7osb5mnclyj" path="res://squares/checkered_16x16.png" id="2_6puu6"]
 [ext_resource type="Texture2D" uid="uid://okrj5triai5g" path="res://squares/32x32.png" id="3_k6861"]
+[ext_resource type="Script" uid="uid://88kl3wkbs7mp" path="res://scenes/ReceieveInput.cs" id="5_x42w8"]
 [ext_resource type="PackedScene" uid="uid://bqmaurexk31n3" path="res://scenes/group/unit_group.tscn" id="6_6puu6"]
 [ext_resource type="Script" uid="uid://lsryn6hwpbe2" path="res://scripts/CameraController.cs" id="7_6v30a"]
 [ext_resource type="Script" uid="uid://b8w6r6k3sgafu" path="res://scripts/PropertyPanel.cs" id="11_1vvmy"]
@@ -15,6 +16,7 @@
 [ext_resource type="Script" uid="uid://mdtteu5lpdeg" path="res://scripts/ToggleTime.cs" id="13_x42w8"]
 [ext_resource type="Resource" uid="uid://jyknnrb6of2w" path="res://resources/GameUnitDataResources/ogre.tres" id="15_6puu6"]
 [ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/ClickToSpawn.cs" id="16_6puu6"]
+[ext_resource type="Script" uid="uid://6gyf6e6op2tv" path="res://scenes/MovementControls.cs" id="17_k6861"]
 [ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://resources/GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
@@ -963,22 +965,54 @@ position_smoothing_enabled = true
 position_smoothing_speed = 10.0
 script = ExtResource("7_6v30a")
 
-[node name="SpawnArea" type="Control" parent="."]
-custom_minimum_size = Vector2(120, 120)
+[node name="Input" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -321.0
-offset_top = -196.0
-offset_right = 321.0
-offset_bottom = 174.0
+offset_left = -286.0
+offset_top = -162.0
+offset_right = 299.0
+offset_bottom = 168.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("5_x42w8")
+
+[node name="SpawnControl" type="Control" parent="Input"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -294.0
+offset_top = -183.0
+offset_right = 301.0
+offset_bottom = 168.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("16_6puu6")
 unitGroupScene = ExtResource("6_6puu6")
+
+[node name="MovementControls" type="Control" parent="Input"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -294.0
+offset_top = -183.0
+offset_right = 301.0
+offset_bottom = 168.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("17_k6861")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 follow_viewport_scale = 3.0

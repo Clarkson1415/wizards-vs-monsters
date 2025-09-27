@@ -1,9 +1,8 @@
-[gd_scene load_steps=33 format=3 uid="uid://cvmqdgknhsdca"]
+[gd_scene load_steps=32 format=3 uid="uid://cvmqdgknhsdca"]
 
 [ext_resource type="Script" uid="uid://ddnr2wj0hagak" path="res://scripts/Units/OgreOfKersh.cs" id="1_i43m7"]
 [ext_resource type="Texture2D" uid="uid://nx0moggc601" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - attack.png" id="1_v5ei5"]
 [ext_resource type="Texture2D" uid="uid://bm7mu6kpvdrl6" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - idle.png" id="2_18hxh"]
-[ext_resource type="Resource" uid="uid://jyknnrb6of2w" path="res://resources/GameUnitDataResources/ogre.tres" id="2_20vd7"]
 [ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scripts/UnitBody.cs" id="2_q5tv2"]
 [ext_resource type="Script" uid="uid://5rlojexeef8u" path="res://scripts/ClickableUnitComponent.cs" id="3_1h347"]
 [ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scripts/UnitIndicator.cs" id="4_t6ix4"]
@@ -224,12 +223,11 @@ colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_0uyrj"]
 gradient = SubResource("Gradient_t6ix4")
 
-[node name="ogre of kerhs" type="Node2D" node_paths=PackedStringArray("ray_left", "clickableUnitComponent", "unitsAreaOrBodyAndArmour")]
+[node name="ogre of kerhs" type="Node2D" node_paths=PackedStringArray("clickableUnitComponent", "UnitBody", "ray_left")]
 script = ExtResource("1_i43m7")
-ray_left = NodePath("RayCast2D")
 clickableUnitComponent = NodePath("ClickableUnitComponent")
-unitsAreaOrBodyAndArmour = NodePath("body")
-resource = ExtResource("2_20vd7")
+UnitBody = NodePath("body")
+ray_left = NodePath("RayCast2D")
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(-8, 0)

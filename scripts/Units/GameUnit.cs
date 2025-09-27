@@ -1,4 +1,6 @@
 using Godot;
+using Godot.Collections;
+using System;
 using System.Collections.Generic;
 using WizardsVsMonster.scripts;
 
@@ -8,19 +10,19 @@ using WizardsVsMonster.scripts;
 [GlobalClass]
 public partial class GameUnit : Node2D
 {
-    [Export] private ClickableUnitComponent clickableUnitComponent;
+    [Export] public ClickableUnitComponent ClickableUnitComponent { get; private set; }
 
-    [Export] protected UnitBody unitsAreaOrBodyAndArmour;
+    [Export] public UnitBody UnitBody { get; private set; }
+
+    [Export] private AnimationComponent animationPlayer;
 
     private int baseUnitDamagePerAnimation = 10;
 
-    private GameUnitResource resource;
+    public GameUnitResource resource { get; private set; }
 
     protected int unitBaseSpeed;
 
     protected int speedModifier = 1;
-
-    protected Vector2 directionFacing = Vector2.Left;
 
     protected Vector2 velocity;
 
@@ -64,21 +66,6 @@ public partial class GameUnit : Node2D
         }
     }
 
-    public float GetCurrentHealth()
-    {
-        return unitsAreaOrBodyAndArmour.GetCurrentHealth();
-    }
-
-    public ClickableUnitComponent GetClickableUnitComponent()
-    {
-        return clickableUnitComponent;
-    }
-
-    public GameUnitResource GetResourceReference()
-    {
-        return this.resource;
-    }
-
     public void Setup(GameUnitResource resource)
     {
         base._Ready();
@@ -89,12 +76,12 @@ public partial class GameUnit : Node2D
             Logger.LogError($"unit data resource not loaded for {this.Name}");
         }
 
-        unitBaseSpeed = this.GetResourceReference().GetSpeed();
-        baseUnitDamagePerAnimation = this.GetResourceReference().GetDPS();
+        unitBaseSpeed = this.resource.GetSpeed();
+        baseUnitDamagePerAnimation = this.resource.GetDPS();
         // TODO scale damage to attack animation speed? or just make sure they match in the resource. OR attack at that dmg per second?
 
-        clickableUnitComponent.Setup(resource);
-        unitsAreaOrBodyAndArmour.Setup(this.GetResourceReference());
+        ClickableUnitComponent.Setup(resource);
+        UnitBody.Setup(this.resource);
     }
 
     private enum unitState
@@ -105,69 +92,117 @@ public partial class GameUnit : Node2D
         Dead,
     }
 
-    private void MoveInDirectionFacing(double delta)
-    {
-        float deltaf = (float)delta;
-
-        // Movement vector
-        velocity = directionFacing * unitBaseSpeed * speedModifier;
-
-        // Apply movement
-        GlobalPosition += velocity * deltaf;
-    }
-
     private unitState state = unitState.Idle;
+
+    private Vector2 targetPosition;
+
+    /// <summary>
+    /// Normalised direction unit vector.
+    /// </summary>
+    private Vector2 targetDirectionUnitVector;
+
+    /// <summary>
+    /// Current direction facing. up, right, down, left etc.
+    /// </summary>
+    private Vector2 directionFacingUnitVector;
+
+    public void SetNewTargetPositionRotation(Vector2 pos, Vector2 dir)
+    {
+        targetPosition = pos;
+        targetDirectionUnitVector = dir;
+    }
 
     public override void _Process(double delta)
     {
         base._Process(delta);
+        if (this.resource == null) { return; }
 
-        if (this.resource == null)
-        {
-            return;
-        }
-
-        // TODO: will be able to manually assign targets. via clicking unit clicking enemy. and then will need to add if assignedTargets ignore targets and chase them.
-        // TODO implement unit range? no need. will be done via the raycast 2d.
         UpdateTargetsInRange();
 
-        if (targetsInRange.Count != 0)
+        if (targetPosition != GlobalPosition || (velocity.Normalized() != targetDirectionUnitVector))
         {
-            state = unitState.Attacking;
+            state = unitState.Moving;
+        }
+
+        if (UnitBody.GetCurrentHealth() <= 0)
+        {
+            animationPlayer.UpdateAnimation(directionFacingUnitVector, "die");
+            state = unitState.Dead;
         }
         else
         {
-            state = unitState.Idle;
+            animationPlayer.UpdateAnimation(directionFacingUnitVector, "hurt");
         }
 
+        float deltaf = (float)delta;
         switch (this.state)
         {
             case unitState.Idle:
                 velocity = Vector2.Zero;
-                unitsAreaOrBodyAndArmour.UpdateAnimation("idle");
-                // if AI faction move towards nearest enemy.
-                if (this.resource.GetFaction() != GlobalGameVariables.PlayerControlledFaction)
+                if (targetsInRange.Count != 0)
                 {
-                    this.state = unitState.Moving;
+                    state = unitState.Attacking;
                 }
+
+                animationPlayer.UpdateAnimation(directionFacingUnitVector, "idle");
                 break;
             case unitState.Moving:
-                MoveInDirectionFacing(delta);
-                unitsAreaOrBodyAndArmour.UpdateAnimation(velocity);
+                if ((Math.Round(GlobalPosition.X, 1) == Math.Round(targetPosition.X, 1)) && (Math.Round(GlobalPosition.Y, 1) == Math.Round(targetPosition.Y, 1)))
+                {
+                    // TODO: rotate over time to be in target rotation
+                    directionFacingUnitVector = targetDirectionUnitVector;
+                    state = unitState.Idle;
+                    return;
+                }
+
+                // Apply movement
+                float radians = this.GlobalRotationDegrees * (float)Math.PI / 180f;
+                var directionVector = new Vector2((float)Math.Cos(radians), (float)Math.Sin(radians));
+                velocity = directionVector * unitBaseSpeed * speedModifier;
+                GlobalPosition += velocity * deltaf;
+
+                animationPlayer.UpdateAnimation(directionFacingUnitVector, "walk");
                 break;
             case unitState.Attacking:
-                unitsAreaOrBodyAndArmour.UpdateAnimation("attack");
+                animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
+                if (targetsInRange.Count == 0)
+                {
+                    state = unitState.Idle;
+                }
+                break;
+            case unitState.Dead:
                 break;
             default:
                 break;
         }
     }
 
-    public void ApplyStatusEffects(Godot.Collections.Array<StatusComponent.STATUS> statuses)
+    private Array<StatusComponent.STATUS> activeStatuses = [];
+
+    public void ApplyStatusEffects(System.Collections.Generic.List<StatusComponent.STATUS> statuses)
     {
         foreach (var status in statuses)
         {
-            // TODO the actual stat changes.
+            TryAddStatus(status);
         }
+    }
+
+    private void TryAddStatus(StatusComponent.STATUS status)
+    {
+        if (activeStatuses.Contains(StatusComponent.STATUS.fresh))
+        {
+            return;
+        }
+
+        // TODO the actual stat changes.
+        switch (status)
+        {
+            case StatusComponent.STATUS.fresh:
+                break;
+            default:
+                break;
+        }
+
+        activeStatuses.Add(status);
     }
 }

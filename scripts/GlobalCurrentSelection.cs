@@ -27,7 +27,7 @@ namespace WizardsVsMonster.scripts
         /// <summary>
         /// Units selected on the battlefield.
         /// </summary>
-        private static List<UnitGroup> UnitsSelectedOnField = new List<UnitGroup>();
+        public static List<UnitGroup> UnitGroupsHighlighted { get; private set; } = [];
 
         private static GameUnitResource? _lastSelectedToolbarUnit;
 
@@ -59,14 +59,21 @@ namespace WizardsVsMonster.scripts
             }
         }
 
-        public void OnUnitGroupClicked(UnitGroup group)
+        public bool OnGroupClicked(UnitGroup group)
         {
+            SelectedUnitToSpawn = null;
             LastSelectedUnitsInfo = group.GetGroupUnitType();
 
-            // TODO group selection logic stuff.
-            // IDK where the logic for targeting should go maybe here?
-            // if group == enemy
-            // set target for all units in players groups to that enemy group.
+            if (!UnitGroupsHighlighted.Contains(group))
+            {
+                UnitGroupsHighlighted.Add(group);
+                return true;
+            }
+            else
+            {
+                UnitGroupsHighlighted.Remove(group);
+                return false;
+            }
         }
     }
 }

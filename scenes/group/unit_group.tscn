@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bqmaurexk31n3"]
 
-[ext_resource type="Script" uid="uid://dqbd5kc1acq30" path="res://UnitGroup.cs" id="1_mnk4d"]
+[ext_resource type="Script" uid="uid://dqbd5kc1acq30" path="res://scripts/Units/UnitGroup.cs" id="1_mnk4d"]
 [ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="2_stuot"]
 
 [node name="UnitGroup" type="Node2D" node_paths=PackedStringArray("statusComponent")]
