@@ -2,6 +2,7 @@ using Godot;
 using Godot.Collections;
 using System;
 using System.Security;
+using WizardsVsMonster.scripts;
 
 public partial class StatusComponent : Control
 {
@@ -22,11 +23,6 @@ public partial class StatusComponent : Control
 		return new Array<STATUS>();
 	}
 
-    /// <summary>
-    /// How long until 'fresh' status wears off.
-    /// </summary>
-    private double freshStatusTime = 0.5;
-
     public void Setup()
 	{
 		maxHealthBarSize = healthFill.Size.X;
@@ -39,7 +35,7 @@ public partial class StatusComponent : Control
 			switch (stat)
 			{
 				case STATUS.fresh:
-					AddStatusWithTimer(stat, freshStatusTime);
+					AddStatusWithTimer(stat, GlobalGameVariables.FRESH_STATUS_TIME);
 					break;
 				default:
 					break;

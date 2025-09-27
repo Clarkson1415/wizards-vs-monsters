@@ -8,33 +8,20 @@ using WizardsVsMonster.scripts;
 [GlobalClass]
 public partial class ClickableUnitComponent : Button
 {
-    [Export] private bool isGoodGuys;
-
-    public bool IsGoodGuys => isGoodGuys;
-
     [Export] private UnitIndicator unitIndicatorLight;
 
     [Export] private Area2D area2d;
 
-    // Cant store a resource in a csharp node in a subscene of the game scene.
-    [Export] private string pathToData;
-
-    private GameUnitResource resource;
+    private GameUnitResource resouce;
 
     public GameUnitResource GetInfo()
     {
-        return resource;
+        return resouce;
     }
 
-    public override void _Ready()
+    public void Setup(GameUnitResource resource)
     {
-        resource = GD.Load<GameUnitResource>(pathToData);
-
-        if (resource == null)
-        {
-            Logger.LogError($"unit data resource not loaded for {this.Name}");
-        }
-
+        this.resouce = resource;
         var unitSquareSize = resource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE;
 
         // setup this button
@@ -42,19 +29,24 @@ public partial class ClickableUnitComponent : Button
         Flat = true;
 
         // unit indicator light
-        unitIndicatorLight.SetupLight(unitSquareSize, isGoodGuys);
+        unitIndicatorLight.SetupLight(unitSquareSize, this.resouce.GetFaction());
 
         // area
         var areaShape = area2d.GetChild<CollisionShape2D>(0).Shape as RectangleShape2D;
         areaShape.Size = new Vector2(unitSquareSize, unitSquareSize);
     }
 
-    public bool IsSelected => unitIndicatorLight.Visible;
+    [Signal]
+    public delegate void OnPressedEventHandler();
 
     public override void _Pressed()
     {
-        unitIndicatorLight.Visible = !unitIndicatorLight.Visible;
-        GlobalCurrentSelection.GetInstance().AddUnit(this);
+        EmitSignal(SignalName.OnPressed);
+    }
+
+    public void Highlight()
+    {
+        unitIndicatorLight.Visible = true;
     }
 
     public void UnHighlight()

@@ -1,15 +1,14 @@
-[gd_scene load_steps=38 format=3 uid="uid://beo7n41qd3xs7"]
+[gd_scene load_steps=37 format=3 uid="uid://beo7n41qd3xs7"]
 
-[ext_resource type="Script" uid="uid://d3ljutmrqhbju" path="res://UkimianBlue.cs" id="1_2ra8t"]
+[ext_resource type="Script" uid="uid://d3ljutmrqhbju" path="res://scripts/UkimianBlue.cs" id="1_2ra8t"]
 [ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - death.png" id="2_hw5ae"]
-[ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://UnitBody.cs" id="2_wbwqt"]
+[ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scripts/UnitBody.cs" id="2_wbwqt"]
 [ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - hit.png" id="3_6yh18"]
 [ext_resource type="Texture2D" uid="uid://06jmvfu4a5iw" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - idle.png" id="4_r5g6r"]
 [ext_resource type="Texture2D" uid="uid://cyi46nvnrm80y" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - spell 1.png" id="5_wbwqt"]
 [ext_resource type="Script" uid="uid://5rlojexeef8u" path="res://scripts/ClickableUnitComponent.cs" id="6_6yh18"]
 [ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scripts/UnitIndicator.cs" id="6_hw5ae"]
-[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="8_r5g6r"]
-[ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://AnimationComponent.cs" id="10_2ra8t"]
+[ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://scripts/AnimationComponent.cs" id="10_2ra8t"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hw5ae"]
 size = Vector2(16, 16)
@@ -236,12 +235,11 @@ _data = {
 &"idle": SubResource("Animation_lnd3i")
 }
 
-[node name="ukimian_blue" type="Node2D" node_paths=PackedStringArray("clickableUnitComponent", "unitsAreaOrBodyAndArmour", "statusComponent")]
+[node name="ukimian_blue" type="Node2D" node_paths=PackedStringArray("clickableUnitComponent", "unitsAreaOrBodyAndArmour", "ray_left")]
 script = ExtResource("1_2ra8t")
 clickableUnitComponent = NodePath("Control")
 unitsAreaOrBodyAndArmour = NodePath("body")
-initialStatuses = Array[int]([3])
-statusComponent = NodePath("statuscomponent")
+ray_left = NodePath("RayCast2D")
 
 [node name="body" type="Area2D" parent="." node_paths=PackedStringArray("animComponent")]
 script = ExtResource("2_wbwqt")
@@ -264,10 +262,8 @@ grow_vertical = 2
 size_flags_horizontal = 4
 flat = true
 script = ExtResource("6_6yh18")
-isGoodGuys = true
 unitIndicatorLight = NodePath("../UnitIndicator")
 area2d = NodePath("../body")
-pathToData = "res://GameUnitDataResources/Ukimian_Blue_data.tres"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -8)
@@ -286,6 +282,5 @@ libraries = {
 autoplay = "idle"
 script = ExtResource("10_2ra8t")
 
-[node name="statuscomponent" parent="." instance=ExtResource("8_r5g6r")]
-offset_top = -35.0
-offset_bottom = -33.0
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(-8, 0)

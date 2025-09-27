@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-public partial class UkimianBlue : MovingGameUnit
+public partial class UkimianBlue : GameUnit
 {
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -15,6 +15,5 @@ public partial class UkimianBlue : MovingGameUnit
 	{
         base._Process(delta);
 
-        unitsAreaOrBodyAndArmour.UpdateAnimation("idle");
 	}
 }

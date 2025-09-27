@@ -14,6 +14,6 @@ public partial class ToolbarButton : Button
     public override void _Pressed()
     {
         base._Pressed();
-        GlobalCurrentSelection.GetInstance().SelectedToolbarUnitsInfo = this.gameUnit;
+        GlobalCurrentSelection.GetInstance().SelectedUnitToSpawn = this.gameUnit;
     }
 }

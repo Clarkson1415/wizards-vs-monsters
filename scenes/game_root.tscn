@@ -1,22 +1,21 @@
-[gd_scene load_steps=24 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=23 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://art/environment/Forest Tileset.png" id="1_uebra"]
 [ext_resource type="Texture2D" uid="uid://dq7osb5mnclyj" path="res://squares/checkered_16x16.png" id="2_6puu6"]
 [ext_resource type="Texture2D" uid="uid://okrj5triai5g" path="res://squares/32x32.png" id="3_k6861"]
+[ext_resource type="PackedScene" uid="uid://bqmaurexk31n3" path="res://scenes/group/unit_group.tscn" id="6_6puu6"]
 [ext_resource type="Script" uid="uid://lsryn6hwpbe2" path="res://scripts/CameraController.cs" id="7_6v30a"]
 [ext_resource type="Script" uid="uid://b8w6r6k3sgafu" path="res://scripts/PropertyPanel.cs" id="11_1vvmy"]
 [ext_resource type="FontFile" uid="uid://b8hbmmi6oyqch" path="res://ui/monogram.ttf" id="11_x42w8"]
 [ext_resource type="Texture2D" uid="uid://bfx3txvw7kvyc" path="res://ui/resizableItembar/edge.png" id="11_ywsqi"]
-[ext_resource type="Resource" uid="uid://35raccy63gdv" path="res://GameUnitDataResources/Ukimian_Blue_data.tres" id="12_k6861"]
+[ext_resource type="Resource" uid="uid://35raccy63gdv" path="res://resources/GameUnitDataResources/Ukimian_Blue_data.tres" id="12_k6861"]
 [ext_resource type="PackedScene" uid="uid://dnwy38nh48ccy" path="res://scenes/slot.tscn" id="12_x5456"]
 [ext_resource type="Texture2D" uid="uid://c070y4qjh282x" path="res://ui/FrameBlue.png" id="13_6puu6"]
 [ext_resource type="Script" uid="uid://cc8w0ietsb751" path="res://scripts/UIScripts/ToggleVisibilityButton.cs" id="13_35vvr"]
-[ext_resource type="PackedScene" uid="uid://beo7n41qd3xs7" path="res://scenes/Ukimian_Blue.tscn" id="13_i7pw8"]
 [ext_resource type="Script" uid="uid://mdtteu5lpdeg" path="res://scripts/ToggleTime.cs" id="13_x42w8"]
-[ext_resource type="PackedScene" uid="uid://cvmqdgknhsdca" path="res://scenes/ogre_of_kersh.tscn" id="15_x5456"]
-[ext_resource type="Resource" uid="uid://bh1ovubptci53" path="res://GameUnitDataResources/Ogre_of_Kerhs.tres" id="16_0aloa"]
+[ext_resource type="Resource" uid="uid://jyknnrb6of2w" path="res://resources/GameUnitDataResources/ogre.tres" id="15_6puu6"]
 [ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/ClickToSpawn.cs" id="16_6puu6"]
-[ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
+[ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://resources/GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -979,6 +978,7 @@ offset_bottom = 174.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("16_6puu6")
+unitGroupScene = ExtResource("6_6puu6")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 follow_viewport_scale = 3.0
@@ -988,7 +988,7 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -95.0
-offset_bottom = 112.0
+offset_bottom = 130.0
 grow_horizontal = 0
 scale = Vector2(3, 3)
 pivot_offset = Vector2(95, 0)
@@ -1204,7 +1204,7 @@ gameUnitData = ExtResource("17_so1mv")
 
 [node name="slot5" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
-gameUnitData = ExtResource("16_0aloa")
+gameUnitData = ExtResource("15_6puu6")
 
 [node name="end" type="TextureRect" parent="CanvasLayer/Toolbar"]
 layout_mode = 2
@@ -1231,9 +1231,3 @@ offset_bottom = 181.0
 scale = Vector2(3, 3)
 text = "Clear/Del"
 script = ExtResource("13_x42w8")
-
-[node name="ogre of kerhs" parent="." instance=ExtResource("15_x5456")]
-position = Vector2(46, -24)
-
-[node name="ukimian_blue" parent="." instance=ExtResource("13_i7pw8")]
-position = Vector2(24, -24)
