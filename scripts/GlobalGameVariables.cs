@@ -26,5 +26,7 @@ namespace WizardsVsMonster.scripts
         /// How many seconds until 'fresh' status wears off.
         /// </summary>
         public static double FRESH_STATUS_TIME = 5;
+
+        public static float FRESH_SPEED_MODIFIER = 20;
     }
 }

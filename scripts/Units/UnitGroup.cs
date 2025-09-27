@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using WizardsVsMonster.scripts;
 
 public partial class UnitGroup : Node2D
@@ -9,6 +10,13 @@ public partial class UnitGroup : Node2D
     [Export] private StatusComponent statusComponent;
 
     [Export] private Godot.Collections.Array<StatusComponent.STATUS> initialStatuses = [];
+
+    /// <summary>
+    /// shows new pos - not needed for enemy units tho i guess o sidk
+    /// </summary>
+    private List<TriangleScene> trianglesToShowNewPos = new();
+
+    [Export] PackedScene triangleScene;
 
     private List<GameUnit> units = new List<GameUnit>();
 
@@ -76,9 +84,8 @@ public partial class UnitGroup : Node2D
     private List<Vector2> GetPositionsToPutUnitsInGrid(Vector2 centreOfSquadron)
     {
         // 1. Calculate grid shape mostly square as non given.
-        int columns = Mathf.CeilToInt(Mathf.Sqrt(units.Count));
-        int rows = Mathf.CeilToInt((float)units.Count / columns);
-
+        columns = Mathf.CeilToInt(Mathf.Sqrt(units.Count));
+        rows = Mathf.CeilToInt((float)units.Count / columns);
         return GetPositionsToPutUnitsInGrid(centreOfSquadron, columns, rows);
     }
 
@@ -102,19 +109,35 @@ public partial class UnitGroup : Node2D
             int row = i / columns;
             int col = i % columns;
 
-            Vector2 position = new Vector2(col, row) * cellSize * unitSize + gridOffset;
+            Vector2 position = new Vector2(col, row) * cellSize * unitSize + centreOfSquadron;
             positions.Add(position);
         }
 
         return positions;
     }
 
-    private Vector2 getCentre()
+    private int columns;
+    private int rows;
+
+    private Vector2 GetCentre()
     {
-        // Average all unit positions? 
-        var averageX = units.Average(x => x.GlobalPosition.X);
-        var averageY = units.Average(x => x.GlobalPosition.Y);
-        return new Vector2(averageX, averageY);
+        if (units.Count == 0) return Vector2.Zero;
+
+        float minX = units.Min(u => u.GlobalPosition.X);
+        float maxX = units.Max(u => u.GlobalPosition.X);
+        float minY = units.Min(u => u.GlobalPosition.Y);
+        float maxY = units.Max(u => u.GlobalPosition.Y);
+
+        // center of the bounding rectangle
+        float centerX = (minX + maxX) / 2f;
+        float centerY = (minY + maxY) / 2f;
+
+        var centre = new Vector2(centerX, centerY);
+
+        var unitSize = unitResource.GetSizeInUnits();
+        var cellSize = GlobalGameVariables.CELL_SIZE;
+        var offset = new Vector2(columns * cellSize * unitSize - cellSize * unitSize, rows * cellSize * unitSize - cellSize * unitSize) / 2f;
+        return centre - offset;
     }
 
     /// <summary>
@@ -123,8 +146,8 @@ public partial class UnitGroup : Node2D
     /// <param name="newCentre"></param>
     public void SetNewTargetLocation(Vector2 newCentre)
     {
-        float dx = getCentre().X - newCentre.X;
-        float dy = getCentre().Y - newCentre.Y;
+        newTargetCentre = newCentre;
+        ClearTriangles();
 
         // ^ thats for the whole unit. the centre position.
         // work out the target positions for all the units.
@@ -138,10 +161,26 @@ public partial class UnitGroup : Node2D
         {
             units[i].SetNewTargetPositionRotation(positionsArray[i], GetDefaultDirection());
         }
+
+        SpawnTriangleIndicators(positionsArray);
     }
 
+    private void SpawnTriangleIndicators(List<Vector2> positions)
+    {
+        for (int i = 0; i < units.Count; i++)
+        {
+            var tri = triangleScene.Instantiate<TriangleScene>();
+            AddChild(tri);
+            tri.GlobalPosition = positions[i];
+            tri.LoadTriangle(unitResource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE, unitResource.GetFaction());
+            trianglesToShowNewPos.Add(tri);
+        }
+    }
+
+    private Vector2 newTargetCentre;
+
     /// <summary>
-    /// Set new positions when clicked and dragged to set new position.
+    /// Set new positions when clicked and dragged to set new position and a specific rotation.
     /// </summary>
     /// <param name="newPosition"></param>
     /// <param name="unitFacingDir"></param>
@@ -149,16 +188,38 @@ public partial class UnitGroup : Node2D
     /// <param name="rows"></param>
     public void SetNewTargetLocation(Vector2 newPosition, Vector2 unitFacingDir, int cols, int rows)
     {
+        ClearTriangles();
+        newTargetCentre = newPosition;
         var positionsArray = GetPositionsToPutUnitsInGrid(newPosition, cols, rows);
         for (int i = 0; i < positionsArray.Count; i++)
         {
             units[i].SetNewTargetPositionRotation(positionsArray[i], unitFacingDir);
         }
+
+        SpawnTriangleIndicators(positionsArray);
+    }
+
+    private void ClearTriangles()
+    {
+        foreach (var triangle in trianglesToShowNewPos)
+        {
+            triangle.QueueFree();
+        }
+
+        trianglesToShowNewPos.Clear();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
+        var centre = GetCentre();
+        this.statusComponent.GlobalPosition = centre;
+
+        if (centre.Round() == newTargetCentre.Round())
+        {
+            ClearTriangles();
+        }
+
         if (units.Count == 0)
         {
             return;
@@ -166,7 +227,7 @@ public partial class UnitGroup : Node2D
 
         foreach (var unit in units)
         {
-            //unit.ApplyStatusEffects(statusComponent.GetActiveStatuses());
+            unit.UpdateStatusEffects(statusComponent.GetActiveStatuses());
         }
 
         // Update health skill indicator if dying or remove if not.
