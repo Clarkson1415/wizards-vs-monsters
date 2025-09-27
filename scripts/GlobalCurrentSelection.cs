@@ -27,20 +27,20 @@ namespace WizardsVsMonster.scripts
         /// <summary>
         /// Units selected on the battlefield.
         /// </summary>
-        private static List<ClickableUnitComponent> UnitsSelectedOnField = new List<ClickableUnitComponent>();
+        private static List<UnitGroup> UnitsSelectedOnField = new List<UnitGroup>();
 
         private static GameUnitResource? _lastSelectedToolbarUnit;
 
         /// <summary>
-        /// The current toolbar item selected. This will clear any selected units on the battlefield.
+        /// The unit to spawn next.
         /// </summary>
-        public GameUnitResource? SelectedToolbarUnitsInfo
+        public GameUnitResource? SelectedUnitToSpawn
         {
             get => _lastSelectedToolbarUnit;
             set
             {
                 _lastSelectedToolbarUnit = value;
-                UnSelectAllUnits();
+                LastSelectedUnitsInfo = value;
             }
         }
 
@@ -59,42 +59,14 @@ namespace WizardsVsMonster.scripts
             }
         }
 
-        public void AddUnit(ClickableUnitComponent unit)
+        public void OnUnitGroupClicked(UnitGroup group)
         {
-            if (unit.IsGoodGuys)
-            {
-                // deselect bad guys.
-                var baddies = UnitsSelectedOnField.Where(u => !u.IsGoodGuys).ToList();
-                foreach (var baddy in baddies)
-                {
-                    baddy.UnHighlight();
-                    UnitsSelectedOnField.Remove(baddy);
-                }
-            }
+            LastSelectedUnitsInfo = group.GetGroupUnitType();
 
-            if (unit.IsSelected)
-            {
-                LastSelectedUnitsInfo = unit.GetInfo();
-                if (!UnitsSelectedOnField.Contains(unit))
-                {
-                    UnitsSelectedOnField.Add(unit);
-                }
-            }
-            else
-            {
-                LastSelectedUnitsInfo = null;
-                UnitsSelectedOnField.Remove(unit);
-            }
-        }
-
-        private void UnSelectAllUnits()
-        {
-            foreach (var unit in UnitsSelectedOnField)
-            {
-                unit.UnHighlight();
-            }
-
-            UnitsSelectedOnField = new List<ClickableUnitComponent>();
+            // TODO group selection logic stuff.
+            // IDK where the logic for targeting should go maybe here?
+            // if group == enemy
+            // set target for all units in players groups to that enemy group.
         }
     }
 }

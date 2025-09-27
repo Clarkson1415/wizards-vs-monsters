@@ -46,4 +46,12 @@ public partial class GameUnitResource : Resource
 
 	[Export] private Texture2D toolbarImage;
 	public Texture2D GetToolbarImage() { return toolbarImage; }
+
+	[Export] private int numberOfUnitsInSquadron = 10;
+
+	/// <summary>
+	/// number of units in the group.
+	/// </summary>
+	/// <returns>int number of units to spawn in group.</returns>
+	public int GetNumberOfUnitsInSquadron() { return numberOfUnitsInSquadron; }
 }

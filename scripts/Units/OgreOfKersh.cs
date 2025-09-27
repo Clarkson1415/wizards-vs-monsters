@@ -31,6 +31,11 @@ public partial class OgreOfKersh : MovingGameUnit
             var target = ray_left.GetCollider();
             if (target is UnitBody targetAsArea)
             {
+                if (targetAsArea.GetCurrentHealth() <= 0)
+                {
+                    return;
+                }
+
                 targetsInRange.Add(targetAsArea);
             }
         }

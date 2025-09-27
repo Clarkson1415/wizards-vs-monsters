@@ -10,5 +10,9 @@ namespace WizardsVsMonster.scripts
     {
         public static int CELL_SIZE = 16;
 
+        /// <summary>
+        /// How many seconds until 'fresh' status wears off.
+        /// </summary>
+        public static double FRESH_STATUS_TIME = 5;
     }
 }

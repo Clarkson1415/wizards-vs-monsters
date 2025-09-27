@@ -3,12 +3,12 @@
 [ext_resource type="Script" uid="uid://ddnr2wj0hagak" path="res://scripts/Units/OgreOfKersh.cs" id="1_i43m7"]
 [ext_resource type="Texture2D" uid="uid://nx0moggc601" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - attack.png" id="1_v5ei5"]
 [ext_resource type="Texture2D" uid="uid://bm7mu6kpvdrl6" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - idle.png" id="2_18hxh"]
-[ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://UnitBody.cs" id="2_q5tv2"]
+[ext_resource type="Resource" uid="uid://bh1ovubptci53" path="res://resources/GameUnitDataResources/Ogre_of_Kerhs.tres" id="2_20vd7"]
+[ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scripts/UnitBody.cs" id="2_q5tv2"]
 [ext_resource type="Script" uid="uid://5rlojexeef8u" path="res://scripts/ClickableUnitComponent.cs" id="3_1h347"]
 [ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scripts/UnitIndicator.cs" id="4_t6ix4"]
 [ext_resource type="Texture2D" uid="uid://cdibeerknc4s" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - walk.png" id="5_6idkb"]
-[ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://AnimationComponent.cs" id="6_b0664"]
-[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="6_i43m7"]
+[ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://scripts/AnimationComponent.cs" id="6_b0664"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_t6ix4"]
 size = Vector2(16, 16)
@@ -224,13 +224,12 @@ colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_0uyrj"]
 gradient = SubResource("Gradient_t6ix4")
 
-[node name="ogre of kerhs" type="Node2D" node_paths=PackedStringArray("ray_left", "clickableUnitComponent", "unitsAreaOrBodyAndArmour", "statusComponent")]
+[node name="ogre of kerhs" type="Node2D" node_paths=PackedStringArray("ray_left", "clickableUnitComponent", "unitsAreaOrBodyAndArmour")]
 script = ExtResource("1_i43m7")
 ray_left = NodePath("RayCast2D")
 clickableUnitComponent = NodePath("ClickableUnitComponent")
 unitsAreaOrBodyAndArmour = NodePath("body")
-initialStatuses = Array[int]([3])
-statusComponent = NodePath("statcomp")
+resource = ExtResource("2_20vd7")
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(-8, 0)
@@ -273,7 +272,6 @@ flat = true
 script = ExtResource("3_1h347")
 unitIndicatorLight = NodePath("../UnitIndicator")
 area2d = NodePath("../body")
-pathToData = "res://GameUnitDataResources/Ogre_of_Kerhs.tres"
 metadata/_custom_type_script = "uid://5rlojexeef8u"
 
 [node name="UnitIndicator" type="PointLight2D" parent="."]
@@ -283,7 +281,3 @@ energy = 2.0
 texture = SubResource("GradientTexture2D_0uyrj")
 script = ExtResource("4_t6ix4")
 metadata/_custom_type_script = "uid://pwwrb0yq7w2g"
-
-[node name="statcomp" parent="." instance=ExtResource("6_i43m7")]
-offset_top = -35.0
-offset_bottom = -33.0

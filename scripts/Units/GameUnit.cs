@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using WizardsVsMonster.scripts;
 
 /// <summary>
@@ -8,36 +9,50 @@ using WizardsVsMonster.scripts;
 [GlobalClass]
 public abstract partial class GameUnit : Node2D
 {
-	[Export] private ClickableUnitComponent clickableUnitComponent;
+    [Export] private ClickableUnitComponent clickableUnitComponent;
 
     [Export] protected UnitBody unitsAreaOrBodyAndArmour;
 
-    [Export] private Godot.Collections.Array<StatusComponent.STATUS> initialStatuses;
+    [Export] private GameUnitResource resource;
 
-    [Export] private StatusComponent statusComponent;
+    public float GetCurrentHealth()
+    {
+        return unitsAreaOrBodyAndArmour.GetCurrentHealth();
+    }
+
+    public ClickableUnitComponent GetClickableUnitComponent()
+    {
+        return clickableUnitComponent;
+    }
 
     public GameUnitResource GetInfo()
-	{
-		return this.clickableUnitComponent.GetInfo();
+    {
+        return this.resource;
     }
 
     public override void _Ready()
     {
         base._Ready();
 
-        unitsAreaOrBodyAndArmour.Setup(this.GetInfo(), statusComponent);
-        statusComponent.InitialiseInitialStatuses(initialStatuses);
+        if (resource == null)
+        {
+            Logger.LogError($"unit data resource not loaded for {this.Name}");
+        }
+
+        clickableUnitComponent.Setup(resource);
+        unitsAreaOrBodyAndArmour.Setup(this.GetInfo());
     }
 
     public override void _Process(double delta)
     {
         base._Process(delta);
+    }
 
-        foreach (var status in this.statusComponent.GetActiveStatuses())
+    public void ApplyStatusEffects(Godot.Collections.Array<StatusComponent.STATUS> statuses)
+    {
+        foreach (var status in statuses)
         {
-            // TODO: add functions to apply statuses.
-            // Then in child classes I can override those status application functions to be different if i so want? idk
-            // Switch(status)
+            // TODO the actual stat changes.
         }
     }
 }

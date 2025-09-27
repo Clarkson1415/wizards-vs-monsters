@@ -15,13 +15,15 @@ public partial class UnitBody : Area2D
 
 	private float currentHealth;
 
+    public float GetCurrentHealth()
+    {
+        return currentHealth;
+    }
+
     private float maxHealth;
 
-    private StatusComponent statusComponent;
-
-    public void Setup(GameUnitResource data, StatusComponent statComponent)
+    public void Setup(GameUnitResource data)
 	{
-        this.statusComponent = statComponent;
 		this.armour = data.GetArmour();
 		currentHealth = data.GetHealth();
         maxHealth = data.GetHealth();
@@ -38,12 +40,10 @@ public partial class UnitBody : Area2D
 
 		// TODO calculate armour and shit.
 		currentHealth -= damage;
-        statusComponent.UpdateHealthPercentage(currentHealth / maxHealth);
 
         if (currentHealth <= 0) 
         {
             isDead = true;
-            Monitorable = false;
             animComponent.UpdateAnimation("die");
         }
         else
