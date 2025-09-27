@@ -2,6 +2,7 @@ using Godot;
 using Godot.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using WizardsVsMonster.scripts;
 
 /// <summary>
@@ -20,9 +21,9 @@ public partial class GameUnit : Node2D
 
     public GameUnitResource resource { get; private set; }
 
-    protected int unitBaseSpeed;
+    protected float unitBaseSpeed;
 
-    protected int speedModifier = 1;
+    protected float speedModifier = 1;
 
     protected Vector2 velocity;
 
@@ -122,7 +123,7 @@ public partial class GameUnit : Node2D
 
     private bool AtTargetLocation()
     {
-        return (Math.Round(GlobalPosition.X, 1) == Math.Round(targetPosition.X, 1)) && (Math.Round(GlobalPosition.Y, 1) == Math.Round(targetPosition.Y, 1));
+        return (Math.Round(GlobalPosition.X, 0) == Math.Round(targetPosition.X, 0)) && (Math.Round(GlobalPosition.Y, 0) == Math.Round(targetPosition.Y, 0));
     }
 
     private bool AtTargetDirection()
@@ -169,10 +170,17 @@ public partial class GameUnit : Node2D
                 }
 
                 // Apply movement
-                float radians = this.GlobalRotationDegrees * (float)Math.PI / 180f;
-                var directionVector = new Vector2((float)Math.Cos(radians), (float)Math.Sin(radians));
+                var directionVector = (targetPosition - GlobalPosition).Normalized();
                 velocity = directionVector * unitBaseSpeed * speedModifier;
                 GlobalPosition += velocity * deltaf;
+
+                directionFacingUnitVector = new Vector2(Math.Sign((int)Math.Round(directionVector.X)),Math.Sign((int)Math.Round(directionVector.Y)));
+
+                // Favour Horizontal movement animations when on an angle.
+                if (Math.Abs(directionFacingUnitVector.X) == Math.Abs(directionFacingUnitVector.Y))
+                {
+                    directionFacingUnitVector.Y = 0;
+                }
 
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "walk");
                 break;
@@ -192,12 +200,33 @@ public partial class GameUnit : Node2D
 
     private Array<StatusComponent.STATUS> activeStatuses = [];
 
-    public void ApplyStatusEffects(System.Collections.Generic.List<StatusComponent.STATUS> statuses)
+    public void UpdateStatusEffects(System.Collections.Generic.List<StatusComponent.STATUS> updatedActiveStatuses)
     {
-        foreach (var status in statuses)
+        foreach (var status in updatedActiveStatuses)
         {
             TryAddStatus(status);
         }
+
+        // if there is a status on here that is not in active statuses remove it
+        var oldStatusesToRemove = activeStatuses.Where(x => !updatedActiveStatuses.Contains(x));
+        foreach (var oldStatus in oldStatusesToRemove)
+        {
+            RemoveStatus(oldStatus);
+        }
+    }
+
+    private void RemoveStatus(StatusComponent.STATUS status)
+    {
+        switch (status)
+        {
+            case StatusComponent.STATUS.fresh:
+                this.speedModifier -= GlobalGameVariables.FRESH_SPEED_MODIFIER;
+                break;
+            default:
+                break;
+        }
+
+        activeStatuses.Remove(status);
     }
 
     private void TryAddStatus(StatusComponent.STATUS status)
@@ -211,6 +240,7 @@ public partial class GameUnit : Node2D
         switch (status)
         {
             case StatusComponent.STATUS.fresh:
+                this.speedModifier += GlobalGameVariables.FRESH_SPEED_MODIFIER;
                 break;
             default:
                 break;
