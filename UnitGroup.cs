@@ -40,6 +40,11 @@ public partial class UnitGroup : Node2D
 
     private void OnUnitClicked()
     {
+        foreach(var unit in units)
+        {
+            unit.GetClickableUnitComponent().Highlight();
+        }
+
         GlobalCurrentSelection.GetInstance().OnUnitGroupClicked(this);
     }
 

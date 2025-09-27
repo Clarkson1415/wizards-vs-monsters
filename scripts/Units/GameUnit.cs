@@ -83,6 +83,7 @@ public partial class GameUnit : Node2D
     {
         base._Ready();
 
+        this.resource = resource;
         if (resource == null)
         {
             Logger.LogError($"unit data resource not loaded for {this.Name}");

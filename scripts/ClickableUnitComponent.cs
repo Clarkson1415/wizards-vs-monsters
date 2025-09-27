@@ -36,8 +36,6 @@ public partial class ClickableUnitComponent : Button
         areaShape.Size = new Vector2(unitSquareSize, unitSquareSize);
     }
 
-    public bool IsSelected => unitIndicatorLight.Visible;
-
     [Signal]
     public delegate void OnPressedEventHandler();
 
