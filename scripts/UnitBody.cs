@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using WizardsVsMonster.scripts;
 
 /// <summary>
@@ -22,9 +21,14 @@ public partial class UnitBody : Area2D
 
     private float maxHealth;
 
+    private GlobalGameVariables.FACTION faction;
+
+    public GlobalGameVariables.FACTION GetFaction() { return faction; }
+
     public void Setup(GameUnitResource data)
 	{
-		this.armour = data.GetArmour();
+        this.faction = data.GetFaction();
+        this.armour = data.GetArmour();
 		currentHealth = data.GetHealth();
         maxHealth = data.GetHealth();
 	}

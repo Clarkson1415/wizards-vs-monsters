@@ -28,18 +28,14 @@ public partial class UnitGroup : Node2D
         for (int i = 0; i < number; i++)
         {
             var newUnit = unitResource.GetUnitScene().Instantiate<GameUnit>();
+            newUnit.Setup(unitResource);
             AddChild(newUnit);
             units.Add(newUnit);
+            newUnit.GetClickableUnitComponent().OnPressed += OnUnitClicked;
         }
 
         PlaceUnitsInCenteredGrid(units, centrePositionWhereMouseClicked);
         statusComponent.InitialiseInitialStatuses(initialStatuses);
-
-        // setup click event
-        foreach(var unit in units)
-        {
-            unit.GetClickableUnitComponent().OnPressed += OnUnitClicked;
-        }
     }
 
     private void OnUnitClicked()

@@ -8,10 +8,6 @@ using WizardsVsMonster.scripts;
 [GlobalClass]
 public partial class ClickableUnitComponent : Button
 {
-    [Export] private bool isGoodGuys;
-
-    public bool IsGoodGuys => isGoodGuys;
-
     [Export] private UnitIndicator unitIndicatorLight;
 
     [Export] private Area2D area2d;
@@ -33,7 +29,7 @@ public partial class ClickableUnitComponent : Button
         Flat = true;
 
         // unit indicator light
-        unitIndicatorLight.SetupLight(unitSquareSize, isGoodGuys);
+        unitIndicatorLight.SetupLight(unitSquareSize, this.resouce.GetFaction());
 
         // area
         var areaShape = area2d.GetChild<CollisionShape2D>(0).Shape as RectangleShape2D;

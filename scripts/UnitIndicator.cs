@@ -1,4 +1,6 @@
 using Godot;
+using WizardsVsMonster.scripts;
+using static WizardsVsMonster.scripts.GlobalGameVariables;
 
 /// <summary>
 /// Shines a square light on the board of the area this unit effects. Tower buff or unit attack area.
@@ -8,7 +10,7 @@ public partial class UnitIndicator : PointLight2D
 {
 	private int unitSquareSize;
 
-    public void SetupLight(int unitSquareSize, bool isBlue)
+    public void SetupLight(int unitSquareSize, GlobalGameVariables.FACTION faction)
     {
         base._Ready();
 
@@ -29,7 +31,7 @@ public partial class UnitIndicator : PointLight2D
         texture.Height = unitSquareSize;
 
         // set color blue else red
-        var color = isBlue ? Godot.Color.Color8(0, 90, 233) : Godot.Color.Color8(165, 12, 20);
+        var color = GlobalGameVariables.FACTION_COLORS[faction];
         this.Color = color;
 
         this.Energy = 0.5f;

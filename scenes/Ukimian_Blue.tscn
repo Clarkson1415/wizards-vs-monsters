@@ -1,8 +1,7 @@
-[gd_scene load_steps=38 format=3 uid="uid://beo7n41qd3xs7"]
+[gd_scene load_steps=37 format=3 uid="uid://beo7n41qd3xs7"]
 
 [ext_resource type="Script" uid="uid://d3ljutmrqhbju" path="res://scripts/UkimianBlue.cs" id="1_2ra8t"]
 [ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - death.png" id="2_hw5ae"]
-[ext_resource type="Resource" uid="uid://35raccy63gdv" path="res://resources/GameUnitDataResources/Ukimian_Blue_data.tres" id="2_lnd3i"]
 [ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scripts/UnitBody.cs" id="2_wbwqt"]
 [ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - hit.png" id="3_6yh18"]
 [ext_resource type="Texture2D" uid="uid://06jmvfu4a5iw" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - idle.png" id="4_r5g6r"]
@@ -236,11 +235,11 @@ _data = {
 &"idle": SubResource("Animation_lnd3i")
 }
 
-[node name="ukimian_blue" type="Node2D" node_paths=PackedStringArray("clickableUnitComponent", "unitsAreaOrBodyAndArmour")]
+[node name="ukimian_blue" type="Node2D" node_paths=PackedStringArray("clickableUnitComponent", "unitsAreaOrBodyAndArmour", "ray_left")]
 script = ExtResource("1_2ra8t")
 clickableUnitComponent = NodePath("Control")
 unitsAreaOrBodyAndArmour = NodePath("body")
-resource = ExtResource("2_lnd3i")
+ray_left = NodePath("RayCast2D")
 
 [node name="body" type="Area2D" parent="." node_paths=PackedStringArray("animComponent")]
 script = ExtResource("2_wbwqt")
@@ -263,7 +262,6 @@ grow_vertical = 2
 size_flags_horizontal = 4
 flat = true
 script = ExtResource("6_6yh18")
-isGoodGuys = true
 unitIndicatorLight = NodePath("../UnitIndicator")
 area2d = NodePath("../body")
 
@@ -283,3 +281,6 @@ libraries = {
 }
 autoplay = "idle"
 script = ExtResource("10_2ra8t")
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(-8, 0)

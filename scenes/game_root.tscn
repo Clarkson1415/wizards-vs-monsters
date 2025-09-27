@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://c070y4qjh282x" path="res://ui/FrameBlue.png" id="13_6puu6"]
 [ext_resource type="Script" uid="uid://cc8w0ietsb751" path="res://scripts/UIScripts/ToggleVisibilityButton.cs" id="13_35vvr"]
 [ext_resource type="Script" uid="uid://mdtteu5lpdeg" path="res://scripts/ToggleTime.cs" id="13_x42w8"]
+[ext_resource type="Resource" uid="uid://jyknnrb6of2w" path="res://resources/GameUnitDataResources/ogre.tres" id="15_6puu6"]
 [ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/ClickToSpawn.cs" id="16_6puu6"]
 [ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://resources/GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
 
@@ -936,9 +937,6 @@ texture_region_size = Vector2i(32, 32)
 tile_size = Vector2i(32, 32)
 sources/1 = SubResource("TileSetAtlasSource_x42w8")
 
-[sub_resource type="Resource" id="Resource_x5456"]
-metadata/__load_path__ = "res://resources/GameUnitDataResources/Ogre_of_Kerhs.tres"
-
 [node name="gameRoot" type="Node2D"]
 y_sort_enabled = true
 
@@ -990,7 +988,7 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -95.0
-offset_right = -95.0
+offset_bottom = 130.0
 grow_horizontal = 0
 scale = Vector2(3, 3)
 pivot_offset = Vector2(95, 0)
@@ -1206,7 +1204,7 @@ gameUnitData = ExtResource("17_so1mv")
 
 [node name="slot5" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
-gameUnitData = SubResource("Resource_x5456")
+gameUnitData = ExtResource("15_6puu6")
 
 [node name="end" type="TextureRect" parent="CanvasLayer/Toolbar"]
 layout_mode = 2
