@@ -15,6 +15,8 @@ public partial class UnitBody : Area2D
         return currentHealth;
     }
 
+    [Signal] public delegate void OnThisHitEventHandler();
+
     private float maxHealth;
 
     private GlobalGameVariables.FACTION faction;
@@ -33,5 +35,6 @@ public partial class UnitBody : Area2D
 	{
 		// TODO calculate armour and shit.
 		currentHealth -= damage;
+        EmitSignal(SignalName.OnThisHit);
     }
 }

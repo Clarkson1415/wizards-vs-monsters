@@ -82,6 +82,8 @@ public partial class GameUnit : Node2D
 
         ClickableUnitComponent.Setup(resource);
         UnitBody.Setup(this.resource);
+
+        UnitBody.OnThisHit += OnThisHit;
     }
 
     private enum unitState
@@ -112,6 +114,22 @@ public partial class GameUnit : Node2D
         targetDirectionUnitVector = dir;
     }
 
+    private void OnThisHit()
+    {
+        animationPlayer.UpdateAnimation(directionFacingUnitVector, "hurt");
+        state = unitState.Dead;
+    }
+
+    private bool AtTargetLocation()
+    {
+        return (Math.Round(GlobalPosition.X, 1) == Math.Round(targetPosition.X, 1)) && (Math.Round(GlobalPosition.Y, 1) == Math.Round(targetPosition.Y, 1));
+    }
+
+    private bool AtTargetDirection()
+    {
+        return (targetDirectionUnitVector == directionFacingUnitVector);
+    }
+
     public override void _Process(double delta)
     {
         base._Process(delta);
@@ -119,19 +137,14 @@ public partial class GameUnit : Node2D
 
         UpdateTargetsInRange();
 
-        if (targetPosition != GlobalPosition || (velocity.Normalized() != targetDirectionUnitVector))
-        {
-            state = unitState.Moving;
-        }
-
         if (UnitBody.GetCurrentHealth() <= 0)
         {
             animationPlayer.UpdateAnimation(directionFacingUnitVector, "die");
             state = unitState.Dead;
         }
-        else
+        else if (!AtTargetLocation() || !AtTargetDirection())
         {
-            animationPlayer.UpdateAnimation(directionFacingUnitVector, "hurt");
+            state = unitState.Moving;
         }
 
         float deltaf = (float)delta;
@@ -147,7 +160,7 @@ public partial class GameUnit : Node2D
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "idle");
                 break;
             case unitState.Moving:
-                if ((Math.Round(GlobalPosition.X, 1) == Math.Round(targetPosition.X, 1)) && (Math.Round(GlobalPosition.Y, 1) == Math.Round(targetPosition.Y, 1)))
+                if (AtTargetLocation())
                 {
                     // TODO: rotate over time to be in target rotation
                     directionFacingUnitVector = targetDirectionUnitVector;

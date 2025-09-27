@@ -55,12 +55,14 @@ public partial class AnimationComponent : AnimationPlayer
         {
             direction = "down";
         }
-        else if (directionFacing == Vector2.Zero)
+        else
         {
-            UpdateAnimation("idle");
+            Logger.Log("No matching animation found");
+            direction = "right";
+            animName = "idle";
         }
 
-        var animToPlay = $"{direction}_{animName}";
+        var animToPlay = $"{animName}_{direction}";
 
         if (GetAnimationList().Contains(animToPlay))
         {

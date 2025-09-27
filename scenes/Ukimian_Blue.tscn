@@ -617,8 +617,8 @@ height = 16
 [sub_resource type="Animation" id="Animation_ch327"]
 length = 0.001
 
-[sub_resource type="Animation" id="Animation_lnd3i"]
-resource_name = "idle"
+[sub_resource type="Animation" id="Animation_07duu"]
+resource_name = "attack_1_right"
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -629,25 +629,22 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [&"idle", 1.0, false],
+"args": [&"attack_1_right", 1.0, false],
 "method": &"play"
 }]
 }
-
-[sub_resource type="Animation" id="Animation_wbwqt"]
-resource_name = "idle_down"
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatedSprite2D")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.5),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [&"idle_down", 1.0, false],
-"method": &"play"
+"args": [],
+"method": &"OnAttackFrame"
 }]
 }
 
@@ -687,8 +684,8 @@ tracks/0/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_07duu"]
-resource_name = "attack_1_right"
+[sub_resource type="Animation" id="Animation_wbwqt"]
+resource_name = "idle_down"
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -699,38 +696,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [&"attack_1_right", 1.0, false],
-"method": &"play"
-}]
-}
-tracks/1/type = "method"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.5),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"OnAttackFrame"
-}]
-}
-
-[sub_resource type="Animation" id="Animation_jbtgb"]
-resource_name = "idle_up"
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatedSprite2D")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [&"idle_up", 1.0, false],
+"args": [&"idle_down", 1.0, false],
 "method": &"play"
 }]
 }
@@ -752,8 +718,8 @@ tracks/0/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_bg6y2"]
-resource_name = "walk_right"
+[sub_resource type="Animation" id="Animation_lnd3i"]
+resource_name = "idle"
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -764,7 +730,24 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [&"walk_right", 1.0, false],
+"args": [&"idle_right", 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_jbtgb"]
+resource_name = "idle_up"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"idle_up", 1.0, false],
 "method": &"play"
 }]
 }
@@ -799,6 +782,23 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [&"walk_left", 1.0, false],
+"method": &"play"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_bg6y2"]
+resource_name = "walk_right"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [&"walk_right", 1.0, false],
 "method": &"play"
 }]
 }
@@ -869,9 +869,7 @@ area2d = NodePath("../body")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(1, -8)
 sprite_frames = SubResource("SpriteFrames_l6rff")
-animation = &"walk_up"
-frame = 1
-frame_progress = 0.4527179
+animation = &"idle_right"
 
 [node name="UnitIndicator" type="PointLight2D" parent="."]
 texture = SubResource("GradientTexture2D_6yh18")
