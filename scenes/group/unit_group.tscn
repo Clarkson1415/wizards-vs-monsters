@@ -1,25 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bqmaurexk31n3"]
+[gd_scene load_steps=3 format=3 uid="uid://bqmaurexk31n3"]
 
 [ext_resource type="Script" uid="uid://dqbd5kc1acq30" path="res://scripts/Units/UnitGroup.cs" id="1_mnk4d"]
 [ext_resource type="PackedScene" uid="uid://hutmif623vv3" path="res://art/Triangles/TriangleScene.tscn" id="2_fxrvk"]
-[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="2_stuot"]
 
 [node name="UnitGroup" type="Node2D" node_paths=PackedStringArray("statusComponent")]
 script = ExtResource("1_mnk4d")
-statusComponent = NodePath("StatusComponent_TopLevel")
+statusComponent = NodePath("")
 initialStatuses = Array[int]([3])
 triangleScene = ExtResource("2_fxrvk")
-
-[node name="StatusComponent_TopLevel" parent="." instance=ExtResource("2_stuot")]
-top_level = true
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = -131.0
-offset_top = -54.0
-offset_right = -131.0
-offset_bottom = -54.0
-grow_horizontal = 1
-grow_vertical = 1

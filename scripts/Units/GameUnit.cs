@@ -200,7 +200,7 @@ public partial class GameUnit : Node2D
 
     private Array<StatusComponent.STATUS> activeStatuses = [];
 
-    public void UpdateStatusEffects(System.Collections.Generic.List<StatusComponent.STATUS> updatedActiveStatuses)
+    public void UpdateStatusEffects(Godot.Collections.Array<StatusComponent.STATUS> updatedActiveStatuses)
     {
         foreach (var status in updatedActiveStatuses)
         {

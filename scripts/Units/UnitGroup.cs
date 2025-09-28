@@ -1,16 +1,10 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using WizardsVsMonster.scripts;
 
 public partial class UnitGroup : Node2D
 {
-    [Export] private StatusComponent statusComponent;
-
-    [Export] private Godot.Collections.Array<StatusComponent.STATUS> initialStatuses = [];
-
     /// <summary>
     /// shows new pos - not needed for enemy units tho i guess o sidk
     /// </summary>
@@ -24,7 +18,7 @@ public partial class UnitGroup : Node2D
 
     public GlobalGameVariables.FACTION Faction => unitResource.GetFaction();
 
-    public GameUnitResource GetGroupUnitType()
+    public GameUnitResource GetUnitsInfo()
     {
         return unitResource;
     }
@@ -51,7 +45,10 @@ public partial class UnitGroup : Node2D
             units[i].SetNewTargetPositionRotation(positions[i], GetDefaultDirection());
         }
 
-        statusComponent.InitialiseInitialStatuses(initialStatuses);
+        foreach (var initial in activeStatuses)
+        {
+            TryAddStatus(initial);
+        }
     }
 
     private Vector2 GetDefaultDirection()
@@ -61,7 +58,10 @@ public partial class UnitGroup : Node2D
         return direction;
     }
 
-    private void OnUnitClicked()
+    /// <summary>
+    /// Triggered when unit clicked. Also called from unit bar slot button.
+    /// </summary>
+    public void OnUnitClicked()
     {
         HighlightUnits();
         var added = GlobalCurrentSelection.GetInstance().OnGroupClicked(this);
@@ -149,13 +149,6 @@ public partial class UnitGroup : Node2D
         newTargetCentre = newCentre;
         ClearTriangles();
 
-        // ^ thats for the whole unit. the centre position.
-        // work out the target positions for all the units.
-        // keep formation move to new position?
-        // TODO: what if want to change formation tho? diff size rectangle?
-        // TODO: Move centre of unit group to new position.
-        // TODO calculate rows cols to use.
-
         var positionsArray = GetPositionsToPutUnitsInGrid(newCentre);
         for (int i = 0; i < positionsArray.Count; i++)
         {
@@ -212,28 +205,101 @@ public partial class UnitGroup : Node2D
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
+        if (units.Count == 0) { return; }
+
         var centre = GetCentre();
-        this.statusComponent.GlobalPosition = centre;
 
         if (centre.Round() == newTargetCentre.Round())
         {
             ClearTriangles();
         }
 
-        if (units.Count == 0)
-        {
-            return;
-        }
-
-        foreach (var unit in units)
-        {
-            unit.UpdateStatusEffects(statusComponent.GetActiveStatuses());
-        }
-
-        // Update health skill indicator if dying or remove if not.
-        //var squadHealth = units.Sum(u => u.UnitBody.GetCurrentHealth());
-        //var maxHealth = unitResource.GetHealth() * units.Count;
-        //statusComponent.UpdateHealthPercentage(squadHealth / maxHealth);
+        CheckStatuses();
     }
 
+    public float GetHealthPercentage()
+    {
+        var squadHealth = units.Sum(u => u.UnitBody.GetCurrentHealth());
+        var maxSquadHealth = unitResource.GetHealth() * units.Count;
+        return squadHealth / maxSquadHealth;
+    }
+
+    private void CheckStatuses()
+    {
+        if (this.GetHealthPercentage() <= 0.3)
+        {
+            TryAddStatus(StatusComponent.STATUS.dying);
+        }
+        else if (this.GetHealthPercentage() > 0.3)
+        {
+            RemoveStatus(StatusComponent.STATUS.dying);
+        }
+    }
+
+    private Godot.Collections.Array<StatusComponent.STATUS> activeStatuses = new Godot.Collections.Array<StatusComponent.STATUS>() { StatusComponent.STATUS.fresh };
+
+    private void UpdateStatusEffectsOnUnits()
+    {
+        foreach (var unit in units)
+        {
+            unit.UpdateStatusEffects(activeStatuses);
+        }
+    }
+
+    public Godot.Collections.Array<StatusComponent.STATUS> GetActiveStatuses()
+    {
+        return this.activeStatuses;
+    }
+
+    private bool TryAddStatus(StatusComponent.STATUS status)
+    {
+        if (this.activeStatuses.Contains(status))
+        {
+            return false;
+        }
+
+        switch (status)
+        {
+            case StatusComponent.STATUS.fresh:
+                AddStatusWithTimer(StatusComponent.STATUS.fresh, GlobalGameVariables.FRESH_STATUS_TIME);
+                break;
+            // TODO other statuses
+            default:
+                AddStatus(status);
+                break;
+        }
+
+        return true;
+    }
+
+    private void RemoveStatus(StatusComponent.STATUS status)
+    {
+        this.activeStatuses.Remove(status);
+        UpdateStatusEffectsOnUnits();
+    }
+
+    /// <summary>
+    /// For ones like fresh and stuff.
+    /// </summary>
+    private void AddStatusWithTimer(StatusComponent.STATUS status, double time)
+    {
+        activeStatuses.Add(status);
+
+        var newTimer = new Timer();
+        AddChild(newTimer);
+        newTimer.WaitTime = time;
+
+        newTimer.Start();
+        newTimer.Timeout += () => RemoveStatus(status);
+        newTimer.Timeout += newTimer.QueueFree;
+        newTimer.Timeout += UpdateStatusEffectsOnUnits;
+
+        UpdateStatusEffectsOnUnits();
+    }
+
+    private void AddStatus(StatusComponent.STATUS status)
+    {
+        activeStatuses.Add(status);
+        UpdateStatusEffectsOnUnits();
+    }
 }

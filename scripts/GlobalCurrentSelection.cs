@@ -62,7 +62,7 @@ namespace WizardsVsMonster.scripts
         public bool OnGroupClicked(UnitGroup group)
         {
             SelectedUnitToSpawn = null;
-            LastSelectedUnitsInfo = group.GetGroupUnitType();
+            LastSelectedUnitsInfo = group.GetUnitsInfo();
 
             if (!UnitGroupsHighlighted.Contains(group))
             {

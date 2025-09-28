@@ -1,22 +1,13 @@
-[gd_scene load_steps=9 format=3 uid="uid://dldl2d58k72h1"]
+[gd_scene load_steps=7 format=3 uid="uid://dldl2d58k72h1"]
 
 [ext_resource type="Script" uid="uid://bkhahjpsm0b2b" path="res://scripts/StatusComponent.cs" id="1_rvjdp"]
 [ext_resource type="Texture2D" uid="uid://n1wjp300dvbl" path="res://art/statusIcons/Determined.png" id="3_pblaw"]
 [ext_resource type="Texture2D" uid="uid://qv24khsrg61w" path="res://art/statusIcons/shield_bracing.png" id="4_j6i8j"]
 [ext_resource type="Texture2D" uid="uid://c83if8tvufvfx" path="res://art/statusIcons/GreenArrowUpSingle.png" id="5_j6i8j"]
 [ext_resource type="Texture2D" uid="uid://cm35m1s4vbovj" path="res://art/statusIcons/skull.png" id="6_pblaw"]
-[ext_resource type="Texture2D" uid="uid://yhy3rshi07fs" path="res://art/statusIcons/StatusBanner.png" id="6_x3bdi"]
+[ext_resource type="Texture2D" uid="uid://btqokk6h70t2c" path="res://ui/bottomUnitBar/RedTopStatuses.png" id="6_x3bdi"]
 
-[sub_resource type="Gradient" id="Gradient_6yh18"]
-offsets = PackedFloat32Array(1)
-colors = PackedColorArray(0.2326732, 0.59381986, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_0pat6"]
-gradient = SubResource("Gradient_6yh18")
-width = 180
-height = 5
-
-[node name="StatusComponent" type="Control" node_paths=PackedStringArray("healthFill", "healthBackground", "colLeft", "colRight")]
+[node name="StatusComponent" type="Control" node_paths=PackedStringArray("healthFill", "colLeft", "colMidle", "colRight")]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -28,66 +19,50 @@ grow_vertical = 2
 size_flags_vertical = 4
 mouse_filter = 2
 script = ExtResource("1_rvjdp")
-healthFill = NodePath("green")
-healthBackground = NodePath("bg")
+healthFill = NodePath("")
 statusTextures = Dictionary[int, Texture2D]({
 0: ExtResource("6_pblaw"),
 1: ExtResource("4_j6i8j"),
 2: ExtResource("3_pblaw"),
 3: ExtResource("5_j6i8j")
 })
-colLeft = NodePath("HBoxContainer/VBoxContainer")
-colRight = NodePath("HBoxContainer/VBoxContainer2")
+colLeft = NodePath("status-TODOtooltips/HBoxContainer/VBoxContainer")
+colMidle = NodePath("status-TODOtooltips/HBoxContainer/VBoxContainer2")
+colRight = NodePath("status-TODOtooltips/HBoxContainer/VBoxContainer3")
 
-[node name="bg" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -5.0
-offset_top = -66.5
-offset_right = 12.0
-offset_bottom = -34.5
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="status-TODOtooltips" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 30.0
+offset_bottom = 11.0
 texture = ExtResource("6_x3bdi")
+stretch_mode = 4
 
-[node name="green" type="TextureRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("GradientTexture2D_0pat6")
-expand_mode = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="status-TODOtooltips"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -4.5
-offset_top = -74.0
-offset_right = 12.5
-offset_bottom = -35.0
+offset_left = -13.0
+offset_top = -34.5
+offset_right = 13.0
+offset_bottom = 4.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="status-TODOtooltips/HBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 1
 alignment = 2
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="status-TODOtooltips/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 2
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="status-TODOtooltips/HBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 1
 alignment = 2

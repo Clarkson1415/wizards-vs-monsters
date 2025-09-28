@@ -12,6 +12,8 @@ public partial class ClickToSpawn : Control, IGameInputControlNode
 {
     [Export] private PackedScene unitGroupScene;
 
+    [Export] private UnitBar unitBar;
+
     private void SnapToGrid(UnitGroup unit, GameUnitResource info)
     {
         var snapSize = GlobalGameVariables.CELL_SIZE * info.GetSizeInUnits();
@@ -51,6 +53,9 @@ public partial class ClickToSpawn : Control, IGameInputControlNode
         newUnitGroup.GlobalPosition = mouseClickPosition;
         SnapToGrid(newUnitGroup, unitData);
         newUnitGroup.SpawnUnits(unitData, mouseClickPosition);
+
+        // add to bar
+        unitBar.AddNewUnitGroup(newUnitGroup);
         return true;
     }
 

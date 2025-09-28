@@ -9,7 +9,7 @@ public partial class ToolbarSlot : TextureRect
     public override void _Ready()
 	{
 		var textureRect = GetChild<TextureRect>(0);
-		textureRect.Texture = gameUnitData.GetToolbarImage();
+		textureRect.Texture = gameUnitData.GetUnitSmallImage();
 
 		var button = GetChild<ToolbarButton>(1);
 		button.SetItem(gameUnitData);

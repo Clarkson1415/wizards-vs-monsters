@@ -1,15 +1,14 @@
-[gd_scene load_steps=15 format=3 uid="uid://gd1n7f872n6s"]
+[gd_scene load_steps=14 format=3 uid="uid://gd1n7f872n6s"]
 
 [ext_resource type="Texture2D" uid="uid://bwtnda0lemui" path="res://ui/bottomUnitBar/Slot.png" id="1_4yfli"]
 [ext_resource type="Texture2D" uid="uid://w0oqohcm8e7i" path="res://ui/bottomUnitBar/frame.png" id="2_bnj48"]
+[ext_resource type="Script" uid="uid://ddhtgwroub23i" path="res://scripts/UnitBarSlot.cs" id="2_iyvxc"]
 [ext_resource type="Texture2D" uid="uid://dpbot6ws03h3d" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/BlueWitchButton.png" id="2_mbv4h"]
 [ext_resource type="FontFile" uid="uid://b8hbmmi6oyqch" path="res://ui/monogram.ttf" id="3_2qugi"]
 [ext_resource type="Texture2D" uid="uid://dtlmm80w20ghg" path="res://ui/bottomUnitBar/TopBit.png" id="4_1ra8c"]
-[ext_resource type="Texture2D" uid="uid://ckbw65y82125b" path="res://ui/unitTypesIcons/Sword.png" id="6_3dkyx"]
-[ext_resource type="Texture2D" uid="uid://btqokk6h70t2c" path="res://ui/bottomUnitBar/RedTopStatuses.png" id="6_08mh0"]
-[ext_resource type="Texture2D" uid="uid://cm35m1s4vbovj" path="res://art/statusIcons/skull.png" id="7_qtvn6"]
-[ext_resource type="Texture2D" uid="uid://n1wjp300dvbl" path="res://art/statusIcons/Determined.png" id="8_mae01"]
-[ext_resource type="Texture2D" uid="uid://qv24khsrg61w" path="res://art/statusIcons/shield_bracing.png" id="9_3dkyx"]
+[ext_resource type="Texture2D" uid="uid://bmug8e5exti5y" path="res://ui/unitTypesIcons/Bow.png" id="6_3dkyx"]
+[ext_resource type="Script" uid="uid://6l3sulk2opu5" path="res://scripts/UnitBarSlotButton.cs" id="9_mae01"]
+[ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="12_u1kyl"]
 
 [sub_resource type="Gradient" id="Gradient_1ra8c"]
 offsets = PackedFloat32Array(1)
@@ -29,9 +28,14 @@ gradient = SubResource("Gradient_bnj48")
 width = 16
 height = 2
 
-[node name="TextureRect" type="TextureRect"]
+[node name="TextureRect" type="TextureRect" node_paths=PackedStringArray("statusComponent", "NumberText", "unitImage", "button")]
 texture = ExtResource("1_4yfli")
 stretch_mode = 4
+script = ExtResource("2_iyvxc")
+statusComponent = NodePath("StatusComponent")
+NumberText = NodePath("Label")
+unitImage = NodePath("image")
+button = NodePath("Button")
 
 [node name="healthbar" type="Control" parent="."]
 anchors_preset = 0
@@ -45,7 +49,7 @@ offset_top = -6.0
 offset_right = 29.0
 texture = SubResource("GradientTexture2D_bnj48")
 
-[node name="TextureRect2" type="TextureRect" parent="healthbar"]
+[node name="green" type="TextureRect" parent="healthbar"]
 layout_mode = 0
 offset_left = 1.0
 offset_top = -6.0
@@ -60,7 +64,7 @@ offset_bottom = 1.0
 texture = ExtResource("2_bnj48")
 stretch_mode = 4
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="image" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = 7.0
 offset_top = 3.0
@@ -81,7 +85,7 @@ text = "11"
 
 [node name="type indicator (melee ranged etc)" type="TextureRect" parent="."]
 layout_mode = 0
-offset_top = 20.0
+offset_top = 19.0
 offset_right = 30.0
 offset_bottom = 30.0
 texture = ExtResource("4_1ra8c")
@@ -95,30 +99,17 @@ offset_bottom = 9.0
 texture = ExtResource("6_3dkyx")
 stretch_mode = 4
 
-[node name="status-TODOtooltips" type="TextureRect" parent="."]
+[node name="StatusComponent" parent="." node_paths=PackedStringArray("healthFill") instance=ExtResource("12_u1kyl")]
+layout_mode = 1
+offset_left = -15.0
+offset_top = -33.0
+offset_right = -15.0
+offset_bottom = -33.0
+healthFill = NodePath("../healthbar/green")
+
+[node name="Button" type="Button" parent="."]
 layout_mode = 0
-offset_top = -18.0
-offset_right = 30.0
-offset_bottom = -7.0
-texture = ExtResource("6_08mh0")
-stretch_mode = 4
-
-[node name="Statuses" type="HBoxContainer" parent="status-TODOtooltips"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 28.0
-offset_bottom = 10.0
-theme_override_constants/separation = 1
-
-[node name="TextureRect" type="TextureRect" parent="status-TODOtooltips/Statuses"]
-layout_mode = 2
-texture = ExtResource("7_qtvn6")
-
-[node name="TextureRect2" type="TextureRect" parent="status-TODOtooltips/Statuses"]
-layout_mode = 2
-texture = ExtResource("8_mae01")
-
-[node name="TextureRect3" type="TextureRect" parent="status-TODOtooltips/Statuses"]
-layout_mode = 2
-texture = ExtResource("9_3dkyx")
+offset_right = 29.0
+offset_bottom = 29.0
+flat = true
+script = ExtResource("9_mae01")

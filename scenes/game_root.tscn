@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=27 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://art/environment/Forest Tileset.png" id="1_uebra"]
 [ext_resource type="Texture2D" uid="uid://dq7osb5mnclyj" path="res://squares/checkered_16x16.png" id="2_6puu6"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://6gyf6e6op2tv" path="res://scenes/MovementControls.cs" id="17_k6861"]
 [ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://resources/GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
 [ext_resource type="PackedScene" uid="uid://gd1n7f872n6s" path="res://scenes/unitBarSlot.tscn" id="19_0aloa"]
+[ext_resource type="Script" uid="uid://dftp2nwcj0ql" path="res://scripts/UnitBar.cs" id="19_35vvr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -962,6 +963,7 @@ tile_set = SubResource("TileSet_k6861")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2.105, 2.105)
+process_callback = 0
 limit_enabled = false
 position_smoothing_enabled = true
 position_smoothing_speed = 10.0
@@ -982,7 +984,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("5_x42w8")
 
-[node name="SpawnControl" type="Control" parent="Input"]
+[node name="SpawnControl" type="Control" parent="Input" node_paths=PackedStringArray("unitBar")]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 1
 anchors_preset = 8
@@ -999,6 +1001,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("16_6puu6")
 unitGroupScene = ExtResource("6_6puu6")
+unitBar = NodePath("../../CanvasLayer/UnitBar")
 
 [node name="MovementControls" type="Control" parent="Input"]
 layout_mode = 1
@@ -1268,7 +1271,7 @@ scale = Vector2(3, 3)
 text = "Clear/Del"
 script = ExtResource("13_x42w8")
 
-[node name="UnitBar" type="Control" parent="CanvasLayer"]
+[node name="UnitBar" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("slots")]
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
@@ -1282,6 +1285,9 @@ grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(3, 3)
 pivot_offset = Vector2(16, 29.125)
+script = ExtResource("19_35vvr")
+UnitBarSlotScene = ExtResource("19_0aloa")
+slots = NodePath("HBoxContainer")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/UnitBar"]
 layout_mode = 1

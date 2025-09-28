@@ -46,7 +46,7 @@ public partial class GameUnitResource : Resource
 	public PackedScene GetUnitScene() { return gameUnit; }
 
 	[Export] private Texture2D toolbarImage;
-	public Texture2D GetToolbarImage() { return toolbarImage; }
+	public Texture2D GetUnitSmallImage() { return toolbarImage; }
 
     [Export] private int numberOfUnitsInSquadron = 10;
 
