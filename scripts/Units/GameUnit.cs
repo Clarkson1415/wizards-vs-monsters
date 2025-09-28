@@ -36,17 +36,17 @@ public partial class GameUnit : Node2D
     [Export] private Area2D range_down;
     [Export] private Area2D range_up;
 
-    private List<UnitBody> targetsInRange = new List<UnitBody>();
+    private List<UnitBody> targetsInRangeAndAlive = new List<UnitBody>();
 
     private void UpdateTargetsInRange()
     {
-        targetsInRange.Clear();
+        targetsInRangeAndAlive.Clear();
 
         var areas = new List<Area2D> { range_left, range_right, range_down, range_up, this.UnitBody };
-        areas.ForEach(x => AddEnemiesInArea(x));
+        areas.ForEach(x => UpdateEnemiesInArea(x));
     }
 
-    private void AddEnemiesInArea(Area2D area)
+    private void UpdateEnemiesInArea(Area2D area)
     {
         if (!area.HasOverlappingAreas())
         {
@@ -68,7 +68,7 @@ public partial class GameUnit : Node2D
                     return;
                 }
 
-                targetsInRange.Add(targetAsArea);
+                targetsInRangeAndAlive.Add(targetAsArea);
             }
         }        
     }
@@ -78,9 +78,9 @@ public partial class GameUnit : Node2D
     /// </summary>
     private void OnAttackFrame()
     {
-        if (targetsInRange.Count == 0) { return; }
+        if (targetsInRangeAndAlive.Count == 0) { return; }
 
-        targetsInRange.First().TakeDamage(this.baseUnitDamagePerAnimation);
+        targetsInRangeAndAlive.First().TakeDamage(this.baseUnitDamagePerAnimation);
 
         //foreach (var tar in targetsInRange)
         //{
@@ -199,7 +199,7 @@ public partial class GameUnit : Node2D
                 }
                 else if (currentCommand == COMMAND.Nothing)
                 {
-                    if (targetsInRange.Count > 0)
+                    if (targetsInRangeAndAlive.Count > 0)
                     {
                         state = unitState.Attacking;
                     }
@@ -215,9 +215,14 @@ public partial class GameUnit : Node2D
                     targetDirectionUnitVector = (targetPosition - GlobalPosition).Normalized();
 
                     // TODO: this should be happening before this guy is right on top of the unit.
-                    if (targetsInRange.Contains(currentTarget))
+                    if (targetsInRangeAndAlive.Contains(currentTarget))
                     {
                         state = unitState.Attacking;
+                    }
+                    else if (currentTarget.GetCurrentHealth() <= 0)
+                    {
+                        currentCommand = COMMAND.Nothing;
+                        state = unitState.Idle;
                     }
                 }
                 else // command.Move or Command.Nothing
@@ -232,7 +237,6 @@ public partial class GameUnit : Node2D
                     }
                 }
 
-
                 // Apply movement
                 var directionVector = (targetPosition - GlobalPosition).Normalized();
                 velocity = directionVector * unitBaseSpeed * speedModifier;
@@ -243,12 +247,17 @@ public partial class GameUnit : Node2D
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "walk");
                 break;
             case unitState.Attacking:
-                // if targetting and it moved out of range.
-                if (currentCommand == COMMAND.AttackTarget && !targetsInRange.Contains(currentTarget))
+                // if targetting a guy and not dead and it moved out of range.
+                if (currentCommand == COMMAND.AttackTarget && !targetsInRangeAndAlive.Contains(currentTarget) && (currentTarget.GetCurrentHealth() >= 0))
                 {
                     state = unitState.MoveToPosition;
                 }
-                else if ((currentCommand == COMMAND.Nothing) && targetsInRange.Count == 0)
+                else if (currentCommand == COMMAND.AttackTarget && currentTarget.GetCurrentHealth() <= 0)
+                {
+                    currentCommand = COMMAND.Nothing;
+                    state = unitState.Idle;
+                }
+                else if ((currentCommand == COMMAND.Nothing) && targetsInRangeAndAlive.Count == 0)
                 {
                     state = unitState.Idle;
                 }
@@ -256,11 +265,12 @@ public partial class GameUnit : Node2D
                 {
                     state = unitState.MoveToPosition;
                 }
+                
 
                 // animation face the direction of the one your attacking.
-                if (targetsInRange.Count != 0)
+                if (targetsInRangeAndAlive.Count != 0)
                 {
-                    var direction = (targetsInRange.First().GlobalPosition - GlobalPosition).Normalized();
+                    var direction = (targetsInRangeAndAlive.First().GlobalPosition - GlobalPosition).Normalized();
                     directionFacingUnitVector = RoundToNearestCardinalDirection(direction);
                 }
 

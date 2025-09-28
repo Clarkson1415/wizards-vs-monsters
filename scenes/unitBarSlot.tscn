@@ -55,6 +55,7 @@ offset_left = 1.0
 offset_top = -6.0
 offset_right = 29.0
 texture = SubResource("GradientTexture2D_giw6m")
+expand_mode = 1
 
 [node name="frame" type="TextureRect" parent="healthbar"]
 layout_mode = 0
