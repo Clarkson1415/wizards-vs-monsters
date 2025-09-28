@@ -1302,9 +1302,3 @@ offset_right = 32.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 0
-
-[node name="TextureRect" parent="CanvasLayer/UnitBar/HBoxContainer" instance=ExtResource("19_0aloa")]
-layout_mode = 2
-
-[node name="TextureRect2" parent="CanvasLayer/UnitBar/HBoxContainer" instance=ExtResource("19_0aloa")]
-layout_mode = 2

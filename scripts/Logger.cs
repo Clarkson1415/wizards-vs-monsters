@@ -7,7 +7,7 @@ public partial class Logger : Node
     {
         if (Debugger.IsAttached)
         {
-            Debugger.Log(2, "Info", message);
+            Debugger.Log(2, "Info", message + "\n");
         }
         else
         {
@@ -19,7 +19,7 @@ public partial class Logger : Node
     {
         if (Debugger.IsAttached)
         {
-            Debugger.Log(2, "Error", message);
+            Debugger.Log(2, "Error", message + "\n");
         }
         else
         {

@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bfsd5u2wvg15v"]
+
+[ext_resource type="Shader" uid="uid://dyq38qaoh2024" path="res://scripts/shaders/flash_sprite_white.gdshader" id="1_s10g7"]
+
+[resource]
+shader = ExtResource("1_s10g7")
+shader_parameter/flash_strength = 0.0

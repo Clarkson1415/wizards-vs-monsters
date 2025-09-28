@@ -45,15 +45,15 @@ public partial class MovementControls : Control, IGameInputControlNode
 
         if (lastSelected == GlobalGameVariables.PlayerControlledFaction)
         {
+            Logger.Log("Moving unit");
             playersFactionsHighlighted.ToList().ForEach(x => x.SetNewTargetLocation(touchOrTapPosition));
 
             // TODO if clicked or dragged need to positions units at the new 'ghost' positions.
-
             // TODO if multiple groups calculate group layout size. then put them next to each other but still in formation.
         }
         else
         {
-            Logger.Log("Gui input received last selected unit was an enemy.");
+            Logger.Log("cant move an enemy unit.");
         }
 
     }

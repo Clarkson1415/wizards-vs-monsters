@@ -12,21 +12,21 @@ public partial class UnitGroup : Node2D
 
     [Export] PackedScene triangleScene;
 
-    private List<GameUnit> units = new List<GameUnit>();
+    /// <summary>
+    /// Units that are alive rn.
+    /// </summary>
+    public List<GameUnit> UnitsRemaining => allUnits.Where(x => !x.IsDead).ToList();
 
-    private GameUnitResource unitResource;
+    private List<GameUnit> allUnits = new List<GameUnit>();
 
-    public GlobalGameVariables.FACTION Faction => unitResource.GetFaction();
+    public GameUnitResource UnitResource { get; private set; }
 
-    public GameUnitResource GetUnitsInfo()
-    {
-        return unitResource;
-    }
+    public GlobalGameVariables.FACTION Faction => UnitResource.GetFaction();
 
     // Called when the node enters the scene tree for the first time.
     public void SpawnUnits(GameUnitResource unitResource, Vector2 centrePositionWhereMouseClicked)
     {
-        this.unitResource = unitResource;
+        this.UnitResource = unitResource;
         var number = unitResource.GetNumberOfUnitsInSquadron();
 
         for (int i = 0; i < number; i++)
@@ -34,25 +34,23 @@ public partial class UnitGroup : Node2D
             var newUnit = unitResource.GetUnitScene().Instantiate<GameUnit>();
             newUnit.Setup(unitResource);
             AddChild(newUnit);
-            units.Add(newUnit);
+            allUnits.Add(newUnit);
             newUnit.ClickableUnitComponent.OnPressed += OnUnitClicked;
         }
 
         var positions = GetPositionsToPutUnitsInGrid(centrePositionWhereMouseClicked);
         for (int i = 0; i < positions.Count; i++)
         {
-            units[i].GlobalPosition = positions[i];
-            units[i].SetNewTargetPositionRotation(positions[i], GetDefaultDirection());
+            allUnits[i].GlobalPosition = positions[i];
+            allUnits[i].SetTargetPosition(positions[i], GetDefaultDirection());
         }
 
-        foreach (var initial in activeStatuses)
-        {
-            TryAddStatus(initial);
-        }
+        foreach (var initial in initialStatuses) { TryAddStatus(initial); }
     }
 
     private Vector2 GetDefaultDirection()
     {
+        // TODO
         var direction = Vector2.Right;
         Logger.Log("will have to make sure enemies are facing the same as units. TODO calculate based of whos side of the board your plaing on.");
         return direction;
@@ -64,37 +62,68 @@ public partial class UnitGroup : Node2D
     public void OnUnitClicked()
     {
         HighlightUnits();
-        var added = GlobalCurrentSelection.GetInstance().OnGroupClicked(this);
+        GlobalCurrentSelection.GetInstance().OnGroupClicked(this);
+        var added = GlobalCurrentSelection.GetInstance().IsGroupInSelection(this);
         if (!added)
         {
             UnhighlightUnits();
         }
     }
 
+    public void TellGroupItWasRemovedFromSelection()
+    {
+        this.UnhighlightUnits();
+    }
+
     private void UnhighlightUnits()
     {
-        this.units.ForEach(x => x.ClickableUnitComponent.UnHighlight());
+        this.allUnits.ForEach(x => x.ClickableUnitComponent.UnHighlight());
     }
 
     private void HighlightUnits()
     {
-        this.units.ForEach(x => x.ClickableUnitComponent.Highlight());
+        this.allUnits.ForEach(x => x.ClickableUnitComponent.Highlight());
     }
+
+    #region centre calc 
+    private Vector2 GetCentre()
+    {
+        if (allUnits.Count == 0) return Vector2.Zero;
+
+        float minX = allUnits.Min(u => u.GlobalPosition.X);
+        float maxX = allUnits.Max(u => u.GlobalPosition.X);
+        float minY = allUnits.Min(u => u.GlobalPosition.Y);
+        float maxY = allUnits.Max(u => u.GlobalPosition.Y);
+
+        // center of the bounding rectangle
+        float centerX = (minX + maxX) / 2f;
+        float centerY = (minY + maxY) / 2f;
+
+        var centre = new Vector2(centerX, centerY);
+
+        var unitSize = UnitResource.GetSizeInUnits();
+        var cellSize = GlobalGameVariables.CELL_SIZE;
+        var offset = new Vector2(columns * cellSize * unitSize - cellSize * unitSize, rows * cellSize * unitSize - cellSize * unitSize) / 2f;
+        return centre - offset;
+    }
+    #endregion
+
+    #region targeting locations or enemies
 
     private List<Vector2> GetPositionsToPutUnitsInGrid(Vector2 centreOfSquadron)
     {
         // 1. Calculate grid shape mostly square as non given.
-        columns = Mathf.CeilToInt(Mathf.Sqrt(units.Count));
-        rows = Mathf.CeilToInt((float)units.Count / columns);
+        columns = Mathf.CeilToInt(Mathf.Sqrt(allUnits.Count));
+        rows = Mathf.CeilToInt((float)allUnits.Count / columns);
         return GetPositionsToPutUnitsInGrid(centreOfSquadron, columns, rows);
     }
 
     private List<Vector2> GetPositionsToPutUnitsInGrid(Vector2 centreOfSquadron, int columns, int rows)
     {
         var cellSize = GlobalGameVariables.CELL_SIZE;
-        var unitSize = unitResource.GetSizeInUnits();
+        var unitSize = UnitResource.GetSizeInUnits();
 
-        int count = units.Count;
+        int count = allUnits.Count;
         if (count == 0) return [];
 
         // 2. Calculate total grid size
@@ -119,25 +148,14 @@ public partial class UnitGroup : Node2D
     private int columns;
     private int rows;
 
-    private Vector2 GetCentre()
+    public void SetNewTargetEnemy(UnitGroup enemyToTarget)
     {
-        if (units.Count == 0) return Vector2.Zero;
-
-        float minX = units.Min(u => u.GlobalPosition.X);
-        float maxX = units.Max(u => u.GlobalPosition.X);
-        float minY = units.Min(u => u.GlobalPosition.Y);
-        float maxY = units.Max(u => u.GlobalPosition.Y);
-
-        // center of the bounding rectangle
-        float centerX = (minX + maxX) / 2f;
-        float centerY = (minY + maxY) / 2f;
-
-        var centre = new Vector2(centerX, centerY);
-
-        var unitSize = unitResource.GetSizeInUnits();
-        var cellSize = GlobalGameVariables.CELL_SIZE;
-        var offset = new Vector2(columns * cellSize * unitSize - cellSize * unitSize, rows * cellSize * unitSize - cellSize * unitSize) / 2f;
-        return centre - offset;
+        for (int i = 0; i < this.allUnits.Count; i++)
+        {
+            var attacker = this.allUnits[i];
+            var target = enemyToTarget.UnitsRemaining[i % enemyToTarget.UnitsRemaining.Count];
+            attacker.SetTargetUnit(target);
+        }
     }
 
     /// <summary>
@@ -146,31 +164,31 @@ public partial class UnitGroup : Node2D
     /// <param name="newCentre"></param>
     public void SetNewTargetLocation(Vector2 newCentre)
     {
-        newTargetCentre = newCentre;
         ClearTriangles();
 
         var positionsArray = GetPositionsToPutUnitsInGrid(newCentre);
         for (int i = 0; i < positionsArray.Count; i++)
         {
-            units[i].SetNewTargetPositionRotation(positionsArray[i], GetDefaultDirection());
+            allUnits[i].SetTargetPosition(positionsArray[i], GetDefaultDirection());
         }
 
-        SpawnTriangleIndicators(positionsArray);
+        SpawnTriangleIndicators(positionsArray, GetDefaultDirection());
     }
 
-    private void SpawnTriangleIndicators(List<Vector2> positions)
+    private void SpawnTriangleIndicators(List<Vector2> positions, Vector2 directionUnitsFacingUnitVector)
     {
-        for (int i = 0; i < units.Count; i++)
+        for (int i = 0; i < allUnits.Count; i++)
         {
             var tri = triangleScene.Instantiate<TriangleScene>();
             AddChild(tri);
             tri.GlobalPosition = positions[i];
-            tri.LoadTriangle(unitResource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE, unitResource.GetFaction());
+            tri.LoadTriangle(UnitResource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE, UnitResource.GetFaction());
             trianglesToShowNewPos.Add(tri);
+
+            float angleRadians = Mathf.Atan2(directionUnitsFacingUnitVector.Y, directionUnitsFacingUnitVector.X);
+            tri.GlobalRotation = angleRadians;
         }
     }
-
-    private Vector2 newTargetCentre;
 
     /// <summary>
     /// Set new positions when clicked and dragged to set new position and a specific rotation.
@@ -182,14 +200,13 @@ public partial class UnitGroup : Node2D
     public void SetNewTargetLocation(Vector2 newPosition, Vector2 unitFacingDir, int cols, int rows)
     {
         ClearTriangles();
-        newTargetCentre = newPosition;
         var positionsArray = GetPositionsToPutUnitsInGrid(newPosition, cols, rows);
         for (int i = 0; i < positionsArray.Count; i++)
         {
-            units[i].SetNewTargetPositionRotation(positionsArray[i], unitFacingDir);
+            allUnits[i].SetTargetPosition(positionsArray[i], unitFacingDir);
         }
 
-        SpawnTriangleIndicators(positionsArray);
+        SpawnTriangleIndicators(positionsArray, GetDefaultDirection());
     }
 
     private void ClearTriangles()
@@ -201,15 +218,16 @@ public partial class UnitGroup : Node2D
 
         trianglesToShowNewPos.Clear();
     }
+    #endregion
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
-        if (units.Count == 0) { return; }
+        if (allUnits.Count == 0) { return; }
 
         var centre = GetCentre();
 
-        if (centre.Round() == newTargetCentre.Round())
+        if (allUnits.All(x => x.AtTargetLocation))
         {
             ClearTriangles();
         }
@@ -219,10 +237,12 @@ public partial class UnitGroup : Node2D
 
     public float GetHealthPercentage()
     {
-        var squadHealth = units.Sum(u => u.UnitBody.GetCurrentHealth());
-        var maxSquadHealth = unitResource.GetHealth() * units.Count;
+        var squadHealth = allUnits.Sum(u => u.UnitBody.GetCurrentHealth());
+        var maxSquadHealth = UnitResource.GetHealth() * allUnits.Count;
         return squadHealth / maxSquadHealth;
     }
+
+    #region status logic
 
     private void CheckStatuses()
     {
@@ -234,13 +254,18 @@ public partial class UnitGroup : Node2D
         {
             RemoveStatus(StatusComponent.STATUS.dying);
         }
+
+        // TODO other statuses
     }
 
-    private Godot.Collections.Array<StatusComponent.STATUS> activeStatuses = new Godot.Collections.Array<StatusComponent.STATUS>() { StatusComponent.STATUS.fresh };
+    private Godot.Collections.Array<StatusComponent.STATUS> initialStatuses = new Godot.Collections.Array<StatusComponent.STATUS>() { StatusComponent.STATUS.fresh };
+
+
+    private Godot.Collections.Array<StatusComponent.STATUS> activeStatuses = new();
 
     private void UpdateStatusEffectsOnUnits()
     {
-        foreach (var unit in units)
+        foreach (var unit in allUnits)
         {
             unit.UpdateStatusEffects(activeStatuses);
         }
@@ -278,6 +303,8 @@ public partial class UnitGroup : Node2D
         UpdateStatusEffectsOnUnits();
     }
 
+    Timer freshStatusTimer;
+
     /// <summary>
     /// For ones like fresh and stuff.
     /// </summary>
@@ -285,15 +312,13 @@ public partial class UnitGroup : Node2D
     {
         activeStatuses.Add(status);
 
-        var newTimer = new Timer();
-        AddChild(newTimer);
-        newTimer.WaitTime = time;
+        freshStatusTimer = new Timer();
+        AddChild(freshStatusTimer);
+        freshStatusTimer.WaitTime = time;
 
-        newTimer.Start();
-        newTimer.Timeout += () => RemoveStatus(status);
-        newTimer.Timeout += newTimer.QueueFree;
-        newTimer.Timeout += UpdateStatusEffectsOnUnits;
-
+        freshStatusTimer.Start();
+        freshStatusTimer.Timeout += () => RemoveStatus(status);
+        freshStatusTimer.Timeout += freshStatusTimer.QueueFree;
         UpdateStatusEffectsOnUnits();
     }
 
@@ -302,4 +327,5 @@ public partial class UnitGroup : Node2D
         activeStatuses.Add(status);
         UpdateStatusEffectsOnUnits();
     }
+    #endregion
 }

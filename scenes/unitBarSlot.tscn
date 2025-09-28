@@ -26,7 +26,7 @@ colors = PackedColorArray(0.38802183, 0.7681577, 5.0055983e-06, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_giw6m"]
 gradient = SubResource("Gradient_bnj48")
 width = 16
-height = 2
+height = 6
 
 [node name="TextureRect" type="TextureRect" node_paths=PackedStringArray("statusComponent", "NumberText", "unitImage", "button")]
 texture = ExtResource("1_4yfli")

@@ -17,7 +17,9 @@ public partial class GameUnit : Node2D
 
     [Export] private AnimationComponent animationPlayer;
 
-    private int baseUnitDamagePerAnimation = 10;
+    [Export] private AnimatedSprite2D animatedSprite2D;
+
+    private int baseUnitDamagePerAnimation = 1;
 
     public GameUnitResource resource { get; private set; }
 
@@ -27,8 +29,12 @@ public partial class GameUnit : Node2D
 
     protected Vector2 velocity;
 
-    // TODO other rays.
-    [Export] private RayCast2D ray_left;
+    public bool IsDead => UnitBody.GetCurrentHealth() <= 0;
+
+    [Export] private Area2D range_left;
+    [Export] private Area2D range_right;
+    [Export] private Area2D range_down;
+    [Export] private Area2D range_up;
 
     private List<UnitBody> targetsInRange = new List<UnitBody>();
 
@@ -36,11 +42,22 @@ public partial class GameUnit : Node2D
     {
         targetsInRange.Clear();
 
-        // TODO: when implement 4 directions, check all raycasters not just the left one.
-        if (ray_left.IsColliding())
+        var areas = new List<Area2D> { range_left, range_right, range_down, range_up, this.UnitBody };
+        areas.ForEach(x => AddEnemiesInArea(x));
+    }
+
+    private void AddEnemiesInArea(Area2D area)
+    {
+        if (!area.HasOverlappingAreas())
         {
-            var target = ray_left.GetCollider();
-            if (target is UnitBody targetAsArea)
+            return;
+        }
+
+        var overlapping = area.GetOverlappingAreas();
+
+        foreach (var overlap in overlapping)
+        {
+            if (overlap is UnitBody targetAsArea)
             {
                 if (targetAsArea.GetCurrentHealth() <= 0)
                 {
@@ -53,7 +70,7 @@ public partial class GameUnit : Node2D
 
                 targetsInRange.Add(targetAsArea);
             }
-        }
+        }        
     }
 
     /// <summary>
@@ -61,10 +78,14 @@ public partial class GameUnit : Node2D
     /// </summary>
     private void OnAttackFrame()
     {
-        foreach (var tar in targetsInRange)
-        {
-            tar.TakeDamage(this.baseUnitDamagePerAnimation);
-        }
+        if (targetsInRange.Count == 0) { return; }
+
+        targetsInRange.First().TakeDamage(this.baseUnitDamagePerAnimation);
+
+        //foreach (var tar in targetsInRange)
+        //{
+        //    tar.TakeDamage(this.baseUnitDamagePerAnimation);
+        //}
     }
 
     public void Setup(GameUnitResource resource)
@@ -90,7 +111,7 @@ public partial class GameUnit : Node2D
     private enum unitState
     {
         Idle,
-        Moving,
+        MoveToPosition,
         Attacking,
         Dead,
     }
@@ -109,27 +130,45 @@ public partial class GameUnit : Node2D
     /// </summary>
     private Vector2 directionFacingUnitVector;
 
-    public void SetNewTargetPositionRotation(Vector2 pos, Vector2 dir)
+    private enum COMMAND { MoveToPosition, AttackTarget, Nothing };
+
+    private COMMAND currentCommand = COMMAND.Nothing;
+
+    public void SetTargetPosition(Vector2 pos, Vector2 dir)
     {
+        currentCommand = COMMAND.MoveToPosition;
         targetPosition = pos;
         targetDirectionUnitVector = dir;
     }
 
-    private void OnHit()
+    public void SetTargetUnit(GameUnit enemyToTarget)
     {
-        animationPlayer.UpdateAnimation(directionFacingUnitVector, "hurt");
-        state = unitState.Dead;
+        currentCommand = COMMAND.AttackTarget;
+        currentTarget = enemyToTarget.UnitBody;
     }
 
-    private bool AtTargetLocation()
+    private void OnHit()
     {
-        return (Math.Round(GlobalPosition.X, 0) == Math.Round(targetPosition.X, 0)) && (Math.Round(GlobalPosition.Y, 0) == Math.Round(targetPosition.Y, 0));
+        Logger.Log($"this Hit {Name}. todo hurt animation? or just flash sprite as to not interrupt state machine.");
+        // animationPlayer.UpdateAnimation(directionFacingUnitVector, "hurt");
+        var material = (ShaderMaterial)animatedSprite2D.Material;
+        // Flash white instantly
+        material.SetShaderParameter("flash_strength", 1.0f);
+        // Reset after a short time
+        GetTree().CreateTimer(0.1).Timeout += () =>
+        {
+            material.SetShaderParameter("flash_strength", 0.0f);
+        };
     }
+
+    public bool AtTargetLocation => GlobalPosition.DistanceTo(targetPosition) < 1f;
 
     private bool AtTargetDirection()
     {
         return (targetDirectionUnitVector == directionFacingUnitVector);
     }
+
+    private UnitBody currentTarget;
 
     public override void _Process(double delta)
     {
@@ -137,15 +176,15 @@ public partial class GameUnit : Node2D
         if (this.resource == null) { return; }
 
         UpdateTargetsInRange();
-
         if (UnitBody.GetCurrentHealth() <= 0)
         {
             animationPlayer.UpdateAnimation(directionFacingUnitVector, "die");
             state = unitState.Dead;
         }
-        else if (!AtTargetLocation() || !AtTargetDirection())
+
+        if (this.resource.GetFaction() == GlobalGameVariables.FACTION.humans)
         {
-            state = unitState.Moving;
+            Logger.Log($"state = {state.ToString()}");
         }
 
         float deltaf = (float)delta;
@@ -153,49 +192,100 @@ public partial class GameUnit : Node2D
         {
             case unitState.Idle:
                 velocity = Vector2.Zero;
-                if (targetsInRange.Count != 0)
-                {
-                    state = unitState.Attacking;
-                }
 
+                if ((currentCommand == COMMAND.MoveToPosition) || (currentCommand == COMMAND.AttackTarget))
+                {
+                    state = unitState.MoveToPosition;
+                }
+                else if (currentCommand == COMMAND.Nothing)
+                {
+                    if (targetsInRange.Count > 0)
+                    {
+                        state = unitState.Attacking;
+                    }
+                }
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "idle");
                 break;
-            case unitState.Moving:
-                if (AtTargetLocation())
+            case unitState.MoveToPosition:
+
+                // update target positoin and orientation if following a target.
+                if (currentCommand == COMMAND.AttackTarget)
                 {
-                    // TODO: rotate over time to be in target rotation
-                    directionFacingUnitVector = targetDirectionUnitVector;
-                    state = unitState.Idle;
-                    return;
+                    targetPosition = currentTarget.GlobalPosition;
+                    targetDirectionUnitVector = (targetPosition - GlobalPosition).Normalized();
+
+                    // TODO: this should be happening before this guy is right on top of the unit.
+                    if (targetsInRange.Contains(currentTarget))
+                    {
+                        state = unitState.Attacking;
+                    }
                 }
+                else // command.Move or Command.Nothing
+                {
+                    if (AtTargetLocation)
+                    {
+                        // TODO: rotate over time to be in target rotation
+                        directionFacingUnitVector = targetDirectionUnitVector;
+                        state = unitState.Idle;
+                        currentCommand = COMMAND.Nothing;
+                        return;
+                    }
+                }
+
 
                 // Apply movement
                 var directionVector = (targetPosition - GlobalPosition).Normalized();
                 velocity = directionVector * unitBaseSpeed * speedModifier;
                 GlobalPosition += velocity * deltaf;
-
-                directionFacingUnitVector = new Vector2(Math.Sign((int)Math.Round(directionVector.X)),Math.Sign((int)Math.Round(directionVector.Y)));
-
-                // Favour Horizontal movement animations when on an angle.
-                if (Math.Abs(directionFacingUnitVector.X) == Math.Abs(directionFacingUnitVector.Y))
-                {
-                    directionFacingUnitVector.Y = 0;
-                }
+                // face toward target position in cardinal direction.
+                directionFacingUnitVector = RoundToNearestCardinalDirection(directionVector);
 
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "walk");
                 break;
             case unitState.Attacking:
-                animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
-                if (targetsInRange.Count == 0)
+                // if targetting and it moved out of range.
+                if (currentCommand == COMMAND.AttackTarget && !targetsInRange.Contains(currentTarget))
+                {
+                    state = unitState.MoveToPosition;
+                }
+                else if ((currentCommand == COMMAND.Nothing) && targetsInRange.Count == 0)
                 {
                     state = unitState.Idle;
                 }
+                else if (currentCommand == COMMAND.MoveToPosition)
+                {
+                    state = unitState.MoveToPosition;
+                }
+
+                // animation face the direction of the one your attacking.
+                if (targetsInRange.Count != 0)
+                {
+                    var direction = (targetsInRange.First().GlobalPosition - GlobalPosition).Normalized();
+                    directionFacingUnitVector = RoundToNearestCardinalDirection(direction);
+                }
+
+                animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
                 break;
             case unitState.Dead:
                 break;
             default:
                 break;
         }
+    }
+
+
+    private Vector2 RoundToNearestCardinalDirection(Vector2 vector)
+    {
+        // face toward target position in cardinal direction.
+        var cardinalDirection = new Vector2(Math.Sign((int)Math.Round(vector.X)), Math.Sign((int)Math.Round(vector.Y)));
+
+        // Favour Horizontal movement animations when on an angle.
+        if (Math.Abs(cardinalDirection.X) == Math.Abs(cardinalDirection.Y))
+        {
+            cardinalDirection.Y = 0;
+        }
+
+        return cardinalDirection;
     }
 
     private Array<StatusComponent.STATUS> activeStatuses = [];

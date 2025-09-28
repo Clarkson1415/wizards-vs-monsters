@@ -59,21 +59,53 @@ namespace WizardsVsMonster.scripts
             }
         }
 
-        public bool OnGroupClicked(UnitGroup group)
+        public void OnGroupClicked(UnitGroup group)
         {
             SelectedUnitToSpawn = null;
-            LastSelectedUnitsInfo = group.GetUnitsInfo();
+            LastSelectedUnitsInfo = group.UnitResource;
 
+            // remove or add group to highlighted groups.
             if (!UnitGroupsHighlighted.Contains(group))
             {
                 UnitGroupsHighlighted.Add(group);
-                return true;
+                OnGroupAddedToSelected(group);
             }
             else
             {
                 UnitGroupsHighlighted.Remove(group);
-                return false;
+                OnGroupAddedToSelected(group);
             }
+        }
+
+        private void OnGroupAddedToSelected(UnitGroup group)
+        {
+            if (!IsGroupEnemyOfPlayer(group)) // if unit group added is players group.
+            {
+                // deselect the enemy groups
+                var enemyGroups = UnitGroupsHighlighted.Where(x => IsGroupEnemyOfPlayer(x)).ToList();
+                UnitGroupsHighlighted.RemoveAll(x => IsGroupEnemyOfPlayer(x));
+                enemyGroups.ForEach(x => x.TellGroupItWasRemovedFromSelection());
+            }
+            else if (UnitGroupsHighlighted.Any(x => !IsGroupEnemyOfPlayer(x))) // If enemy selected and player has groups selected. set group target to attack it.
+            {
+                var playersGroups = UnitGroupsHighlighted.Where(x => !IsGroupEnemyOfPlayer(x)).ToList();
+                playersGroups.ForEach(x => x.SetNewTargetEnemy(group));
+            }
+        }
+
+        private void OnGroupRemovedFromSelected(UnitGroup group)
+        {
+            group.TellGroupItWasRemovedFromSelection();
+        }
+
+        public bool IsGroupInSelection(UnitGroup group)
+        {
+            return UnitGroupsHighlighted.Contains(group);
+        }
+
+        private bool IsGroupEnemyOfPlayer(UnitGroup group)
+        {
+            return GlobalGameVariables.FactionEnemies[GlobalGameVariables.PlayerControlledFaction].Contains(group.Faction);
         }
     }
 }

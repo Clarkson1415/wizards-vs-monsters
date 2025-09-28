@@ -24,7 +24,7 @@ public partial class UnitBarSlot : TextureRect
 	public void Setup(UnitGroup group)
 	{
 		this.group = group;
-        var data = group.GetUnitsInfo();
+        var data = group.UnitResource;
         this.NumberText.Text = data.GetNumberOfUnitsInSquadron().ToString();
         unitImage.Texture = data.GetUnitSmallImage();
 
