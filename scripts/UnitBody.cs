@@ -15,7 +15,7 @@ public partial class UnitBody : Area2D
         return currentHealth;
     }
 
-    [Signal] public delegate void OnThisHitEventHandler();
+    [Signal] public delegate void OnThisHitEventHandler(GameUnit unit);
 
     private float maxHealth;
 
@@ -31,10 +31,10 @@ public partial class UnitBody : Area2D
         maxHealth = data.GetHealth();
 	}
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, GameUnit hitBy)
 	{
 		// TODO calculate armour and shit.
 		currentHealth -= damage;
-        EmitSignal(SignalName.OnThisHit);
+        EmitSignal(SignalName.OnThisHit, hitBy);
     }
 }

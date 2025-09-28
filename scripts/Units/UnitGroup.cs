@@ -1,7 +1,10 @@
 using Godot;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using WizardsVsMonster.scripts;
+using static Godot.HttpRequest;
 
 public partial class UnitGroup : Node2D
 {
@@ -46,6 +49,12 @@ public partial class UnitGroup : Node2D
         }
 
         foreach (var initial in initialStatuses) { TryAddStatus(initial); }
+
+        // setup signals
+        foreach (var unit in allUnits)
+        {
+            unit.OnAttacked += OnUnitAttacked;
+        }
     }
 
     private Vector2 GetDefaultDirection()
@@ -150,11 +159,73 @@ public partial class UnitGroup : Node2D
 
     public void SetNewTargetEnemy(UnitGroup enemyToTarget)
     {
-        for (int i = 0; i < this.allUnits.Count; i++)
+        var allTargets = new List<GameUnit>(enemyToTarget.UnitsRemaining);
+
+        if (allTargets.Count == 0)
         {
-            var attacker = this.allUnits[i];
-            var target = enemyToTarget.UnitsRemaining[i % enemyToTarget.UnitsRemaining.Count];
-            attacker.SetTargetUnit(target);
+            Logger.Log("No targets available to attack.");
+            return;
+        }
+
+        var availableTargets = new List<GameUnit>(allTargets);
+        int targetCount = allTargets.Count;
+
+        GameUnit chosenTarget;
+
+        // assign closest pairs (player, enemy) units first.
+        var attackers = new List<GameUnit>(this.UnitsRemaining);
+        List<(GameUnit, GameUnit, float)> combinations = new();
+
+        // Step 1: Compute all distances
+        foreach (var a in attackers)
+        {
+            foreach (var b in allTargets)
+            {
+                float dist = a.GlobalPosition.DistanceSquaredTo(b.GlobalPosition);
+                combinations.Add(new(a, b, dist));
+            }
+        }
+
+        // Step 2: Sort by distance ascending
+        combinations.OrderBy(p => p.Item3).ToList();
+
+        List<GameUnit> usedA = new();
+        List<GameUnit> usedB = new();
+        List<(GameUnit, GameUnit, float)> result = new();
+
+        // Step 3: Select closest non-used pairs
+        foreach (var (a, b, distance) in combinations)
+        {
+            if (!usedA.Contains(a) && !usedB.Contains(b))
+            {
+                result.Add((a, b, distance));
+                usedA.Add(a);
+                usedB.Add(b);
+            }
+
+            // Stop if assigned all targets to at least 1 attacker.
+            if (result.Count >= allTargets.Count)
+            {
+                break;
+            }
+        }
+
+        // if more attackers than targets need to assign from fursthees
+        // TODO: same as above but for largest distance.
+
+        // Reuse targets: rotate through the full list using a wrap-around index
+        int rotationIndex = 0;
+
+        foreach (var attacker in this.UnitsRemaining)
+        {
+            if (availableTargets.Count == 0)
+            {
+                return;
+            }
+
+            chosenTarget = allTargets[rotationIndex % targetCount];
+            rotationIndex++;
+            attacker.SetTargetUnit(chosenTarget);
         }
     }
 
@@ -233,6 +304,17 @@ public partial class UnitGroup : Node2D
         }
 
         CheckStatuses();
+    }
+
+    private void OnUnitAttacked(UnitGroup attackers)
+    {
+        Logger.Log("unit attacked, will retaliate if not busy.");
+        // on unit attacked if no other command in place. then attack the attacker.
+        if (UnitsRemaining.FirstOrDefault().CurrentCommand == GameUnit.COMMAND.Nothing)
+        {
+            Logger.Log("attacking back.");
+            SetNewTargetEnemy(attackers);
+        }
     }
 
     public float GetHealthPercentage()

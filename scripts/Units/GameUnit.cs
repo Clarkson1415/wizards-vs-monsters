@@ -80,7 +80,7 @@ public partial class GameUnit : Node2D
     {
         if (targetsInRangeAndAlive.Count == 0) { return; }
 
-        targetsInRangeAndAlive.First().TakeDamage(this.baseUnitDamagePerAnimation);
+        targetsInRangeAndAlive.First().TakeDamage(this.baseUnitDamagePerAnimation, this);
 
         //foreach (var tar in targetsInRange)
         //{
@@ -130,27 +130,29 @@ public partial class GameUnit : Node2D
     /// </summary>
     private Vector2 directionFacingUnitVector;
 
-    private enum COMMAND { MoveToPosition, AttackTarget, Nothing };
+    public enum COMMAND { MoveToPosition, AttackTarget, Nothing };
 
-    private COMMAND currentCommand = COMMAND.Nothing;
+    public COMMAND CurrentCommand { get; private set; } = COMMAND.Nothing;
 
     public void SetTargetPosition(Vector2 pos, Vector2 dir)
     {
-        currentCommand = COMMAND.MoveToPosition;
+        CurrentCommand = COMMAND.MoveToPosition;
         targetPosition = pos;
         targetDirectionUnitVector = dir;
     }
 
     public void SetTargetUnit(GameUnit enemyToTarget)
     {
-        currentCommand = COMMAND.AttackTarget;
+        CurrentCommand = COMMAND.AttackTarget;
         currentTarget = enemyToTarget.UnitBody;
+        targetPosition = enemyToTarget.GlobalPosition;
+        targetDirectionUnitVector = RoundToNearestCardinalDirection((targetPosition - GlobalPosition).Normalized());
     }
 
-    private void OnHit()
+    [Signal] public delegate void OnAttackedEventHandler(UnitGroup attackers);
+
+    private void OnHit(GameUnit attacker)
     {
-        Logger.Log($"this Hit {Name}. todo hurt animation? or just flash sprite as to not interrupt state machine.");
-        // animationPlayer.UpdateAnimation(directionFacingUnitVector, "hurt");
         var material = (ShaderMaterial)animatedSprite2D.Material;
         // Flash white instantly
         material.SetShaderParameter("flash_strength", 1.0f);
@@ -159,6 +161,11 @@ public partial class GameUnit : Node2D
         {
             material.SetShaderParameter("flash_strength", 0.0f);
         };
+
+        // tell group were being attacked.
+        var group = attacker.GetParent<UnitGroup>();
+        if (group == null) { Logger.LogError("NO GROUP WHY"); }
+        EmitSignal(SignalName.OnAttacked, group);
     }
 
     public bool AtTargetLocation => GlobalPosition.DistanceTo(targetPosition) < 1f;
@@ -182,22 +189,17 @@ public partial class GameUnit : Node2D
             state = unitState.Dead;
         }
 
-        if (this.resource.GetFaction() == GlobalGameVariables.FACTION.humans)
-        {
-            Logger.Log($"state = {state.ToString()}");
-        }
-
         float deltaf = (float)delta;
         switch (this.state)
         {
             case unitState.Idle:
                 velocity = Vector2.Zero;
 
-                if ((currentCommand == COMMAND.MoveToPosition) || (currentCommand == COMMAND.AttackTarget))
+                if ((CurrentCommand == COMMAND.MoveToPosition && !AtTargetLocation) || (CurrentCommand == COMMAND.AttackTarget))
                 {
                     state = unitState.MoveToPosition;
                 }
-                else if (currentCommand == COMMAND.Nothing)
+                else if (CurrentCommand == COMMAND.Nothing)
                 {
                     if (targetsInRangeAndAlive.Count > 0)
                     {
@@ -209,10 +211,10 @@ public partial class GameUnit : Node2D
             case unitState.MoveToPosition:
 
                 // update target positoin and orientation if following a target.
-                if (currentCommand == COMMAND.AttackTarget)
+                if (CurrentCommand == COMMAND.AttackTarget)
                 {
                     targetPosition = currentTarget.GlobalPosition;
-                    targetDirectionUnitVector = (targetPosition - GlobalPosition).Normalized();
+                    targetDirectionUnitVector = RoundToNearestCardinalDirection((targetPosition - GlobalPosition).Normalized());
 
                     // TODO: this should be happening before this guy is right on top of the unit.
                     if (targetsInRangeAndAlive.Contains(currentTarget))
@@ -221,7 +223,7 @@ public partial class GameUnit : Node2D
                     }
                     else if (currentTarget.GetCurrentHealth() <= 0)
                     {
-                        currentCommand = COMMAND.Nothing;
+                        CurrentCommand = COMMAND.Nothing;
                         state = unitState.Idle;
                     }
                 }
@@ -232,8 +234,7 @@ public partial class GameUnit : Node2D
                         // TODO: rotate over time to be in target rotation
                         directionFacingUnitVector = targetDirectionUnitVector;
                         state = unitState.Idle;
-                        currentCommand = COMMAND.Nothing;
-                        return;
+                        CurrentCommand = COMMAND.Nothing;
                     }
                 }
 
@@ -248,20 +249,20 @@ public partial class GameUnit : Node2D
                 break;
             case unitState.Attacking:
                 // if targetting a guy and not dead and it moved out of range.
-                if (currentCommand == COMMAND.AttackTarget && !targetsInRangeAndAlive.Contains(currentTarget) && (currentTarget.GetCurrentHealth() >= 0))
+                if (CurrentCommand == COMMAND.AttackTarget && !targetsInRangeAndAlive.Contains(currentTarget) && (currentTarget.GetCurrentHealth() >= 0))
                 {
                     state = unitState.MoveToPosition;
                 }
-                else if (currentCommand == COMMAND.AttackTarget && currentTarget.GetCurrentHealth() <= 0)
+                else if (CurrentCommand == COMMAND.AttackTarget && currentTarget.GetCurrentHealth() <= 0)
                 {
-                    currentCommand = COMMAND.Nothing;
+                    CurrentCommand = COMMAND.Nothing;
                     state = unitState.Idle;
                 }
-                else if ((currentCommand == COMMAND.Nothing) && targetsInRangeAndAlive.Count == 0)
+                else if ((CurrentCommand == COMMAND.Nothing) && targetsInRangeAndAlive.Count == 0)
                 {
                     state = unitState.Idle;
                 }
-                else if (currentCommand == COMMAND.MoveToPosition)
+                else if (CurrentCommand == COMMAND.MoveToPosition)
                 {
                     state = unitState.MoveToPosition;
                 }

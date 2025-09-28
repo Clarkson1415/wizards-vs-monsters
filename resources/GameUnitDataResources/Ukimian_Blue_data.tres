@@ -16,5 +16,5 @@ DPS = 1
 description = "Ice mage of Ukimia "
 gameUnit = ExtResource("1_xv2s2")
 toolbarImage = ExtResource("3_l3y7q")
-numberOfUnitsInSquadron = 1
+numberOfUnitsInSquadron = 4
 metadata/_custom_type_script = "uid://cqcq15rhu6tjp"
