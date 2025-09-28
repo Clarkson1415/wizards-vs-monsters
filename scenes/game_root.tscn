@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=26 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://art/environment/Forest Tileset.png" id="1_uebra"]
 [ext_resource type="Texture2D" uid="uid://dq7osb5mnclyj" path="res://squares/checkered_16x16.png" id="2_6puu6"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/ClickToSpawn.cs" id="16_6puu6"]
 [ext_resource type="Script" uid="uid://6gyf6e6op2tv" path="res://scenes/MovementControls.cs" id="17_k6861"]
 [ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://resources/GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
+[ext_resource type="PackedScene" uid="uid://gd1n7f872n6s" path="res://scenes/unitBarSlot.tscn" id="19_0aloa"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -1211,7 +1212,7 @@ theme_override_font_sizes/font_size = 16
 text = "A medium length description a d dllkjd lkjld ljd ldkj ld ldjld jdldkj dlj d"
 autowrap_mode = 2
 
-[node name="Toolbar" type="HBoxContainer" parent="CanvasLayer"]
+[node name="SpawnToolbar" type="HBoxContainer" parent="CanvasLayer"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1224,24 +1225,24 @@ pivot_offset = Vector2(33, 0)
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="front" type="TextureRect" parent="CanvasLayer/Toolbar"]
+[node name="front" type="TextureRect" parent="CanvasLayer/SpawnToolbar"]
 layout_mode = 2
 texture = ExtResource("11_ywsqi")
 stretch_mode = 2
 
-[node name="slot3" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
+[node name="slot3" parent="CanvasLayer/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("12_k6861")
 
-[node name="slot4" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
+[node name="slot4" parent="CanvasLayer/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("17_so1mv")
 
-[node name="slot5" parent="CanvasLayer/Toolbar" instance=ExtResource("12_x5456")]
+[node name="slot5" parent="CanvasLayer/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("15_6puu6")
 
-[node name="end" type="TextureRect" parent="CanvasLayer/Toolbar"]
+[node name="end" type="TextureRect" parent="CanvasLayer/SpawnToolbar"]
 layout_mode = 2
 texture = ExtResource("11_ywsqi")
 stretch_mode = 2
@@ -1266,3 +1267,38 @@ offset_bottom = 181.0
 scale = Vector2(3, 3)
 text = "Clear/Del"
 script = ExtResource("13_x42w8")
+
+[node name="UnitBar" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_top = -32.0
+offset_right = 16.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(3, 3)
+pivot_offset = Vector2(16, 29.125)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/UnitBar"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="TextureRect" parent="CanvasLayer/UnitBar/HBoxContainer" instance=ExtResource("19_0aloa")]
+layout_mode = 2
+
+[node name="TextureRect2" parent="CanvasLayer/UnitBar/HBoxContainer" instance=ExtResource("19_0aloa")]
+layout_mode = 2
