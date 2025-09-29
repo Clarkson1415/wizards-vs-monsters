@@ -3,20 +3,23 @@ using System;
 
 public partial class AnimationComponent : AnimationPlayer
 {
-	/// <summary>
-	/// For attacks
-	/// </summary>
-	/// <param name="animName"></param>
-	private void UpdateAnimation(string animName)
+
+    // var animationLibraryName = this.animationPlayer.GetAnimationLibraryList()[0].ToString();
+    private string animationLibraryName;
+
+    public void SetAnimationLibraryName(string libararyName)
+    {
+        animationLibraryName = libararyName;
+    }
+
+    /// <summary>
+    /// For attacks
+    /// </summary>
+    /// <param name="animName"></param>
+    private void UpdateAnimation(string animName)
 	{
         if (CurrentAnimation.Contains("die"))
         {
-            return;
-        }
-
-        if (animName.Contains("die"))
-        {
-            Play(animName);
             return;
         }
 
@@ -49,9 +52,10 @@ public partial class AnimationComponent : AnimationPlayer
             animName = "idle";
         }
 
-        var animToPlay = $"{animName}_{direction}";
+        var animToPlay = $"{animationLibraryName}/{animName}_{direction}";
 
-        if (!GetAnimationList().Contains(animToPlay))
+        var animationsList = GetAnimationList();
+        if (!animationsList.Contains(animToPlay))
         {
             Logger.LogError($"Missing animation: {animToPlay} on character {GetParent().Name}");
             return;

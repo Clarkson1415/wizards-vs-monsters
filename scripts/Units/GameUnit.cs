@@ -85,15 +85,14 @@ public partial class GameUnit : CharacterBody2D
     /// </summary>
     private void OnAttackFrame()
     {
-        if (targetsInRange.Count == 0) { return; }
-
         UpdateTargets();
+        if (targetsInRange.Count == 0) { return; }
 
         if (currentTarget == null || (currentTarget.GetCurrentHealth() <= 0))
         {
             targetsInRange.First().TakeDamage(this.baseUnitDamagePerAnimation, this);
         }
-        else
+        else if (targetsInRange.Contains(currentTarget))
         {
             currentTarget.TakeDamage(this.baseUnitDamagePerAnimation, this);
         }
@@ -116,10 +115,23 @@ public partial class GameUnit : CharacterBody2D
         this.animatedSprite2D.SpriteFrames = relevantSprite2d.SpriteFrames;
         this.animatedSprite2D.Play();
 
+        // make sure material is set as unique otherwise white flashes on all units.
+        this.animatedSprite2D.Material = this.animatedSprite2D.Material.DuplicateDeep() as Material;
+
+        var listbefore = this.animationPlayer.GetAnimationLibraryList();
+
+        foreach (var lib in this.animationPlayer.GetAnimationLibraryList())
+        {
+            this.animationPlayer.RemoveAnimationLibrary(lib);
+        }
+
         var list = this.animationPlayer.GetAnimationLibraryList();
-        this.animationPlayer.RemoveAnimationLibrary(string.Empty);
-        this.animationPlayer.AddAnimationLibrary(string.Empty, resource.GetAnimationLibrary());
-        var nlist = this.animationPlayer.GetAnimationLibraryList();
+
+        var libraryName = "added";
+        this.animationPlayer.AddAnimationLibrary(libraryName, resource.GetAnimationLibrary());
+        var aniamtoins = this.animationPlayer.GetAnimationList();
+
+        this.animationPlayer.SetAnimationLibraryName(libraryName);
 
         this.resource = resource;
         if (resource == null)
@@ -186,15 +198,20 @@ public partial class GameUnit : CharacterBody2D
     {
         CurrentCommand = COMMAND.AttackTarget;
         currentTarget = enemyToTarget.UnitBody;
-        navAgent.TargetPosition = GetPositionWhereUnitIsInRange(currentTarget);
+        navAgent.TargetPosition = GetPositionWhereUnitIsJustInRange(currentTarget);
         targetDirectionUnitVector = RoundToNearestCardinalDirection((navAgent.TargetPosition - GlobalPosition).Normalized());
     }
 
     private void OnHit(GameUnit attacker)
     {
+        Logger.Log($"this at {Position} hit by {attacker.Position}, attackers faction: {attacker.resource.GetFaction()} tihs faction: {this.resource.GetFaction()}");
+        Logger.Log($"attackers targets {attacker.targetsInRange}");
+        Logger.Log($"is this in attackers targets {attacker.targetsInRange.Contains(this.UnitBody)}");
+
         var material = (ShaderMaterial)animatedSprite2D.Material;
         // Flash white instantly
         material.SetShaderParameter("flash_strength", 1.0f);
+        
         // Reset after a short time
         GetTree().CreateTimer(0.1).Timeout += () =>
         {
@@ -214,9 +231,11 @@ public partial class GameUnit : CharacterBody2D
 
     private UnitBody currentTarget;
 
-    private Vector2 GetPositionWhereUnitIsInRange(UnitBody areaToTarget)
+    private Vector2 GetPositionWhereUnitIsJustInRange(UnitBody areaToTarget)
     {
         return areaToTarget.GlobalPosition;
+
+        // TODO: not working.
 
         Vector2 currentPosition = GlobalPosition;
         Vector2 targetCenter = areaToTarget.GlobalPosition;
@@ -293,18 +312,16 @@ public partial class GameUnit : CharacterBody2D
 
     private void UpdateTargets()
     {
-        targetsInRange.Clear();
-
         // remove dead enemy targets
         if (targetsInNeabyChunkAndAlive.Any(x => x.GetCurrentHealth() <= 0))
         {
             targetsInNeabyChunkAndAlive.RemoveAll(x => x.GetCurrentHealth() <= 0);
         }
 
+        targetsInRange.Clear();
         // update targets in range
         foreach (var unitBody in targetsInNeabyChunkAndAlive)
         {
-            targetsInRange.Clear();
             // calculate boolean return true if area is witihin the distance between this.GlobalPosition and the float rangeInPixels
             if (IsAreaWithinRange(unitBody))
             {
@@ -313,22 +330,25 @@ public partial class GameUnit : CharacterBody2D
         }
     }
 
+    [Export] private CollisionShape2D collisionShape;
+
     public override void _PhysicsProcess(double delta)
     {
         base._PhysicsProcess(delta);
         if (this.resource == null) { return; }
 
-        if (UnitBody.GetCurrentHealth() <= 0)
+        if (UnitBody.GetCurrentHealth() <= 0 && state != unitState.Dead)
         {
             animationPlayer.UpdateAnimation(directionFacingUnitVector, "die");
+            this.CollisionMask = 0;
+            this.CollisionLayer= 0;
+            this.collisionShape.Disabled = true;
+            this.navAgent.QueueFree();
             state = unitState.Dead;
-        }
-
-        if (animationPlayer.CurrentAnimation.Contains("attack"))
-        {
-            // wait for attack animation to finish.
             return;
         }
+
+        UpdateTargets();
 
         float deltaf = (float)GetPhysicsProcessDeltaTime();
         switch (this.state)
@@ -336,7 +356,11 @@ public partial class GameUnit : CharacterBody2D
             case unitState.Idle:
                 navAgent.SetVelocity(Vector2.Zero);
 
-                if ((CurrentCommand == COMMAND.MoveToPosition && !navAgent.IsNavigationFinished()) || (CurrentCommand == COMMAND.AttackTarget))
+                var atPos = (this.GlobalPosition - navAgent.TargetPosition).Length() < navAgent.TargetDesiredDistance;
+                var hasBeenPushedFromPosition = navAgent.IsNavigationFinished() && !atPos;
+
+                if ((CurrentCommand == COMMAND.MoveToPosition && (!navAgent.IsNavigationFinished() || hasBeenPushedFromPosition))
+                    || (CurrentCommand == COMMAND.AttackTarget))
                 {
                     state = unitState.MoveToPosition;
                 }
@@ -353,8 +377,7 @@ public partial class GameUnit : CharacterBody2D
                 // update target positoin and orientation if following a target.
                 if (CurrentCommand == COMMAND.AttackTarget)
                 {
-                    UpdateTargets();
-                    navAgent.TargetPosition = GetPositionWhereUnitIsInRange(currentTarget);
+                    navAgent.TargetPosition = GetPositionWhereUnitIsJustInRange(currentTarget);
                     targetDirectionUnitVector = RoundToNearestCardinalDirection((navAgent.TargetPosition - GlobalPosition).Normalized());
 
                     // TODO: this should be happening before this guy is right on top of the unit.
@@ -412,13 +435,18 @@ public partial class GameUnit : CharacterBody2D
             case unitState.Attacking:
                 navAgent.SetVelocity(Vector2.Zero);
 
+                if (animationPlayer.CurrentAnimation.Contains("attack"))
+                {
+                    // wait for attack animation to finish.
+                    return;
+                }
+
                 // animation face the direction of the one your attacking.
                 if (targetsInRange.Count != 0)
                 {
                     var direction = (targetsInRange.First().GlobalPosition - GlobalPosition).Normalized();
                     directionFacingUnitVector = RoundToNearestCardinalDirection(direction);
                 }
-                animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
 
                 // check changes
                 // if targetting a guy and not dead and it moved out of range or died.
@@ -433,15 +461,21 @@ public partial class GameUnit : CharacterBody2D
                     {
                         Logger.Log($"Blue {this.Name} emmitted signal that target left. retargeting. state: {state}");
                     }
+
+                    return;
                 }
                 else if ((CurrentCommand == COMMAND.Nothing) && targetsInRange.Count == 0)
                 {
                     state = unitState.Idle;
+                    return;
                 }
                 else if (CurrentCommand == COMMAND.MoveToPosition)
                 {
                     state = unitState.MoveToPosition;
+                    return;
                 }
+
+                animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
                 break;
             case unitState.Dead:
                 break;

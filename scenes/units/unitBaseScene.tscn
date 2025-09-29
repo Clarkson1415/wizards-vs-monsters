@@ -1,4 +1,4 @@
-[gd_scene load_steps=122 format=3 uid="uid://boxqkw8j620v2"]
+[gd_scene load_steps=123 format=3 uid="uid://boxqkw8j620v2"]
 
 [ext_resource type="Script" uid="uid://bwuvxj280qfn7" path="res://scripts/Units/GameUnit.cs" id="1_g01vy"]
 [ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scripts/UnitBody.cs" id="2_qlqyl"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scripts/UnitIndicator.cs" id="4_qmf2c"]
 [ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://scripts/AnimationComponent.cs" id="5_iivwh"]
 [ext_resource type="AnimationLibrary" uid="uid://dw6a1i0av6rop" path="res://animationlibraries/ogreOfKershAnimationLibrary.res" id="5_qlqyl"]
-[ext_resource type="Material" uid="uid://bfsd5u2wvg15v" path="res://materials/white_flash_material.tres" id="6_n5egc"]
 [ext_resource type="Texture2D" uid="uid://bcqjxm4cj122d" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - spell 2.png" id="7_4kqpf"]
 [ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - death.png" id="8_5k8ke"]
 [ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - hit.png" id="9_7dm4a"]
@@ -14,8 +13,8 @@
 [ext_resource type="Texture2D" uid="uid://b47ugpsltahyn" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - walk.png" id="11_jihbs"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g01vy"]
-radius = 5.0
-height = 14.0
+radius = 4.0
+height = 10.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hw5ae"]
 size = Vector2(16, 16)
@@ -339,6 +338,32 @@ _data = {
 &"walk_right": SubResource("Animation_bg6y2"),
 &"walk_up": SubResource("Animation_ujbpr")
 }
+
+[sub_resource type="Shader" id="Shader_g01vy"]
+code = "shader_type canvas_item;
+
+uniform float flash_strength : hint_range(0.0, 1.0) = 0.0;
+
+void vertex() {
+	// Called for every vertex the material is visible on.
+}
+
+void fragment() {
+	// Called for every pixel the material is visible on.
+	vec4 tex_color = texture(TEXTURE, UV);
+    // mix sprite color with white, controlled by flash_strength
+    COLOR = mix(tex_color, vec4(1.0, 1.0, 1.0, tex_color.a), flash_strength);
+}
+
+//void light() {
+//	// Called for every pixel for every light affecting the CanvasItem.
+//	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g01vy"]
+shader = SubResource("Shader_g01vy")
+shader_parameter/flash_strength = 0.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0xwvb"]
 atlas = ExtResource("7_4kqpf")
@@ -688,7 +713,7 @@ region = Rect2(64, 96, 32, 32)
 atlas = ExtResource("11_jihbs")
 region = Rect2(96, 96, 32, 32)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_l6rff"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_qlqyl"]
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -1065,9 +1090,9 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lnd3i"]
-size = Vector2(18, 18)
+size = Vector2(22, 22)
 
-[node name="unit" type="CharacterBody2D" node_paths=PackedStringArray("navAgent", "ClickableUnitComponent", "UnitBody", "animationPlayer", "animatedSprite2D", "inRangeArea")]
+[node name="unit" type="CharacterBody2D" node_paths=PackedStringArray("navAgent", "ClickableUnitComponent", "UnitBody", "animationPlayer", "animatedSprite2D", "inRangeArea", "collisionShape")]
 y_sort_enabled = true
 script = ExtResource("1_g01vy")
 navAgent = NodePath("NavigationAgent2D")
@@ -1076,8 +1101,10 @@ UnitBody = NodePath("body")
 animationPlayer = NodePath("AnimationPlayer")
 animatedSprite2D = NodePath("AnimatedSprite2D")
 inRangeArea = NodePath("range")
+collisionShape = NodePath("CollisionShape2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
 shape = SubResource("CapsuleShape2D_g01vy")
 
 [node name="body" type="Area2D" parent="."]
@@ -1117,10 +1144,9 @@ autoplay = "idle_right"
 script = ExtResource("5_iivwh")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-y_sort_enabled = true
-material = ExtResource("6_n5egc")
+material = SubResource("ShaderMaterial_g01vy")
 position = Vector2(0, -4)
-sprite_frames = SubResource("SpriteFrames_l6rff")
+sprite_frames = SubResource("SpriteFrames_qlqyl")
 animation = &"attack_1_left"
 
 [node name="range" type="Area2D" parent="."]
@@ -1130,11 +1156,14 @@ collision_layer = 0
 shape = SubResource("RectangleShape2D_lnd3i")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-target_desired_distance = 1.0
+path_desired_distance = 16.0
+target_desired_distance = 4.0
 path_max_distance = 32.0
 avoidance_enabled = true
 radius = 8.0
 max_neighbors = 1000
+time_horizon_agents = 10.0
+time_horizon_obstacles = 10.0
 debug_use_custom = true
 debug_path_custom_color = Color(0, 0.90533316, 0.97, 1)
 debug_path_custom_point_size = 2.0

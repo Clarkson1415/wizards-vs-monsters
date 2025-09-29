@@ -458,7 +458,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_tm8b8")
 }],
-"loop": true,
+"loop": false,
 "name": &"die_down",
 "speed": 8.0
 }, {
@@ -478,7 +478,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_uw0no")
 }],
-"loop": true,
+"loop": false,
 "name": &"die_left",
 "speed": 8.0
 }, {
@@ -498,7 +498,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lie7m")
 }],
-"loop": true,
+"loop": false,
 "name": &"die_right",
 "speed": 8.0
 }, {
@@ -518,7 +518,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_r0qom")
 }],
-"loop": true,
+"loop": false,
 "name": &"die_up",
 "speed": 8.0
 }, {
@@ -706,5 +706,5 @@ animations = [{
 [node name="AnimatedSprite2D" type="AnimatedSprite2D"]
 material = ExtResource("1_xupdr")
 sprite_frames = SubResource("SpriteFrames_jn8rs")
-animation = &"idle_left"
+animation = &"die_up"
 autoplay = "idle_left"
