@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=24 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://art/environment/Forest Tileset.png" id="1_uebra"]
 [ext_resource type="Script" uid="uid://88kl3wkbs7mp" path="res://scenes/ReceieveInput.cs" id="5_x42w8"]
@@ -14,8 +14,10 @@
 [ext_resource type="Script" uid="uid://mdtteu5lpdeg" path="res://scripts/ToggleTime.cs" id="13_x42w8"]
 [ext_resource type="Resource" uid="uid://jyknnrb6of2w" path="res://resources/GameUnitDataResources/ogre.tres" id="15_6puu6"]
 [ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/ClickToSpawn.cs" id="16_6puu6"]
+[ext_resource type="Script" uid="uid://4ep8a4euauus" path="res://scripts/UIScripts/ClearCursor.cs" id="17_1vvmy"]
 [ext_resource type="Script" uid="uid://6gyf6e6op2tv" path="res://scenes/MovementControls.cs" id="17_k6861"]
 [ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://resources/GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
+[ext_resource type="Script" uid="uid://cdneyk6se25bd" path="res://scripts/UIScripts/DeselectAll.cs" id="18_0aloa"]
 [ext_resource type="PackedScene" uid="uid://gd1n7f872n6s" path="res://scenes/unitBarSlot.tscn" id="19_0aloa"]
 [ext_resource type="Script" uid="uid://dftp2nwcj0ql" path="res://scripts/UnitBar.cs" id="19_35vvr"]
 
@@ -1232,7 +1234,7 @@ theme_override_font_sizes/font_size = 16
 text = "Pause/Play"
 script = ExtResource("13_x42w8")
 
-[node name="Pause2" type="Button" parent="CanvasLayer - scale 3"]
+[node name="clear cursor" type="Button" parent="CanvasLayer - scale 3"]
 offset_left = 32.999996
 offset_top = 103.0
 offset_right = 113.0
@@ -1241,8 +1243,9 @@ scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Clear Cursor"
+script = ExtResource("17_1vvmy")
 
-[node name="Pause3" type="Button" parent="CanvasLayer - scale 3"]
+[node name="deselect all" type="Button" parent="CanvasLayer - scale 3"]
 offset_left = 32.999996
 offset_top = 185.0
 offset_right = 113.0
@@ -1251,6 +1254,7 @@ scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Deselect All"
+script = ExtResource("18_0aloa")
 
 [node name="UnitBar" type="Control" parent="CanvasLayer - scale 3" node_paths=PackedStringArray("slots")]
 layout_mode = 3

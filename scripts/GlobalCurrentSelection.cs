@@ -14,11 +14,32 @@ namespace WizardsVsMonster.scripts
     /// </summary>
     public partial class GlobalCurrentSelection : Node
     {
+        public void ClearCursor()
+        {
+            this.DeselectAll();
+
+            SelectedUnitToSpawn = null;
+            LastSelectedUnitsInfo = null;
+        }
+
         private static GlobalCurrentSelection instance = new GlobalCurrentSelection();
 
         public static GlobalCurrentSelection GetInstance()
         {
             return instance;
+        }
+
+        /// <summary>
+        /// Deselcts all highlighted unit groups.
+        /// </summary>
+        public void DeselectAll()
+        {
+            foreach (var group in UnitGroupsHighlighted)
+            {
+                group.TellGroupItWasRemovedFromSelection();
+            }
+
+            UnitGroupsHighlighted.Clear();
         }
 
         [Signal]
