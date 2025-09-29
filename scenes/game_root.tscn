@@ -971,7 +971,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("16_6puu6")
 unitGroupScene = ExtResource("6_6puu6")
-unitBar = NodePath("../../CanvasLayer/UnitBar")
+unitBar = NodePath("../../CanvasLayer - scale 3/UnitBar")
 
 [node name="MovementControls" type="Control" parent="Input"]
 layout_mode = 1
@@ -989,10 +989,10 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("17_k6861")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer - scale 3" type="CanvasLayer" parent="."]
 follow_viewport_scale = 3.0
 
-[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range", "speed", "size")]
+[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer - scale 3" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range", "speed", "size")]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -1013,7 +1013,7 @@ range = NodePath("Stats/VBoxContainer/HBoxContainer4/rangestat")
 speed = NodePath("Stats/VBoxContainer/speed/rangestat2")
 size = NodePath("Stats/VBoxContainer/size/rangestat2")
 
-[node name="Name" type="Label" parent="CanvasLayer/PropertyPanel"]
+[node name="Name" type="Label" parent="CanvasLayer - scale 3/PropertyPanel"]
 layout_mode = 0
 offset_left = 14.333332
 offset_top = 7.666667
@@ -1026,12 +1026,12 @@ theme_override_font_sizes/font_size = 16
 text = "Ukimian Ice Mage"
 autowrap_mode = 2
 
-[node name="Stats" type="Control" parent="CanvasLayer/PropertyPanel"]
+[node name="Stats" type="Control" parent="CanvasLayer - scale 3/PropertyPanel"]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/PropertyPanel/Stats"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer - scale 3/PropertyPanel/Stats"]
 layout_mode = 0
 offset_left = 14.666659
 offset_top = 34.333332
@@ -1039,10 +1039,10 @@ offset_right = 92.66666
 offset_bottom = 132.33334
 scale = Vector2(0.7185835, 0.7185835)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="armour" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
+[node name="armour" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1050,7 +1050,7 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="astat" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
+[node name="astat" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1058,10 +1058,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="health" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
+[node name="health" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1069,7 +1069,7 @@ theme_override_font_sizes/font_size = 16
 text = "Health"
 autowrap_mode = 2
 
-[node name="healthstat" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
+[node name="healthstat" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1077,10 +1077,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="dps" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
+[node name="dps" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1088,7 +1088,7 @@ theme_override_font_sizes/font_size = 16
 text = "DPS"
 autowrap_mode = 2
 
-[node name="dpsstat" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
+[node name="dpsstat" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1096,10 +1096,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
+[node name="range" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1107,7 +1107,7 @@ theme_override_font_sizes/font_size = 16
 text = "Range"
 autowrap_mode = 2
 
-[node name="rangestat" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
+[node name="rangestat" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1115,10 +1115,10 @@ theme_override_font_sizes/font_size = 16
 text = "Range"
 autowrap_mode = 2
 
-[node name="speed" type="HBoxContainer" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer"]
+[node name="speed" type="HBoxContainer" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range2" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/speed"]
+[node name="range2" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/speed"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1126,7 +1126,7 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="rangestat2" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/speed"]
+[node name="rangestat2" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/speed"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1134,10 +1134,10 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="size" type="HBoxContainer" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer"]
+[node name="size" type="HBoxContainer" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range2" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/size"]
+[node name="range2" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/size"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1145,7 +1145,7 @@ theme_override_font_sizes/font_size = 16
 text = "Size"
 autowrap_mode = 2
 
-[node name="rangestat2" type="Label" parent="CanvasLayer/PropertyPanel/Stats/VBoxContainer/size"]
+[node name="rangestat2" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Stats/VBoxContainer/size"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1153,7 +1153,7 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="SwitchView" type="Button" parent="CanvasLayer/PropertyPanel" node_paths=PackedStringArray("description", "stats")]
+[node name="SwitchView" type="Button" parent="CanvasLayer - scale 3/PropertyPanel" node_paths=PackedStringArray("description", "stats")]
 layout_mode = 0
 offset_left = 50.333344
 offset_top = 106.66667
@@ -1166,7 +1166,7 @@ script = ExtResource("13_35vvr")
 description = NodePath("../Description")
 stats = NodePath("../Stats")
 
-[node name="Description" type="Control" parent="CanvasLayer/PropertyPanel"]
+[node name="Description" type="Control" parent="CanvasLayer - scale 3/PropertyPanel"]
 visible = false
 anchors_preset = 0
 offset_left = 11.0
@@ -1174,7 +1174,7 @@ offset_top = 34.0
 offset_right = 51.0
 offset_bottom = 74.0
 
-[node name="desc" type="Label" parent="CanvasLayer/PropertyPanel/Description"]
+[node name="desc" type="Label" parent="CanvasLayer - scale 3/PropertyPanel/Description"]
 layout_mode = 0
 offset_right = 112.29031
 offset_bottom = 65.0
@@ -1185,7 +1185,7 @@ theme_override_font_sizes/font_size = 16
 text = "A medium length description a d dllkjd lkjld ljd ldkj ld ldjld jdldkj dlj d"
 autowrap_mode = 2
 
-[node name="SpawnToolbar" type="HBoxContainer" parent="CanvasLayer"]
+[node name="SpawnToolbar" type="HBoxContainer" parent="CanvasLayer - scale 3"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1198,50 +1198,61 @@ pivot_offset = Vector2(33, 0)
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="front" type="TextureRect" parent="CanvasLayer/SpawnToolbar"]
+[node name="front" type="TextureRect" parent="CanvasLayer - scale 3/SpawnToolbar"]
 layout_mode = 2
 texture = ExtResource("11_ywsqi")
 stretch_mode = 2
 
-[node name="slot3" parent="CanvasLayer/SpawnToolbar" instance=ExtResource("12_x5456")]
+[node name="slot3" parent="CanvasLayer - scale 3/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("12_k6861")
 
-[node name="slot4" parent="CanvasLayer/SpawnToolbar" instance=ExtResource("12_x5456")]
+[node name="slot4" parent="CanvasLayer - scale 3/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("17_so1mv")
 
-[node name="slot5" parent="CanvasLayer/SpawnToolbar" instance=ExtResource("12_x5456")]
+[node name="slot5" parent="CanvasLayer - scale 3/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("15_6puu6")
 
-[node name="end" type="TextureRect" parent="CanvasLayer/SpawnToolbar"]
+[node name="end" type="TextureRect" parent="CanvasLayer - scale 3/SpawnToolbar"]
 layout_mode = 2
 texture = ExtResource("11_ywsqi")
 stretch_mode = 2
 flip_h = true
 
-[node name="Pause" type="Button" parent="CanvasLayer"]
-visible = false
+[node name="Pause" type="Button" parent="CanvasLayer - scale 3"]
 offset_left = 32.999996
 offset_top = 22.999998
-offset_right = 130.0
-offset_bottom = 54.0
+offset_right = 101.0
+offset_bottom = 44.0
 scale = Vector2(3, 3)
-text = "Pause"
+theme_override_fonts/font = ExtResource("11_x42w8")
+theme_override_font_sizes/font_size = 16
+text = "Pause/Play"
 script = ExtResource("13_x42w8")
 
-[node name="Clear" type="Button" parent="CanvasLayer"]
-visible = false
-offset_left = 33.0
-offset_top = 150.0
-offset_right = 130.0
-offset_bottom = 181.0
+[node name="Pause2" type="Button" parent="CanvasLayer - scale 3"]
+offset_left = 32.999996
+offset_top = 103.0
+offset_right = 113.0
+offset_bottom = 124.0
 scale = Vector2(3, 3)
-text = "Clear/Del"
-script = ExtResource("13_x42w8")
+theme_override_fonts/font = ExtResource("11_x42w8")
+theme_override_font_sizes/font_size = 16
+text = "Clear Cursor"
 
-[node name="UnitBar" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("slots")]
+[node name="Pause3" type="Button" parent="CanvasLayer - scale 3"]
+offset_left = 32.999996
+offset_top = 185.0
+offset_right = 113.0
+offset_bottom = 206.0
+scale = Vector2(3, 3)
+theme_override_fonts/font = ExtResource("11_x42w8")
+theme_override_font_sizes/font_size = 16
+text = "Deselect All"
+
+[node name="UnitBar" type="Control" parent="CanvasLayer - scale 3" node_paths=PackedStringArray("slots")]
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
@@ -1259,7 +1270,7 @@ script = ExtResource("19_35vvr")
 UnitBarSlotScene = ExtResource("19_0aloa")
 slots = NodePath("HBoxContainer")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/UnitBar"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer - scale 3/UnitBar"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5

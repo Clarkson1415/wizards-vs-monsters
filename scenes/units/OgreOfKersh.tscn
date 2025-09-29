@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://k7soiss1qd52"]
+
+[ext_resource type="PackedScene" uid="uid://boxqkw8j620v2" path="res://scenes/units/unitBaseScene.tscn" id="1_l7y4a"]
+
+[node name="unit" instance=ExtResource("1_l7y4a")]
+
+[node name="AnimatedSprite2D" parent="." index="5"]
+position = Vector2(0, 0)

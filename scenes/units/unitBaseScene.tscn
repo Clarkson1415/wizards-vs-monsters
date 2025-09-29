@@ -1,4 +1,4 @@
-[gd_scene load_steps=123 format=3 uid="uid://boxqkw8j620v2"]
+[gd_scene load_steps=128 format=3 uid="uid://boxqkw8j620v2"]
 
 [ext_resource type="Script" uid="uid://bwuvxj280qfn7" path="res://scripts/Units/GameUnit.cs" id="1_g01vy"]
 [ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scripts/UnitBody.cs" id="2_qlqyl"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://scripts/AnimationComponent.cs" id="5_iivwh"]
 [ext_resource type="AnimationLibrary" uid="uid://dw6a1i0av6rop" path="res://animationlibraries/ogreOfKershAnimationLibrary.res" id="5_qlqyl"]
 [ext_resource type="Texture2D" uid="uid://bcqjxm4cj122d" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - spell 2.png" id="7_4kqpf"]
+[ext_resource type="Texture2D" uid="uid://bm7mu6kpvdrl6" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - idle.png" id="7_qlqyl"]
 [ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - death.png" id="8_5k8ke"]
 [ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - hit.png" id="9_7dm4a"]
 [ext_resource type="Texture2D" uid="uid://06jmvfu4a5iw" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - idle.png" id="10_8ogao"]
@@ -365,6 +366,22 @@ void fragment() {
 shader = SubResource("Shader_g01vy")
 shader_parameter/flash_strength = 0.0
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ux2s3"]
+atlas = ExtResource("7_qlqyl")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qmf2c"]
+atlas = ExtResource("7_qlqyl")
+region = Rect2(48, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iivwh"]
+atlas = ExtResource("7_qlqyl")
+region = Rect2(96, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n5egc"]
+atlas = ExtResource("7_qlqyl")
+region = Rect2(144, 48, 48, 48)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_0xwvb"]
 atlas = ExtResource("7_4kqpf")
 region = Rect2(0, 0, 32, 32)
@@ -715,6 +732,23 @@ region = Rect2(96, 96, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_qlqyl"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ux2s3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qmf2c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iivwh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n5egc")
+}],
+"loop": true,
+"name": &"Ogre_test",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0xwvb")

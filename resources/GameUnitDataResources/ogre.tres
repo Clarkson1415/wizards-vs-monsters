@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="GameUnitResource" load_steps=6 format=3 uid="uid://jyknnrb6of2w"]
 
-[ext_resource type="PackedScene" uid="uid://cvmqdgknhsdca" path="res://scenes/ogre_of_kersh.tscn" id="1_7yiut"]
 [ext_resource type="Script" uid="uid://cqcq15rhu6tjp" path="res://scripts/resourceScripts/GameUnitResource.cs" id="1_dg827"]
 [ext_resource type="PackedScene" uid="uid://dwcr6uwcbb0ok" path="res://scenes/UnitAnimations/ogreOfKeshAnimations.tscn" id="1_uj6k6"]
 [ext_resource type="AnimationLibrary" uid="uid://dw6a1i0av6rop" path="res://animationlibraries/ogreOfKershAnimationLibrary.res" id="2_s0p53"]
+[ext_resource type="PackedScene" uid="uid://k7soiss1qd52" path="res://scenes/units/OgreOfKersh.tscn" id="3_s0p53"]
 [ext_resource type="Texture2D" uid="uid://bet20faclf2m7" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/OgreButton.png" id="3_uj6k6"]
 
 [resource]
@@ -18,8 +18,8 @@ size = 1
 range = 1
 DPS = 1
 description = "stinky"
-gameUnit = ExtResource("1_7yiut")
+gameUnit = ExtResource("3_s0p53")
 toolbarImage = ExtResource("3_uj6k6")
-numberOfUnitsInSquadron = 1
+numberOfUnitsInSquadron = 6
 faction = 1
 metadata/_custom_type_script = "uid://cqcq15rhu6tjp"

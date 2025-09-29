@@ -35,7 +35,7 @@ public partial class UnitGroup : Node2D
 
         for (int i = 0; i < number; i++)
         {
-            var newUnit = baseUnitScene.Instantiate<GameUnit>();
+            var newUnit = unitResource.GetUnitScene().Instantiate<GameUnit>();
             newUnit.Setup(unitResource);
             AddChild(newUnit);
             allUnits.Add(newUnit);
