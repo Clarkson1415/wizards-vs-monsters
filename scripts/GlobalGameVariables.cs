@@ -1,3 +1,4 @@
+using Godot;
 using Godot.Collections;
 
 namespace WizardsVsMonster.scripts
@@ -28,5 +29,15 @@ namespace WizardsVsMonster.scripts
         public static double FRESH_STATUS_TIME = 5;
 
         public static float FRESH_SPEED_MODIFIER = 20;
+
+        /// <summary>
+        /// Returns vector 2 left if on x < 0 on the let side of the board else  right if x > 0
+        /// </summary>
+        /// <param name="position">unit at</param>
+        /// <returns></returns>
+        public static Vector2 GetDefaultDirection(Vector2 position)
+        {
+            return position.X > 0 ? Vector2.Left : Vector2.Right;
+        }
     }
 }

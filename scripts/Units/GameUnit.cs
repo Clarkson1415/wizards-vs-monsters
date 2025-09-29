@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using WizardsVsMonster.scripts;
 
 /// <summary>
@@ -12,6 +13,8 @@ using WizardsVsMonster.scripts;
 [GlobalClass]
 public partial class GameUnit : Node2D
 {
+    [Export] public NavigationAgent2D navAgent;
+
     [Export] public ClickableUnitComponent ClickableUnitComponent { get; private set; }
 
     [Export] public UnitBody UnitBody { get; private set; }
@@ -30,14 +33,14 @@ public partial class GameUnit : Node2D
 
     protected Vector2 velocity;
 
+    private float rangeInPixels;
+
     public bool IsDead => UnitBody.GetCurrentHealth() <= 0;
 
-    [Export] private Area2D range_left;
-    [Export] private Area2D range_right;
-    [Export] private Area2D range_down;
-    [Export] private Area2D range_up;
+    [Export] private Area2D inRangeArea;
 
-    private List<UnitBody> targetsInRangeAndAlive = new List<UnitBody>();
+    private List<UnitBody> targetsInNeabyChunkAndAlive = new List<UnitBody>();
+    private List<UnitBody> targetsInRange = new List<UnitBody>();
 
     [Signal] public delegate void OnAttackedEventHandler(UnitGroup attackers);
 
@@ -47,39 +50,37 @@ public partial class GameUnit : Node2D
     /// <param name="attackers"></param>
     [Signal] public delegate void OnTargetsMovedAwayWhileAttackingEventHandler(UnitGroup attackers);
 
-    private void UpdateTargetsInRange()
+    public void OnUnitAreaEnteredChunk(Area2D area)
     {
-        targetsInRangeAndAlive.Clear();
-
-        var areas = new List<Area2D> { range_left, range_right, range_down, range_up, this.UnitBody };
-        areas.ForEach(x => UpdateEnemiesInArea(x));
-    }
-
-    private void UpdateEnemiesInArea(Area2D area)
-    {
-        if (!area.HasOverlappingAreas())
+        var unit = area as UnitBody;
+        if (unit == null)
         {
             return;
         }
 
-        var overlapping = area.GetOverlappingAreas();
-
-        foreach (var overlap in overlapping)
+        if (IsUnitAnEnemy(unit) && (unit.GetCurrentHealth() > 0) && (!targetsInNeabyChunkAndAlive.Contains(unit)))
         {
-            if (overlap is UnitBody targetAsArea)
-            {
-                if (targetAsArea.GetCurrentHealth() <= 0)
-                {
-                    return;
-                }
-                else if (!GlobalGameVariables.FactionEnemies[this.resource.GetFaction()].Contains(targetAsArea.GetFaction()))
-                {
-                    return;
-                }
+            targetsInNeabyChunkAndAlive.Add(unit);
+        }
+    }
 
-                targetsInRangeAndAlive.Add(targetAsArea);
-            }
-        }        
+    public void OnUnitAreaExitedChunk(Area2D area)
+    {
+        var unit = area as UnitBody;
+        if (unit == null)
+        {
+            return;
+        }
+
+        if (IsUnitAnEnemy(unit) && targetsInNeabyChunkAndAlive.Contains(unit))
+        {
+            targetsInNeabyChunkAndAlive.Remove(unit);
+        }
+    }
+
+    private bool IsUnitAnEnemy(UnitBody targetAsArea)
+    {
+        return GlobalGameVariables.FactionEnemies[this.resource.GetFaction()].Contains(targetAsArea.GetFaction());
     }
 
     /// <summary>
@@ -87,9 +88,9 @@ public partial class GameUnit : Node2D
     /// </summary>
     private void OnAttackFrame()
     {
-        if (targetsInRangeAndAlive.Count == 0) { return; }
+        if (targetsInRange.Count == 0) { return; }
 
-        targetsInRangeAndAlive.First().TakeDamage(this.baseUnitDamagePerAnimation, this);
+        targetsInRange.First().TakeDamage(this.baseUnitDamagePerAnimation, this);
 
         //foreach (var tar in targetsInRange)
         //{
@@ -114,7 +115,22 @@ public partial class GameUnit : Node2D
         ClickableUnitComponent.Setup(resource);
         UnitBody.Setup(this.resource);
 
+        rangeInPixels = ((this.resource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE) / 2) + (this.resource.GetRange() * GlobalGameVariables.CELL_SIZE);
+
         UnitBody.OnThisHit += OnHit;
+
+        inRangeArea.AreaEntered += OnUnitAreaEnteredChunk;
+        inRangeArea.AreaEntered += OnUnitAreaEnteredChunk;
+
+        if (navAgent != null)
+        {
+            navAgent.VelocityComputed += OnVelocityComputed;
+        }
+    }
+
+    public void SetInitialDirectionFacing(Vector2 direction)
+    {
+        directionFacingUnitVector = direction;
     }
 
     private enum unitState
@@ -184,19 +200,101 @@ public partial class GameUnit : Node2D
 
     private UnitBody currentTarget;
 
-    public override void _Process(double delta)
+    /// <summary>
+    /// Calculates if an area is within this units range in pixels.
+    /// </summary>
+    /// <param name="targetArea"></param>
+    /// <returns></returns>
+    private bool IsAreaWithinRange(UnitBody targetArea)
     {
-        base._Process(delta);
+        // 1. Get the current physics space ID
+        var space = GetWorld2D().DirectSpaceState;
+
+        // 2. Define the search parameters (the circular range)
+        var intersectionQuery = new PhysicsShapeQueryParameters2D(); // Correct instantiation
+
+        // Create the circle shape
+        var shape = new CircleShape2D();
+        shape.Radius = rangeInPixels;
+        intersectionQuery.Shape = shape;
+
+        // Set the circle's position
+        // Transform2D(rotation, position)
+        intersectionQuery.Transform = new Transform2D(0, GlobalPosition);
+
+        // Ensure the query checks against Area2Ds
+        intersectionQuery.CollideWithAreas = true;
+
+        // Set the collision mask to only check layers the targetArea is on
+        intersectionQuery.CollisionMask = targetArea.CollisionLayer;
+
+        // 3. Perform the shape intersection query
+        // This returns a list of objects that the circle shape intersects.
+        Godot.Collections.Array<Godot.Collections.Dictionary> results = space.IntersectShape(intersectionQuery);
+
+        // 4. Check if the targetArea is in the results
+        foreach (Godot.Collections.Dictionary result in results)
+        {
+            // Check if the 'collider' key exists and its value is an Object (which Area2D is).
+            if (result.TryGetValue("collider", out Variant colliderValue) && colliderValue.Obj is Area2D colliderArea)
+            {
+                // Check if the hit Area2D is the one we're looking for
+                if (colliderArea == targetArea)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public override void _PhysicsProcess(double delta)
+    {
+        base._PhysicsProcess(delta);
         if (this.resource == null) { return; }
 
-        UpdateTargetsInRange();
+        // remove dead enemy targets
+        if (targetsInNeabyChunkAndAlive.Any(x => x.GetCurrentHealth() <= 0))
+        {
+            targetsInNeabyChunkAndAlive.RemoveAll(x => x.GetCurrentHealth() <= 0);
+        }
+
+        // update targets in range
+        foreach (var unitBody in targetsInNeabyChunkAndAlive)
+        {
+            if (targetsInRange.Contains(unitBody))
+            {
+                if (!IsAreaWithinRange(unitBody))
+                {
+                    targetsInRange.Remove(unitBody);
+                }
+
+                continue;
+            }
+
+            // calculate boolean return true if area is witihin the distance between this.GlobalPosition and the float rangeInPixels
+            if (IsAreaWithinRange(unitBody))
+            {
+                targetsInRange.Add(unitBody);
+            }
+        }
+
         if (UnitBody.GetCurrentHealth() <= 0)
         {
             animationPlayer.UpdateAnimation(directionFacingUnitVector, "die");
             state = unitState.Dead;
         }
 
-        float deltaf = (float)delta;
+        if (animationPlayer.CurrentAnimation.Contains("attack"))
+        {
+            // wait for attack animation to finish.
+            return;
+        }
+
+        navAgent.TargetPosition = this.targetPosition;
+
+        float deltaf = (float)GetPhysicsProcessDeltaTime();
         switch (this.state)
         {
             case unitState.Idle:
@@ -208,7 +306,7 @@ public partial class GameUnit : Node2D
                 }
                 else if (CurrentCommand == COMMAND.Nothing)
                 {
-                    if (targetsInRangeAndAlive.Count > 0)
+                    if (targetsInRange.Count > 0)
                     {
                         state = unitState.Attacking;
                     }
@@ -216,12 +314,6 @@ public partial class GameUnit : Node2D
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "idle");
                 break;
             case unitState.MoveToPosition:
-                if (animationPlayer.CurrentAnimation.Contains("attack"))
-                {
-                    // wait for attack animation to finish.
-                    return;
-                }
-
                 // update target positoin and orientation if following a target.
                 if (CurrentCommand == COMMAND.AttackTarget)
                 {
@@ -229,9 +321,13 @@ public partial class GameUnit : Node2D
                     targetDirectionUnitVector = RoundToNearestCardinalDirection((targetPosition - GlobalPosition).Normalized());
 
                     // TODO: this should be happening before this guy is right on top of the unit.
-                    if (targetsInRangeAndAlive.Contains(currentTarget))
+                    if (targetsInRange.Contains(currentTarget))
                     {
                         state = unitState.Attacking;
+                        if (resource.GetFaction() == GlobalGameVariables.FACTION.monsters)
+                        {
+                            Logger.Log($"{this.Name} found target = {state}");
+                        }
                         return;
                     }
                     else if (currentTarget.GetCurrentHealth() <= 0)
@@ -254,37 +350,45 @@ public partial class GameUnit : Node2D
                 }
 
                 // Apply movement
-                var directionVector = (targetPosition - GlobalPosition).Normalized();
-                velocity = directionVector * unitBaseSpeed * speedModifier;
-                GlobalPosition += velocity * deltaf;
+                var nextPosition = navAgent.GetNextPathPosition();
+                var directionVector = (nextPosition - GlobalPosition).Normalized();
+                var desiredVelocity = directionVector * unitBaseSpeed * speedModifier;
+                navAgent.SetVelocity(desiredVelocity);
+
                 // face toward target position in cardinal direction.
                 directionFacingUnitVector = RoundToNearestCardinalDirection(directionVector);
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "walk");
+
+                if (resource.GetFaction() == GlobalGameVariables.FACTION.monsters)
+                {
+                    Logger.Log($"{this.Name} moved = {state}");
+                }
+
                 break;
             case unitState.Attacking:
                 // animation face the direction of the one your attacking.
-                if (targetsInRangeAndAlive.Count != 0)
+                if (targetsInRange.Count != 0)
                 {
-                    var direction = (targetsInRangeAndAlive.First().GlobalPosition - GlobalPosition).Normalized();
+                    var direction = (targetsInRange.First().GlobalPosition - GlobalPosition).Normalized();
                     directionFacingUnitVector = RoundToNearestCardinalDirection(direction);
                 }
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
 
                 // check changes
                 // if targetting a guy and not dead and it moved out of range or died.
-                if (CurrentCommand == COMMAND.AttackTarget && !targetsInRangeAndAlive.Contains(currentTarget) && (currentTarget.GetCurrentHealth() >= 0))
+                if (CurrentCommand == COMMAND.AttackTarget && (!targetsInRange.Contains(currentTarget) || currentTarget.GetCurrentHealth() <= 0))
                 {
                     state = unitState.Idle;
                     CurrentCommand = COMMAND.Nothing;
                     var group = currentTarget.GetParent<GameUnit>().GetParent<UnitGroup>();
                     EmitSignal(SignalName.OnTargetsMovedAwayWhileAttacking, group);
+
+                    if (resource.GetFaction() == GlobalGameVariables.FACTION.humans)
+                    {
+                        Logger.Log($"Blue {this.Name} emmitted signal that target left. retargeting. state: {state}");
+                    }
                 }
-                else if (CurrentCommand == COMMAND.AttackTarget && currentTarget.GetCurrentHealth() <= 0)
-                {
-                    CurrentCommand = COMMAND.Nothing;
-                    state = unitState.Idle;
-                }
-                else if ((CurrentCommand == COMMAND.Nothing) && targetsInRangeAndAlive.Count == 0)
+                else if ((CurrentCommand == COMMAND.Nothing) && targetsInRange.Count == 0)
                 {
                     state = unitState.Idle;
                 }
@@ -299,10 +403,10 @@ public partial class GameUnit : Node2D
                 break;
         }
 
-        if (resource.GetFaction() == GlobalGameVariables.FACTION.monsters) 
-        {
-            Logger.Log($"state = {state}");
-        }
+        //if (resource.GetFaction() == GlobalGameVariables.FACTION.monsters) 
+        //{
+        //    Logger.Log($"state = {state}");
+        //}
 
     }
 
@@ -355,6 +459,25 @@ public partial class GameUnit : Node2D
         }
 
         activeStatuses.Remove(status);
+    }
+
+    // Add this method to your GameUnit class
+    private void OnVelocityComputed(Vector2 safeVelocity)
+    {
+        // The safeVelocity is the final, adjusted velocity provided by RVO.
+        // We must use this to move the unit.
+        if (state == unitState.MoveToPosition)
+        {
+            // Use delta from _PhysicsProcess/GetPhysicsProcessDeltaTime() for frame-rate independence.
+            float delta = (float)GetPhysicsProcessDeltaTime();
+
+            // This is the line that actually applies the RVO-corrected movement
+            GlobalPosition += safeVelocity * delta;
+
+            // The rest of the movement logic (like animation updates) should probably 
+            // stay in _PhysicsProcess, or at least the animation part could stay there.
+            // For simplicity, let's keep the movement part here.
+        }
     }
 
     private void TryAddStatus(StatusComponent.STATUS status)

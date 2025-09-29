@@ -45,6 +45,7 @@ public partial class UnitGroup : Node2D
         for (int i = 0; i < positions.Count; i++)
         {
             allUnits[i].GlobalPosition = positions[i];
+            allUnits[i].SetInitialDirectionFacing(GlobalGameVariables.GetDefaultDirection(positions[i]));
         }
 
         foreach (var initial in initialStatuses) { TryAddStatus(initial); }
@@ -55,14 +56,6 @@ public partial class UnitGroup : Node2D
             unit.OnAttacked += OnUnitAttacked;
             unit.OnTargetsMovedAwayWhileAttacking += OnTargetsMovedAwayWhileAttacking;
         }
-    }
-
-    private Vector2 GetDefaultDirection()
-    {
-        // TODO
-        var direction = Vector2.Right;
-        Logger.Log("will have to make sure enemies are facing the same as units. TODO calculate based of whos side of the board your plaing on.");
-        return direction;
     }
 
     /// <summary>
@@ -279,13 +272,13 @@ public partial class UnitGroup : Node2D
         var positionsArray = GetPositionsToPutUnitsInGrid(newCentre);
         for (int i = 0; i < positionsArray.Count; i++)
         {
-            allUnits[i].SetTargetPosition(positionsArray[i], GetDefaultDirection());
+            allUnits[i].SetTargetPosition(positionsArray[i], GlobalGameVariables.GetDefaultDirection(allUnits[i].GlobalPosition));
         }
 
-        SpawnTriangleIndicators(positionsArray, GetDefaultDirection());
+        SpawnTriangleIndicators(positionsArray);
     }
 
-    private void SpawnTriangleIndicators(List<Vector2> positions, Vector2 directionUnitsFacingUnitVector)
+    private void SpawnTriangleIndicators(List<Vector2> positions)
     {
         for (int i = 0; i < allUnits.Count; i++)
         {
@@ -295,7 +288,8 @@ public partial class UnitGroup : Node2D
             tri.LoadTriangle(UnitResource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE, UnitResource.GetFaction());
             trianglesToShowNewPos.Add(tri);
 
-            float angleRadians = Mathf.Atan2(directionUnitsFacingUnitVector.Y, directionUnitsFacingUnitVector.X);
+            var directionUnitFacing = GlobalGameVariables.GetDefaultDirection(positions[i]);
+            float angleRadians = Mathf.Atan2(directionUnitFacing.Y, directionUnitFacing.X);
             tri.GlobalRotation = angleRadians;
         }
     }
@@ -316,7 +310,7 @@ public partial class UnitGroup : Node2D
             allUnits[i].SetTargetPosition(positionsArray[i], unitFacingDir);
         }
 
-        SpawnTriangleIndicators(positionsArray, GetDefaultDirection());
+        SpawnTriangleIndicators(positionsArray);
     }
 
     private void ClearTriangles()
@@ -347,7 +341,6 @@ public partial class UnitGroup : Node2D
 
     private void OnUnitAttacked(UnitGroup attackers)
     {
-        Logger.Log("unit attacked, will retaliate if not busy.");
         // on unit attacked if no other command in place. then attack the attacker.
         if (UnitsRemaining.FirstOrDefault().CurrentCommand == GameUnit.COMMAND.Nothing)
         {

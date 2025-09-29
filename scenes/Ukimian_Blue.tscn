@@ -1,4 +1,4 @@
-[gd_scene load_steps=112 format=3 uid="uid://beo7n41qd3xs7"]
+[gd_scene load_steps=109 format=3 uid="uid://beo7n41qd3xs7"]
 
 [ext_resource type="Script" uid="uid://d3ljutmrqhbju" path="res://scripts/UkimianBlue.cs" id="1_2ra8t"]
 [ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - death.png" id="2_hw5ae"]
@@ -1015,27 +1015,16 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lnd3i"]
-size = Vector2(16, 16)
+size = Vector2(128, 128)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ch327"]
-size = Vector2(16, 16)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_kjbl8"]
-size = Vector2(16, 16)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_07duu"]
-size = Vector2(16, 16)
-
-[node name="ukimian_blue" type="Node2D" node_paths=PackedStringArray("ClickableUnitComponent", "UnitBody", "animationPlayer", "animatedSprite2D", "range_left", "range_right", "range_down", "range_up")]
+[node name="ukimian_blue" type="Node2D" node_paths=PackedStringArray("navAgent", "ClickableUnitComponent", "UnitBody", "animationPlayer", "animatedSprite2D", "inRangeArea")]
 script = ExtResource("1_2ra8t")
+navAgent = NodePath("NavigationAgent2D")
 ClickableUnitComponent = NodePath("Control")
 UnitBody = NodePath("body")
 animationPlayer = NodePath("AnimationPlayer")
 animatedSprite2D = NodePath("AnimatedSprite2D")
-range_left = NodePath("left")
-range_right = NodePath("right")
-range_down = NodePath("down")
-range_up = NodePath("up")
+inRangeArea = NodePath("left")
 
 [node name="body" type="Area2D" parent="."]
 script = ExtResource("2_wbwqt")
@@ -1079,33 +1068,11 @@ autoplay = "idle_right"
 script = ExtResource("10_2ra8t")
 
 [node name="left" type="Area2D" parent="."]
-position = Vector2(-12, 0)
 collision_layer = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="left"]
-position = Vector2(-4, 0)
 shape = SubResource("RectangleShape2D_lnd3i")
 
-[node name="right" type="Area2D" parent="."]
-position = Vector2(12, 0)
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="right"]
-position = Vector2(4, 1)
-shape = SubResource("RectangleShape2D_ch327")
-
-[node name="up" type="Area2D" parent="."]
-position = Vector2(0, -12)
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="up"]
-position = Vector2(0, -4)
-shape = SubResource("RectangleShape2D_kjbl8")
-
-[node name="down" type="Area2D" parent="."]
-position = Vector2(0, 12)
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="down"]
-position = Vector2(0, 4)
-shape = SubResource("RectangleShape2D_07duu")
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 10.0
+avoidance_enabled = true

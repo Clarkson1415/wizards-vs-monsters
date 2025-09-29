@@ -1,4 +1,4 @@
-[gd_scene load_steps=126 format=3 uid="uid://cvmqdgknhsdca"]
+[gd_scene load_steps=123 format=3 uid="uid://cvmqdgknhsdca"]
 
 [ext_resource type="Script" uid="uid://ddnr2wj0hagak" path="res://scripts/Units/OgreOfKersh.cs" id="1_i43m7"]
 [ext_resource type="Texture2D" uid="uid://nx0moggc601" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - attack.png" id="1_v5ei5"]
@@ -1129,27 +1129,16 @@ colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
 gradient = SubResource("Gradient_t6ix4")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w425g"]
-size = Vector2(16, 16)
+size = Vector2(128, 128)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_fndci"]
-size = Vector2(16, 16)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ouali"]
-size = Vector2(17, 16)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_8ubfb"]
-size = Vector2(16, 16)
-
-[node name="ogre of kerhs" type="Node2D" node_paths=PackedStringArray("ClickableUnitComponent", "UnitBody", "animationPlayer", "animatedSprite2D", "range_left", "range_right", "range_down", "range_up")]
+[node name="ogre of kerhs" type="Node2D" node_paths=PackedStringArray("navAgent", "ClickableUnitComponent", "UnitBody", "animationPlayer", "animatedSprite2D", "inRangeArea")]
 script = ExtResource("1_i43m7")
+navAgent = NodePath("NavigationAgent2D")
 ClickableUnitComponent = NodePath("ClickableUnitComponent")
 UnitBody = NodePath("body")
 animationPlayer = NodePath("AnimationPlayer")
 animatedSprite2D = NodePath("AnimatedSprite2D")
-range_left = NodePath("left")
-range_right = NodePath("right")
-range_down = NodePath("down")
-range_up = NodePath("up")
+inRangeArea = NodePath("ChunkOfUnits - has to be at least its ranged attack distnace")
 
 [node name="body" type="Area2D" parent="."]
 script = ExtResource("2_q5tv2")
@@ -1198,34 +1187,12 @@ texture = SubResource("GradientTexture2D_0uyrj")
 script = ExtResource("4_t6ix4")
 metadata/_custom_type_script = "uid://pwwrb0yq7w2g"
 
-[node name="up" type="Area2D" parent="."]
-position = Vector2(0, -12)
+[node name="ChunkOfUnits - has to be at least its ranged attack distnace" type="Area2D" parent="."]
 collision_layer = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="up"]
-position = Vector2(0, -4)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ChunkOfUnits - has to be at least its ranged attack distnace"]
 shape = SubResource("RectangleShape2D_w425g")
 
-[node name="down" type="Area2D" parent="."]
-position = Vector2(0, 12)
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="down"]
-position = Vector2(0, 4)
-shape = SubResource("RectangleShape2D_fndci")
-
-[node name="left" type="Area2D" parent="."]
-position = Vector2(-12, -4)
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="left"]
-position = Vector2(-4.5, 4)
-shape = SubResource("RectangleShape2D_ouali")
-
-[node name="right" type="Area2D" parent="."]
-position = Vector2(12, -4)
-collision_layer = 0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="right"]
-position = Vector2(4, 4)
-shape = SubResource("RectangleShape2D_8ubfb")
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+radius = 0.01
