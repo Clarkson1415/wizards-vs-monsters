@@ -21,18 +21,6 @@ public partial class AnimationComponent : AnimationPlayer
             return;
         }
 
-        if (CurrentAnimation.Contains("hurt") && IsPlaying())
-        {
-            // wait till hurt animation is finished.
-            return;
-        }
-
-        if (CurrentAnimation.Contains("attack") && IsPlaying())
-        {
-            // wait till finished.
-            return;
-        }
-
         Play(animName);
     }
 
@@ -57,7 +45,7 @@ public partial class AnimationComponent : AnimationPlayer
         }
         else
         {
-            Logger.Log("No matching animation found");
+            Logger.Log($"No matching animation found {direction}, {animName}.");
             direction = "right";
             animName = "idle";
         }

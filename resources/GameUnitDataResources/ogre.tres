@@ -16,6 +16,6 @@ DPS = 1
 description = "stinky"
 gameUnit = ExtResource("1_7yiut")
 toolbarImage = ExtResource("3_uj6k6")
-numberOfUnitsInSquadron = 4
+numberOfUnitsInSquadron = 3
 faction = 1
 metadata/_custom_type_script = "uid://cqcq15rhu6tjp"

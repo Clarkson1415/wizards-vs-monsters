@@ -3,6 +3,7 @@ using Godot.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using WizardsVsMonster.scripts;
 
 /// <summary>
@@ -37,6 +38,14 @@ public partial class GameUnit : Node2D
     [Export] private Area2D range_up;
 
     private List<UnitBody> targetsInRangeAndAlive = new List<UnitBody>();
+
+    [Signal] public delegate void OnAttackedEventHandler(UnitGroup attackers);
+
+    /// <summary>
+    /// Emitted when target moved out of range or died while being targeted.
+    /// </summary>
+    /// <param name="attackers"></param>
+    [Signal] public delegate void OnTargetsMovedAwayWhileAttackingEventHandler(UnitGroup attackers);
 
     private void UpdateTargetsInRange()
     {
@@ -128,7 +137,7 @@ public partial class GameUnit : Node2D
     /// <summary>
     /// Current direction facing. up, right, down, left etc.
     /// </summary>
-    private Vector2 directionFacingUnitVector;
+    private Vector2 directionFacingUnitVector = Vector2.Right;
 
     public enum COMMAND { MoveToPosition, AttackTarget, Nothing };
 
@@ -148,8 +157,6 @@ public partial class GameUnit : Node2D
         targetPosition = enemyToTarget.GlobalPosition;
         targetDirectionUnitVector = RoundToNearestCardinalDirection((targetPosition - GlobalPosition).Normalized());
     }
-
-    [Signal] public delegate void OnAttackedEventHandler(UnitGroup attackers);
 
     private void OnHit(GameUnit attacker)
     {
@@ -209,6 +216,11 @@ public partial class GameUnit : Node2D
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "idle");
                 break;
             case unitState.MoveToPosition:
+                if (animationPlayer.CurrentAnimation.Contains("attack"))
+                {
+                    // wait for attack animation to finish.
+                    return;
+                }
 
                 // update target positoin and orientation if following a target.
                 if (CurrentCommand == COMMAND.AttackTarget)
@@ -220,11 +232,13 @@ public partial class GameUnit : Node2D
                     if (targetsInRangeAndAlive.Contains(currentTarget))
                     {
                         state = unitState.Attacking;
+                        return;
                     }
                     else if (currentTarget.GetCurrentHealth() <= 0)
                     {
                         CurrentCommand = COMMAND.Nothing;
                         state = unitState.Idle;
+                        return;
                     }
                 }
                 else // command.Move or Command.Nothing
@@ -235,6 +249,7 @@ public partial class GameUnit : Node2D
                         directionFacingUnitVector = targetDirectionUnitVector;
                         state = unitState.Idle;
                         CurrentCommand = COMMAND.Nothing;
+                        return;
                     }
                 }
 
@@ -244,14 +259,25 @@ public partial class GameUnit : Node2D
                 GlobalPosition += velocity * deltaf;
                 // face toward target position in cardinal direction.
                 directionFacingUnitVector = RoundToNearestCardinalDirection(directionVector);
-
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "walk");
                 break;
             case unitState.Attacking:
-                // if targetting a guy and not dead and it moved out of range.
+                // animation face the direction of the one your attacking.
+                if (targetsInRangeAndAlive.Count != 0)
+                {
+                    var direction = (targetsInRangeAndAlive.First().GlobalPosition - GlobalPosition).Normalized();
+                    directionFacingUnitVector = RoundToNearestCardinalDirection(direction);
+                }
+                animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
+
+                // check changes
+                // if targetting a guy and not dead and it moved out of range or died.
                 if (CurrentCommand == COMMAND.AttackTarget && !targetsInRangeAndAlive.Contains(currentTarget) && (currentTarget.GetCurrentHealth() >= 0))
                 {
-                    state = unitState.MoveToPosition;
+                    state = unitState.Idle;
+                    CurrentCommand = COMMAND.Nothing;
+                    var group = currentTarget.GetParent<GameUnit>().GetParent<UnitGroup>();
+                    EmitSignal(SignalName.OnTargetsMovedAwayWhileAttacking, group);
                 }
                 else if (CurrentCommand == COMMAND.AttackTarget && currentTarget.GetCurrentHealth() <= 0)
                 {
@@ -266,22 +292,18 @@ public partial class GameUnit : Node2D
                 {
                     state = unitState.MoveToPosition;
                 }
-                
-
-                // animation face the direction of the one your attacking.
-                if (targetsInRangeAndAlive.Count != 0)
-                {
-                    var direction = (targetsInRangeAndAlive.First().GlobalPosition - GlobalPosition).Normalized();
-                    directionFacingUnitVector = RoundToNearestCardinalDirection(direction);
-                }
-
-                animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
                 break;
             case unitState.Dead:
                 break;
             default:
                 break;
         }
+
+        if (resource.GetFaction() == GlobalGameVariables.FACTION.monsters) 
+        {
+            Logger.Log($"state = {state}");
+        }
+
     }
 
 
@@ -290,8 +312,13 @@ public partial class GameUnit : Node2D
         // face toward target position in cardinal direction.
         var cardinalDirection = new Vector2(Math.Sign((int)Math.Round(vector.X)), Math.Sign((int)Math.Round(vector.Y)));
 
+        if (cardinalDirection.Y == 0 && cardinalDirection.X == 0)
+        {
+            return directionFacingUnitVector; // keep same.
+        }
+
         // Favour Horizontal movement animations when on an angle.
-        if (Math.Abs(cardinalDirection.X) == Math.Abs(cardinalDirection.Y))
+        else if (Math.Abs(cardinalDirection.X) == Math.Abs(cardinalDirection.Y))
         {
             cardinalDirection.Y = 0;
         }

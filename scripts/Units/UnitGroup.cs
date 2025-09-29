@@ -45,7 +45,6 @@ public partial class UnitGroup : Node2D
         for (int i = 0; i < positions.Count; i++)
         {
             allUnits[i].GlobalPosition = positions[i];
-            allUnits[i].SetTargetPosition(positions[i], GetDefaultDirection());
         }
 
         foreach (var initial in initialStatuses) { TryAddStatus(initial); }
@@ -54,6 +53,7 @@ public partial class UnitGroup : Node2D
         foreach (var unit in allUnits)
         {
             unit.OnAttacked += OnUnitAttacked;
+            unit.OnTargetsMovedAwayWhileAttacking += OnTargetsMovedAwayWhileAttacking;
         }
     }
 
@@ -157,6 +157,11 @@ public partial class UnitGroup : Node2D
     private int columns;
     private int rows;
 
+    private void OnTargetsMovedAwayWhileAttacking(UnitGroup targets)
+    {
+        SetNewTargetEnemy(targets);
+    }
+
     public void SetNewTargetEnemy(UnitGroup enemyToTarget)
     {
         var allTargets = new List<GameUnit>(enemyToTarget.UnitsRemaining);
@@ -169,8 +174,6 @@ public partial class UnitGroup : Node2D
 
         var availableTargets = new List<GameUnit>(allTargets);
         int targetCount = allTargets.Count;
-
-        GameUnit chosenTarget;
 
         // assign closest pairs (player, enemy) units first.
         var attackers = new List<GameUnit>(this.UnitsRemaining);
@@ -187,45 +190,81 @@ public partial class UnitGroup : Node2D
         }
 
         // Step 2: Sort by distance ascending
-        combinations.OrderBy(p => p.Item3).ToList();
+        var closestFirst = combinations.OrderBy(p => p.Item3).ToList();
 
-        List<GameUnit> usedA = new();
-        List<GameUnit> usedB = new();
-        List<(GameUnit, GameUnit, float)> result = new();
+        List<GameUnit> usedAttackers = new();
+        List<GameUnit> usedTargets = new();
+        List<(GameUnit, GameUnit, float)> assignedPairs = new();
 
         // Step 3: Select closest non-used pairs
-        foreach (var (a, b, distance) in combinations)
+        foreach (var (a, b, distance) in closestFirst)
         {
-            if (!usedA.Contains(a) && !usedB.Contains(b))
+            if (!usedAttackers.Contains(a) && !usedTargets.Contains(b))
             {
-                result.Add((a, b, distance));
-                usedA.Add(a);
-                usedB.Add(b);
+                assignedPairs.Add((a, b, distance));
+                usedAttackers.Add(a);
+                usedTargets.Add(b);
             }
 
-            // Stop if assigned all targets to at least 1 attacker.
-            if (result.Count >= allTargets.Count)
-            {
+            if (assignedPairs.Count >= Math.Min(attackers.Count, allTargets.Count))
                 break;
-            }
         }
 
-        // if more attackers than targets need to assign from fursthees
-        // TODO: same as above but for largest distance.
+        // Assign closest first. then assign furthest first. using modulo wrap around.
 
-        // Reuse targets: rotate through the full list using a wrap-around index
-        int rotationIndex = 0;
+        List<GameUnit> attackersWithTargets = new();
 
-        foreach (var attacker in this.UnitsRemaining)
+        // TODO: what if less attackers than targets? 
+        // what if less targets than attackers.
+
+        // Step 4: Assign the matched closest targets
+        foreach (var (attacker, target, _) in assignedPairs)
         {
-            if (availableTargets.Count == 0)
+            Logger.Log($"Attacker at {attacker.GlobalPosition} assigned to {target.GlobalPosition}");
+            attacker.SetTargetUnit(target);
+            attackersWithTargets.Add(attacker);
+        }
+
+        // Step 5: then assign furthest first. then when done that continue using modulus wrap around.
+        var furthestFirst = assignedPairs.OrderByDescending(x => x.Item3);
+
+        foreach (var (attacker, target, _) in furthestFirst)
+        {
+            if (attackersWithTargets.Contains(attacker))
+            {
+                continue;
+            }
+
+            if (attackersWithTargets.Count == attackers.Count)
             {
                 return;
             }
 
-            chosenTarget = allTargets[rotationIndex % targetCount];
-            rotationIndex++;
-            attacker.SetTargetUnit(chosenTarget);
+            Logger.Log($"Attacker at {attacker.GlobalPosition} assigned to {target.GlobalPosition}");
+
+            attacker.SetTargetUnit(target);
+            attackersWithTargets.Add(attacker);
+            Logger.Log($"Attacker at {attacker.GlobalPosition} assigned to {target.GlobalPosition}");
+        }
+
+        int wrapIndex = 0;
+
+        foreach (var attacker in attackers)
+        {
+            if (attackersWithTargets.Count == attackers.Count)
+            {
+                return;
+            }
+
+            if (attackersWithTargets.Contains(attacker))
+                continue;
+
+            var target = allTargets[wrapIndex % targetCount];
+            Logger.Log($"Attacker at {attacker.GlobalPosition} assigned to {target.GlobalPosition}");
+
+            attacker.SetTargetUnit(target);
+            attackersWithTargets.Add(attacker);
+            wrapIndex++;
         }
     }
 
