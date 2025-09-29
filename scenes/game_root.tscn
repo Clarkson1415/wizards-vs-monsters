@@ -918,9 +918,10 @@ texture = ExtResource("1_uebra")
 sources/0 = SubResource("TileSetAtlasSource_jb3nc")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_x42w8"]
-vertices = PackedVector2Array(345, -169.25, 345, 182.59375, -288.90625, 157.39063, -286.07813, -185.72656)
+vertices = PackedVector2Array(380.90625, -218.27344, 406.0078, 201, -374.9297, 201, -347.0078, -231.71094)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-299, 167, 355, 193, 355, -179, -296, -196)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-392, 217, 423, 217, 396, -234, -362, -248)])
+agent_radius = 16.0
 
 [node name="gameRoot" type="Node2D"]
 y_sort_enabled = true

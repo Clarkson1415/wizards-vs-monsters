@@ -1,10 +1,9 @@
 using Godot;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using WizardsVsMonster.scripts;
-using static Godot.HttpRequest;
 
 public partial class UnitGroup : Node2D
 {
@@ -14,6 +13,8 @@ public partial class UnitGroup : Node2D
     private List<TriangleScene> trianglesToShowNewPos = new();
 
     [Export] PackedScene triangleScene;
+
+    [Export] PackedScene baseUnitScene;
 
     /// <summary>
     /// Units that are alive rn.
@@ -34,7 +35,7 @@ public partial class UnitGroup : Node2D
 
         for (int i = 0; i < number; i++)
         {
-            var newUnit = unitResource.GetUnitScene().Instantiate<GameUnit>();
+            var newUnit = baseUnitScene.Instantiate<GameUnit>();
             newUnit.Setup(unitResource);
             AddChild(newUnit);
             allUnits.Add(newUnit);
@@ -115,8 +116,19 @@ public partial class UnitGroup : Node2D
     private List<Vector2> GetPositionsToPutUnitsInGrid(Vector2 centreOfSquadron)
     {
         // 1. Calculate grid shape mostly square as non given.
-        columns = Mathf.CeilToInt(Mathf.Sqrt(allUnits.Count));
-        rows = Mathf.CeilToInt((float)allUnits.Count / columns);
+        // Define the desired ratio: 1 column for every x rows
+        const float COL_TO_ROW_RATIO = 1f / 5f;
+
+        int totalUnits = allUnits.Count;
+
+        // 1. Calculate columns using the ratio factor.
+        // This scales the total unit count to find the optimal column count 
+        // that maintains the desired ratio (e.g., sqrt(N * 1/3))
+        columns = Mathf.CeilToInt(Mathf.Sqrt(totalUnits * COL_TO_ROW_RATIO));
+
+        // 2. Calculate rows based on the columns, ensuring all units fit.
+        rows = Mathf.CeilToInt((float)totalUnits / columns);
+
         return GetPositionsToPutUnitsInGrid(centreOfSquadron, columns, rows);
     }
 
@@ -331,7 +343,7 @@ public partial class UnitGroup : Node2D
 
         var centre = GetCentre();
 
-        if (allUnits.All(x => x.AtTargetLocation))
+        if (allUnits.All(x => x.navAgent.IsNavigationFinished()))
         {
             ClearTriangles();
         }
@@ -342,6 +354,10 @@ public partial class UnitGroup : Node2D
     private void OnUnitAttacked(UnitGroup attackers)
     {
         // on unit attacked if no other command in place. then attack the attacker.
+        if (UnitsRemaining.Count == 0)
+        {
+            return; // this unit is dead I guess.
+        }
         if (UnitsRemaining.FirstOrDefault().CurrentCommand == GameUnit.COMMAND.Nothing)
         {
             Logger.Log("attacking back.");

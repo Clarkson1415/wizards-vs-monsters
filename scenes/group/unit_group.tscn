@@ -1,10 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bqmaurexk31n3"]
+[gd_scene load_steps=4 format=3 uid="uid://bqmaurexk31n3"]
 
 [ext_resource type="Script" uid="uid://dqbd5kc1acq30" path="res://scripts/Units/UnitGroup.cs" id="1_mnk4d"]
 [ext_resource type="PackedScene" uid="uid://hutmif623vv3" path="res://art/Triangles/TriangleScene.tscn" id="2_fxrvk"]
+[ext_resource type="PackedScene" uid="uid://boxqkw8j620v2" path="res://scenes/units/unitBaseScene.tscn" id="3_stuot"]
 
-[node name="UnitGroup" type="Node2D" node_paths=PackedStringArray("statusComponent")]
+[node name="UnitGroup" type="Node2D"]
 script = ExtResource("1_mnk4d")
-statusComponent = NodePath("")
-initialStatuses = Array[int]([3])
 triangleScene = ExtResource("2_fxrvk")
+baseUnitScene = ExtResource("3_stuot")

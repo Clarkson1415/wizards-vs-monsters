@@ -5,7 +5,15 @@ using WizardsVsMonster.scripts;
 [GlobalClass]
 public partial class GameUnitResource : Resource
 {
-	[Export] private int health;
+	[Export] PackedScene animatedSprite2d;
+
+    public PackedScene GetAnimatedSprite2D() { return animatedSprite2d; }
+
+	[Export] AnimationLibrary animationPlayerAnimationLibrary;
+
+	public AnimationLibrary GetAnimationLibrary() { return animationPlayerAnimationLibrary; }
+
+    [Export] private int health;
 	public int GetHealth() { return health; }
 
 	[Export] private int speed = 2;

@@ -1,11 +1,15 @@
-[gd_resource type="Resource" script_class="GameUnitResource" load_steps=4 format=3 uid="uid://35raccy63gdv"]
+[gd_resource type="Resource" script_class="GameUnitResource" load_steps=6 format=3 uid="uid://35raccy63gdv"]
 
+[ext_resource type="PackedScene" uid="uid://b0bfrq7u4pxl6" path="res://scenes/UnitAnimations/ukimian_blue_Animations.tscn" id="1_adk88"]
 [ext_resource type="Script" uid="uid://cqcq15rhu6tjp" path="res://scripts/resourceScripts/GameUnitResource.cs" id="1_h8kfe"]
 [ext_resource type="PackedScene" uid="uid://beo7n41qd3xs7" path="res://scenes/Ukimian_Blue.tscn" id="1_xv2s2"]
+[ext_resource type="AnimationLibrary" uid="uid://cfgfm1f6y8f0g" path="res://animationlibraries/ukimianBlueAnimationLibrary.res" id="2_8cabh"]
 [ext_resource type="Texture2D" uid="uid://dpbot6ws03h3d" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/BlueWitchButton.png" id="3_l3y7q"]
 
 [resource]
 script = ExtResource("1_h8kfe")
+animatedSprite2d = ExtResource("1_adk88")
+animationPlayerAnimationLibrary = ExtResource("2_8cabh")
 health = 50
 speed = 10
 armour = 2
@@ -16,5 +20,5 @@ DPS = 1
 description = "Ice mage of Ukimia "
 gameUnit = ExtResource("1_xv2s2")
 toolbarImage = ExtResource("3_l3y7q")
-numberOfUnitsInSquadron = 5
+numberOfUnitsInSquadron = 6
 metadata/_custom_type_script = "uid://cqcq15rhu6tjp"

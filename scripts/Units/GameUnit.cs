@@ -3,15 +3,13 @@ using Godot.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
 using WizardsVsMonster.scripts;
 
 /// <summary>
 /// Represents the game unit on the board.
 /// </summary>
 [GlobalClass]
-public partial class GameUnit : Node2D
+public partial class GameUnit : CharacterBody2D
 {
     [Export] public NavigationAgent2D navAgent;
 
@@ -30,8 +28,6 @@ public partial class GameUnit : Node2D
     protected float unitBaseSpeed;
 
     protected float speedModifier = 1;
-
-    protected Vector2 velocity;
 
     private float rangeInPixels;
 
@@ -75,6 +71,7 @@ public partial class GameUnit : Node2D
         if (IsUnitAnEnemy(unit) && targetsInNeabyChunkAndAlive.Contains(unit))
         {
             targetsInNeabyChunkAndAlive.Remove(unit);
+            targetsInRange.Remove(unit);
         }
     }
 
@@ -90,7 +87,16 @@ public partial class GameUnit : Node2D
     {
         if (targetsInRange.Count == 0) { return; }
 
-        targetsInRange.First().TakeDamage(this.baseUnitDamagePerAnimation, this);
+        UpdateTargets();
+
+        if (currentTarget == null || (currentTarget.GetCurrentHealth() <= 0))
+        {
+            targetsInRange.First().TakeDamage(this.baseUnitDamagePerAnimation, this);
+        }
+        else
+        {
+            currentTarget.TakeDamage(this.baseUnitDamagePerAnimation, this);
+        }
 
         //foreach (var tar in targetsInRange)
         //{
@@ -102,6 +108,19 @@ public partial class GameUnit : Node2D
     {
         base._Ready();
 
+        var relevantSprite2d = resource.GetAnimatedSprite2D().Instantiate<AnimatedSprite2D>();
+        AddChild(relevantSprite2d);
+        relevantSprite2d.Visible = false;
+
+        // set this sprites 2d frames to the aboves
+        this.animatedSprite2D.SpriteFrames = relevantSprite2d.SpriteFrames;
+        this.animatedSprite2D.Play();
+
+        var list = this.animationPlayer.GetAnimationLibraryList();
+        this.animationPlayer.RemoveAnimationLibrary(string.Empty);
+        this.animationPlayer.AddAnimationLibrary(string.Empty, resource.GetAnimationLibrary());
+        var nlist = this.animationPlayer.GetAnimationLibraryList();
+
         this.resource = resource;
         if (resource == null)
         {
@@ -110,22 +129,21 @@ public partial class GameUnit : Node2D
 
         unitBaseSpeed = this.resource.GetSpeed();
         baseUnitDamagePerAnimation = this.resource.GetDPS();
-        // TODO scale damage to attack animation speed? or just make sure they match in the resource. OR attack at that dmg per second?
 
         ClickableUnitComponent.Setup(resource);
         UnitBody.Setup(this.resource);
+
+        // TODO setup programmaticalloy the unit range area2d
+        // button, clickable unit, unitbodysize, agent navigion radius etc. anything unit size or resource dependent.
 
         rangeInPixels = ((this.resource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE) / 2) + (this.resource.GetRange() * GlobalGameVariables.CELL_SIZE);
 
         UnitBody.OnThisHit += OnHit;
 
         inRangeArea.AreaEntered += OnUnitAreaEnteredChunk;
-        inRangeArea.AreaEntered += OnUnitAreaEnteredChunk;
+        inRangeArea.AreaExited += OnUnitAreaExitedChunk;
 
-        if (navAgent != null)
-        {
-            navAgent.VelocityComputed += OnVelocityComputed;
-        }
+        navAgent.VelocityComputed += OnVelocityComputed;
     }
 
     public void SetInitialDirectionFacing(Vector2 direction)
@@ -142,8 +160,6 @@ public partial class GameUnit : Node2D
     }
 
     private unitState state = unitState.Idle;
-
-    private Vector2 targetPosition;
 
     /// <summary>
     /// Normalised direction unit vector.
@@ -162,7 +178,7 @@ public partial class GameUnit : Node2D
     public void SetTargetPosition(Vector2 pos, Vector2 dir)
     {
         CurrentCommand = COMMAND.MoveToPosition;
-        targetPosition = pos;
+        navAgent.TargetPosition = pos;
         targetDirectionUnitVector = dir;
     }
 
@@ -170,8 +186,8 @@ public partial class GameUnit : Node2D
     {
         CurrentCommand = COMMAND.AttackTarget;
         currentTarget = enemyToTarget.UnitBody;
-        targetPosition = enemyToTarget.GlobalPosition;
-        targetDirectionUnitVector = RoundToNearestCardinalDirection((targetPosition - GlobalPosition).Normalized());
+        navAgent.TargetPosition = GetPositionWhereUnitIsInRange(currentTarget);
+        targetDirectionUnitVector = RoundToNearestCardinalDirection((navAgent.TargetPosition - GlobalPosition).Normalized());
     }
 
     private void OnHit(GameUnit attacker)
@@ -191,14 +207,40 @@ public partial class GameUnit : Node2D
         EmitSignal(SignalName.OnAttacked, group);
     }
 
-    public bool AtTargetLocation => GlobalPosition.DistanceTo(targetPosition) < 1f;
-
     private bool AtTargetDirection()
     {
         return (targetDirectionUnitVector == directionFacingUnitVector);
     }
 
     private UnitBody currentTarget;
+
+    private Vector2 GetPositionWhereUnitIsInRange(UnitBody areaToTarget)
+    {
+        return areaToTarget.GlobalPosition;
+
+        Vector2 currentPosition = GlobalPosition;
+        Vector2 targetCenter = areaToTarget.GlobalPosition;
+
+        // 1. Calculate the vector from the target's center to the unit's current position.
+        Vector2 directionToCurrent = currentPosition - targetCenter;
+
+        // 2. Normalize the direction vector to get a unit vector (length of 1).
+        // If the unit is exactly on top of the target, this will result in a zero vector.
+        if (directionToCurrent.LengthSquared() < 0.0001f)
+        {
+            // Handle the case where the unit and target are at the same spot.
+            // Choose an arbitrary direction (e.g., right) and move out by 'rangeInPixels'.
+            return targetCenter + Vector2.Right * rangeInPixels;
+        }
+
+        Vector2 directionUnit = directionToCurrent.Normalized();
+
+        // 3. Calculate the desired position.
+        // Move away from the 'targetCenter' by *exactly* 'rangeInPixels'.
+        Vector2 idealPosition = targetCenter + (directionUnit * rangeInPixels);
+
+        return idealPosition;
+    }
 
     /// <summary>
     /// Calculates if an area is within this units range in pixels.
@@ -249,10 +291,9 @@ public partial class GameUnit : Node2D
         return false;
     }
 
-    public override void _PhysicsProcess(double delta)
+    private void UpdateTargets()
     {
-        base._PhysicsProcess(delta);
-        if (this.resource == null) { return; }
+        targetsInRange.Clear();
 
         // remove dead enemy targets
         if (targetsInNeabyChunkAndAlive.Any(x => x.GetCurrentHealth() <= 0))
@@ -263,22 +304,19 @@ public partial class GameUnit : Node2D
         // update targets in range
         foreach (var unitBody in targetsInNeabyChunkAndAlive)
         {
-            if (targetsInRange.Contains(unitBody))
-            {
-                if (!IsAreaWithinRange(unitBody))
-                {
-                    targetsInRange.Remove(unitBody);
-                }
-
-                continue;
-            }
-
+            targetsInRange.Clear();
             // calculate boolean return true if area is witihin the distance between this.GlobalPosition and the float rangeInPixels
             if (IsAreaWithinRange(unitBody))
             {
                 targetsInRange.Add(unitBody);
             }
         }
+    }
+
+    public override void _PhysicsProcess(double delta)
+    {
+        base._PhysicsProcess(delta);
+        if (this.resource == null) { return; }
 
         if (UnitBody.GetCurrentHealth() <= 0)
         {
@@ -292,15 +330,13 @@ public partial class GameUnit : Node2D
             return;
         }
 
-        navAgent.TargetPosition = this.targetPosition;
-
         float deltaf = (float)GetPhysicsProcessDeltaTime();
         switch (this.state)
         {
             case unitState.Idle:
-                velocity = Vector2.Zero;
+                navAgent.SetVelocity(Vector2.Zero);
 
-                if ((CurrentCommand == COMMAND.MoveToPosition && !AtTargetLocation) || (CurrentCommand == COMMAND.AttackTarget))
+                if ((CurrentCommand == COMMAND.MoveToPosition && !navAgent.IsNavigationFinished()) || (CurrentCommand == COMMAND.AttackTarget))
                 {
                     state = unitState.MoveToPosition;
                 }
@@ -317,8 +353,9 @@ public partial class GameUnit : Node2D
                 // update target positoin and orientation if following a target.
                 if (CurrentCommand == COMMAND.AttackTarget)
                 {
-                    targetPosition = currentTarget.GlobalPosition;
-                    targetDirectionUnitVector = RoundToNearestCardinalDirection((targetPosition - GlobalPosition).Normalized());
+                    UpdateTargets();
+                    navAgent.TargetPosition = GetPositionWhereUnitIsInRange(currentTarget);
+                    targetDirectionUnitVector = RoundToNearestCardinalDirection((navAgent.TargetPosition - GlobalPosition).Normalized());
 
                     // TODO: this should be happening before this guy is right on top of the unit.
                     if (targetsInRange.Contains(currentTarget))
@@ -339,7 +376,7 @@ public partial class GameUnit : Node2D
                 }
                 else // command.Move or Command.Nothing
                 {
-                    if (AtTargetLocation)
+                    if (navAgent.IsNavigationFinished())
                     {
                         // TODO: rotate over time to be in target rotation
                         directionFacingUnitVector = targetDirectionUnitVector;
@@ -349,9 +386,16 @@ public partial class GameUnit : Node2D
                     }
                 }
 
+                //if (navAgent.GetCurrentNavigationResult().PathLength < 2)
+                //{
+                //    // Path is impossible (only contains the start position)
+                //    return;
+                //}
+
                 // Apply movement
                 var nextPosition = navAgent.GetNextPathPosition();
                 var directionVector = (nextPosition - GlobalPosition).Normalized();
+
                 var desiredVelocity = directionVector * unitBaseSpeed * speedModifier;
                 navAgent.SetVelocity(desiredVelocity);
 
@@ -366,6 +410,8 @@ public partial class GameUnit : Node2D
 
                 break;
             case unitState.Attacking:
+                navAgent.SetVelocity(Vector2.Zero);
+
                 // animation face the direction of the one your attacking.
                 if (targetsInRange.Count != 0)
                 {
@@ -407,9 +453,23 @@ public partial class GameUnit : Node2D
         //{
         //    Logger.Log($"state = {state}");
         //}
-
     }
 
+    private void OnVelocityComputed(Vector2 safeVelocity)
+    {
+        //if (safeVelocity.Round() == Vector2.Zero)
+        //{
+        //    return;
+        //}
+        //else
+        //{
+        //    Velocity = safeVelocity;
+        //    MoveAndSlide();
+        //}
+
+        Velocity = safeVelocity;
+        MoveAndSlide();
+    }
 
     private Vector2 RoundToNearestCardinalDirection(Vector2 vector)
     {
@@ -459,25 +519,6 @@ public partial class GameUnit : Node2D
         }
 
         activeStatuses.Remove(status);
-    }
-
-    // Add this method to your GameUnit class
-    private void OnVelocityComputed(Vector2 safeVelocity)
-    {
-        // The safeVelocity is the final, adjusted velocity provided by RVO.
-        // We must use this to move the unit.
-        if (state == unitState.MoveToPosition)
-        {
-            // Use delta from _PhysicsProcess/GetPhysicsProcessDeltaTime() for frame-rate independence.
-            float delta = (float)GetPhysicsProcessDeltaTime();
-
-            // This is the line that actually applies the RVO-corrected movement
-            GlobalPosition += safeVelocity * delta;
-
-            // The rest of the movement logic (like animation updates) should probably 
-            // stay in _PhysicsProcess, or at least the animation part could stay there.
-            // For simplicity, let's keep the movement part here.
-        }
     }
 
     private void TryAddStatus(StatusComponent.STATUS status)
