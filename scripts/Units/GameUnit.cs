@@ -231,8 +231,12 @@ public partial class GameUnit : CharacterBody2D
 
     private UnitBody currentTarget;
 
+    private Vector2 lastKnownPositionOfCurrentTarget;
+
     private Vector2 GetPositionWhereUnitIsJustInRange(UnitBody areaToTarget)
     {
+        lastKnownPositionOfCurrentTarget = areaToTarget.GlobalPosition;
+
         return areaToTarget.GlobalPosition;
 
         // TODO: not working.
@@ -450,7 +454,14 @@ public partial class GameUnit : CharacterBody2D
 
                 // check changes
                 // if targetting a guy and not dead and it moved out of range or died.
-                if (CurrentCommand == COMMAND.AttackTarget && (!targetsInRange.Contains(currentTarget) || currentTarget.GetCurrentHealth() <= 0))
+                // if moved substantially. retarget.
+                if ((currentTarget.GlobalPosition - lastKnownPositionOfCurrentTarget).Length() > navAgent.TargetDesiredDistance)
+                {
+                    navAgent.TargetPosition = GetPositionWhereUnitIsJustInRange(currentTarget);
+                    state = unitState.MoveToPosition;
+                    return;
+                }
+                else if (CurrentCommand == COMMAND.AttackTarget && (!targetsInRange.Contains(currentTarget) || currentTarget.GetCurrentHealth() <= 0))
                 {
                     state = unitState.Idle;
                     CurrentCommand = COMMAND.Nothing;
