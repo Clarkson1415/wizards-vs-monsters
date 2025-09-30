@@ -19,7 +19,7 @@ public partial class UnitGroup : Node2D
     /// <summary>
     /// Units that are alive rn.
     /// </summary>
-    public List<GameUnit> UnitsRemaining => allUnits.Where(x => !x.IsDead).ToList();
+    public List<GameUnit> UnitsRemaining => allUnits.Where(x => !x.IsDead || x.navAgent == null).ToList();
 
     private List<GameUnit> allUnits = new List<GameUnit>();
 
@@ -169,6 +169,8 @@ public partial class UnitGroup : Node2D
 
     public void SetNewTargetEnemy(UnitGroup enemyToTarget)
     {
+        ClearTriangles();
+
         var allTargets = new List<GameUnit>(enemyToTarget.UnitsRemaining);
 
         if (allTargets.Count == 0)
@@ -340,10 +342,11 @@ public partial class UnitGroup : Node2D
     public override void _Process(double delta)
     {
         if (allUnits.Count == 0) { return; }
+        if (UnitsRemaining.Count == 0) { return; }
 
         var centre = GetCentre();
 
-        if (allUnits.All(x => x.navAgent.IsNavigationFinished()))
+        if (allUnits.All(x => x.IsAtTargetPosition))
         {
             ClearTriangles();
         }
@@ -376,11 +379,11 @@ public partial class UnitGroup : Node2D
 
     private void CheckStatuses()
     {
-        if (this.GetHealthPercentage() <= 0.3)
+        if (this.GetHealthPercentage() <= 0.16)
         {
             TryAddStatus(StatusComponent.STATUS.dying);
         }
-        else if (this.GetHealthPercentage() > 0.3)
+        else if (this.GetHealthPercentage() > 0.16)
         {
             RemoveStatus(StatusComponent.STATUS.dying);
         }

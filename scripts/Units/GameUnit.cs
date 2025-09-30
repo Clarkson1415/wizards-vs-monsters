@@ -2,6 +2,7 @@ using Godot;
 using Godot.Collections;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using WizardsVsMonster.scripts;
 
@@ -163,7 +164,7 @@ public partial class GameUnit : CharacterBody2D
         directionFacingUnitVector = direction;
     }
 
-    private enum unitState
+    public enum unitState
     {
         Idle,
         MoveToPosition,
@@ -171,7 +172,7 @@ public partial class GameUnit : CharacterBody2D
         Dead,
     }
 
-    private unitState state = unitState.Idle;
+    public unitState State { get; private set; } = unitState.Idle;
 
     /// <summary>
     /// Normalised direction unit vector.
@@ -334,45 +335,54 @@ public partial class GameUnit : CharacterBody2D
         }
     }
 
+    public bool IsAtTargetPosition => navAgent == null ? false : navAgent.IsNavigationFinished();
+
     [Export] private CollisionShape2D collisionShape;
 
     public override void _PhysicsProcess(double delta)
     {
-        base._PhysicsProcess(delta);
         if (this.resource == null) { return; }
 
-        if (UnitBody.GetCurrentHealth() <= 0 && state != unitState.Dead)
+        if (UnitBody.GetCurrentHealth() <= 0 && State != unitState.Dead)
         {
             animationPlayer.UpdateAnimation(directionFacingUnitVector, "die");
             this.CollisionMask = 0;
-            this.CollisionLayer= 0;
+            this.CollisionLayer = 0;
             this.collisionShape.Disabled = true;
+            this.ClickableUnitComponent.Disabled = true;
             this.navAgent.QueueFree();
-            state = unitState.Dead;
+            this.navAgent = null;
+            this.YSortEnabled = false;
+            this.ZIndex -= 1; // put corpses always behind the others.
+            State = unitState.Dead;
             return;
         }
 
         UpdateTargets();
 
         float deltaf = (float)GetPhysicsProcessDeltaTime();
-        switch (this.state)
+        switch (this.State)
         {
             case unitState.Idle:
                 navAgent.SetVelocity(Vector2.Zero);
 
-                var atPos = (this.GlobalPosition - navAgent.TargetPosition).Length() < navAgent.TargetDesiredDistance;
+                var atPos = this.GlobalPosition.DistanceTo(navAgent.TargetPosition) < navAgent.TargetDesiredDistance;
                 var hasBeenPushedFromPosition = navAgent.IsNavigationFinished() && !atPos;
 
-                if ((CurrentCommand == COMMAND.MoveToPosition && (!navAgent.IsNavigationFinished() || hasBeenPushedFromPosition))
+                if ((CurrentCommand == COMMAND.MoveToPosition && (hasBeenPushedFromPosition || !navAgent.IsNavigationFinished()))
                     || (CurrentCommand == COMMAND.AttackTarget))
                 {
-                    state = unitState.MoveToPosition;
+                    // ? Do i need to reset position again?
+                    navAgent.TargetPosition = navAgent.TargetPosition;
+                    State = unitState.MoveToPosition;
                 }
                 else if (CurrentCommand == COMMAND.Nothing)
                 {
                     if (targetsInRange.Count > 0)
                     {
-                        state = unitState.Attacking;
+                        // Get closest target and attack
+                        currentTarget = targetsInRange.OrderBy(x => x.GlobalPosition.DistanceSquaredTo(this.GlobalPosition)).First();
+                        State = unitState.Attacking;
                     }
                 }
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "idle");
@@ -387,27 +397,30 @@ public partial class GameUnit : CharacterBody2D
                     // TODO: this should be happening before this guy is right on top of the unit.
                     if (targetsInRange.Contains(currentTarget))
                     {
-                        state = unitState.Attacking;
+                        State = unitState.Attacking;
                         if (resource.GetFaction() == GlobalGameVariables.FACTION.monsters)
                         {
-                            Logger.Log($"{this.Name} found target = {state}");
+                            Logger.Log($"{this.Name} found target = {State}");
                         }
                         return;
                     }
                     else if (currentTarget.GetCurrentHealth() <= 0)
                     {
                         CurrentCommand = COMMAND.Nothing;
-                        state = unitState.Idle;
+                        State = unitState.Idle;
                         return;
                     }
                 }
                 else // command.Move or Command.Nothing
                 {
+                    // reset position to recalculate path. - not ideal for every frame but otherwise they r stupid.
+                    navAgent.TargetPosition = navAgent.TargetPosition;
+
                     if (navAgent.IsNavigationFinished())
                     {
                         // TODO: rotate over time to be in target rotation
                         directionFacingUnitVector = targetDirectionUnitVector;
-                        state = unitState.Idle;
+                        State = unitState.Idle;
                         CurrentCommand = COMMAND.Nothing;
                         return;
                     }
@@ -432,7 +445,7 @@ public partial class GameUnit : CharacterBody2D
 
                 if (resource.GetFaction() == GlobalGameVariables.FACTION.monsters)
                 {
-                    Logger.Log($"{this.Name} moved = {state}");
+                    Logger.Log($"{this.Name} moved = {State}");
                 }
 
                 break;
@@ -445,46 +458,43 @@ public partial class GameUnit : CharacterBody2D
                     return;
                 }
 
-                // animation face the direction of the one your attacking.
-                if (targetsInRange.Count != 0)
-                {
-                    var direction = (targetsInRange.First().GlobalPosition - GlobalPosition).Normalized();
-                    directionFacingUnitVector = RoundToNearestCardinalDirection(direction);
-                }
-
                 // check changes
                 // if targetting a guy and not dead and it moved out of range or died.
                 // if moved substantially. retarget.
                 if ((currentTarget.GlobalPosition - lastKnownPositionOfCurrentTarget).Length() > navAgent.TargetDesiredDistance)
                 {
                     navAgent.TargetPosition = GetPositionWhereUnitIsJustInRange(currentTarget);
-                    state = unitState.MoveToPosition;
+                    State = unitState.MoveToPosition;
                     return;
                 }
                 else if (CurrentCommand == COMMAND.AttackTarget && (!targetsInRange.Contains(currentTarget) || currentTarget.GetCurrentHealth() <= 0))
                 {
-                    state = unitState.Idle;
+                    State = unitState.Idle;
                     CurrentCommand = COMMAND.Nothing;
                     var group = currentTarget.GetParent<GameUnit>().GetParent<UnitGroup>();
                     EmitSignal(SignalName.OnTargetsMovedAwayWhileAttacking, group);
 
                     if (resource.GetFaction() == GlobalGameVariables.FACTION.humans)
                     {
-                        Logger.Log($"Blue {this.Name} emmitted signal that target left. retargeting. state: {state}");
+                        Logger.Log($"Blue {this.Name} emmitted signal that target left. retargeting. state: {State}");
                     }
 
                     return;
                 }
                 else if ((CurrentCommand == COMMAND.Nothing) && targetsInRange.Count == 0)
                 {
-                    state = unitState.Idle;
+                    State = unitState.Idle;
                     return;
                 }
                 else if (CurrentCommand == COMMAND.MoveToPosition)
                 {
-                    state = unitState.MoveToPosition;
+                    State = unitState.MoveToPosition;
                     return;
                 }
+
+                // animation face the direction of the one your attacking.
+                var direction = (currentTarget.GlobalPosition - GlobalPosition).Normalized();
+                directionFacingUnitVector = RoundToNearestCardinalDirection(direction);
 
                 animationPlayer.UpdateAnimation(directionFacingUnitVector, "attack_1");
                 break;
@@ -502,6 +512,8 @@ public partial class GameUnit : CharacterBody2D
 
     private void OnVelocityComputed(Vector2 safeVelocity)
     {
+        if (State == unitState.Dead) { return; }
+
         //if (safeVelocity.Round() == Vector2.Zero)
         //{
         //    return;
@@ -514,6 +526,7 @@ public partial class GameUnit : CharacterBody2D
 
         Velocity = safeVelocity;
         MoveAndSlide();
+        MaxSlides = 2;
     }
 
     private Vector2 RoundToNearestCardinalDirection(Vector2 vector)

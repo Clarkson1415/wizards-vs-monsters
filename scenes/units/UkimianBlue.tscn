@@ -3,3 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://boxqkw8j620v2" path="res://scenes/units/unitBaseScene.tscn" id="1_cdefr"]
 
 [node name="unit" instance=ExtResource("1_cdefr")]
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2(0, 0)
+
+[node name="AnimatedSprite2D" parent="." index="5"]
+position = Vector2(0, -6)

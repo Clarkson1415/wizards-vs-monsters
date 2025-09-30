@@ -1138,7 +1138,7 @@ inRangeArea = NodePath("range")
 collisionShape = NodePath("CollisionShape2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 4)
+position = Vector2(0, 3)
 shape = SubResource("CapsuleShape2D_g01vy")
 
 [node name="body" type="Area2D" parent="."]
@@ -1194,7 +1194,7 @@ path_desired_distance = 16.0
 target_desired_distance = 4.0
 path_max_distance = 32.0
 avoidance_enabled = true
-radius = 8.0
+radius = 6.0
 max_neighbors = 1000
 time_horizon_agents = 10.0
 time_horizon_obstacles = 10.0
