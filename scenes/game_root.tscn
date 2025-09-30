@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=31 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="Texture2D" uid="uid://g3pr8akyulje" path="res://art/environment/Forest Tileset.png" id="1_uebra"]
 [ext_resource type="Script" uid="uid://88kl3wkbs7mp" path="res://scenes/ReceieveInput.cs" id="5_x42w8"]
@@ -20,9 +20,11 @@
 [ext_resource type="Script" uid="uid://cdneyk6se25bd" path="res://scripts/UIScripts/DeselectAll.cs" id="18_0aloa"]
 [ext_resource type="PackedScene" uid="uid://gd1n7f872n6s" path="res://scenes/unitBarSlot.tscn" id="19_0aloa"]
 [ext_resource type="Script" uid="uid://dftp2nwcj0ql" path="res://scripts/UnitBar.cs" id="19_35vvr"]
-[ext_resource type="PackedScene" uid="uid://dfe1dkf138jcb" path="res://scenes/units/UkimianBlue.tscn" id="21_so1mv"]
-[ext_resource type="PackedScene" uid="uid://k7soiss1qd52" path="res://scenes/units/OgreOfKersh.tscn" id="22_6y7e7"]
-[ext_resource type="PackedScene" uid="uid://dwcr6uwcbb0ok" path="res://scenes/UnitAnimations/ogreOfKeshAnimations.tscn" id="23_6y7e7"]
+[ext_resource type="Script" uid="uid://boymwl1cflepg" path="res://scripts/UIScripts/CustomCursorLoader.cs" id="21_35vvr"]
+[ext_resource type="Texture2D" uid="uid://cpaubvvh88ack" path="res://art/SwordBlue34x34.png" id="22_so1mv"]
+[ext_resource type="Shader" uid="uid://qjc1fb0nljwj" path="res://scenes/god_rays.gdshader" id="23_6y7e7"]
+[ext_resource type="Shader" uid="uid://dd4w45mh5hk6a" path="res://scenes/fog.gdshader" id="24_0ns5a"]
+[ext_resource type="Texture2D" uid="uid://b5iss1msdvnld" path="res://noiseTex/Perlin_22-512x512.png" id="25_lfyj4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -928,6 +930,33 @@ polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-392, 217, 423, 217, 396, -234, -362, -248)])
 agent_radius = 16.0
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lfyj4"]
+shader = ExtResource("24_0ns5a")
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/OCTAVES = 8
+shader_parameter/enable_pixelation = false
+shader_parameter/pixelation_amount = 0
+shader_parameter/fog_mask = ExtResource("25_lfyj4")
+shader_parameter/fog_direction = Vector2(1, 1)
+shader_parameter/scroll_noise_tex = true
+shader_parameter/noise_scroll_direction = Vector2(1, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_so1mv"]
+shader = ExtResource("23_6y7e7")
+shader_parameter/angle = 0.6
+shader_parameter/position = 0.34
+shader_parameter/spread = 0.3010000142975
+shader_parameter/cutoff = -0.17899996100250004
+shader_parameter/falloff = 0.6210000294975
+shader_parameter/edge_fade = 0.70400003344
+shader_parameter/speed = 1.0
+shader_parameter/ray1_density = 12.505
+shader_parameter/ray2_density = 30.0
+shader_parameter/ray2_intensity = 0.3
+shader_parameter/color = Vector4(1, 0.9, 0.65, 0.8)
+shader_parameter/hdr = false
+shader_parameter/seed = 5.0
+
 [node name="gameRoot" type="Node2D"]
 y_sort_enabled = true
 
@@ -976,7 +1005,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("16_6puu6")
 unitGroupScene = ExtResource("6_6puu6")
-unitBar = NodePath("../../CanvasLayer - scale 2/UnitBar")
+unitBar = NodePath("../../CanvasLayer - scale 2_5/UnitBar")
 
 [node name="MovementControls" type="Control" parent="Input"]
 layout_mode = 1
@@ -994,17 +1023,17 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("17_k6861")
 
-[node name="CanvasLayer - scale 2" type="CanvasLayer" parent="."]
+[node name="CanvasLayer - scale 2_5" type="CanvasLayer" parent="."]
 follow_viewport_scale = 3.0
 
-[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer - scale 2" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range", "speed", "size")]
+[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer - scale 2_5" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range", "speed", "size")]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -95.0
 offset_bottom = 130.0
 grow_horizontal = 0
-scale = Vector2(2, 2)
+scale = Vector2(2.5, 2.5)
 pivot_offset = Vector2(95, 0)
 texture = ExtResource("13_6puu6")
 stretch_mode = 4
@@ -1018,7 +1047,7 @@ range = NodePath("Stats/VBoxContainer/HBoxContainer4/rangestat")
 speed = NodePath("Stats/VBoxContainer/speed/rangestat2")
 size = NodePath("Stats/VBoxContainer/size/rangestat2")
 
-[node name="Name" type="Label" parent="CanvasLayer - scale 2/PropertyPanel"]
+[node name="Name" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel"]
 layout_mode = 0
 offset_left = 14.333332
 offset_top = 7.666667
@@ -1031,12 +1060,12 @@ theme_override_font_sizes/font_size = 16
 text = "Ukimian Ice Mage"
 autowrap_mode = 2
 
-[node name="Stats" type="Control" parent="CanvasLayer - scale 2/PropertyPanel"]
+[node name="Stats" type="Control" parent="CanvasLayer - scale 2_5/PropertyPanel"]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer - scale 2/PropertyPanel/Stats"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats"]
 layout_mode = 0
 offset_left = 14.666659
 offset_top = 34.333332
@@ -1044,10 +1073,10 @@ offset_right = 92.66666
 offset_bottom = 132.33334
 scale = Vector2(0.7185835, 0.7185835)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="armour" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
+[node name="armour" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1055,7 +1084,7 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="astat" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
+[node name="astat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1063,10 +1092,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="health" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
+[node name="health" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1074,7 +1103,7 @@ theme_override_font_sizes/font_size = 16
 text = "Health"
 autowrap_mode = 2
 
-[node name="healthstat" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
+[node name="healthstat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1082,10 +1111,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="dps" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
+[node name="dps" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1093,7 +1122,7 @@ theme_override_font_sizes/font_size = 16
 text = "DPS"
 autowrap_mode = 2
 
-[node name="dpsstat" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
+[node name="dpsstat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1101,10 +1130,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
+[node name="range" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1112,7 +1141,7 @@ theme_override_font_sizes/font_size = 16
 text = "Range"
 autowrap_mode = 2
 
-[node name="rangestat" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
+[node name="rangestat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1120,10 +1149,10 @@ theme_override_font_sizes/font_size = 16
 text = "Range"
 autowrap_mode = 2
 
-[node name="speed" type="HBoxContainer" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer"]
+[node name="speed" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range2" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/speed"]
+[node name="range2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/speed"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1131,7 +1160,7 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/speed"]
+[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/speed"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1139,10 +1168,10 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="size" type="HBoxContainer" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer"]
+[node name="size" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range2" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/size"]
+[node name="range2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/size"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1150,7 +1179,7 @@ theme_override_font_sizes/font_size = 16
 text = "Size"
 autowrap_mode = 2
 
-[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Stats/VBoxContainer/size"]
+[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/size"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -1158,7 +1187,7 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="SwitchView" type="Button" parent="CanvasLayer - scale 2/PropertyPanel" node_paths=PackedStringArray("description", "stats")]
+[node name="SwitchView" type="Button" parent="CanvasLayer - scale 2_5/PropertyPanel" node_paths=PackedStringArray("description", "stats")]
 layout_mode = 0
 offset_left = 50.333344
 offset_top = 106.66667
@@ -1171,7 +1200,7 @@ script = ExtResource("13_35vvr")
 description = NodePath("../Description")
 stats = NodePath("../Stats")
 
-[node name="Description" type="Control" parent="CanvasLayer - scale 2/PropertyPanel"]
+[node name="Description" type="Control" parent="CanvasLayer - scale 2_5/PropertyPanel"]
 visible = false
 anchors_preset = 0
 offset_left = 11.0
@@ -1179,7 +1208,7 @@ offset_top = 34.0
 offset_right = 51.0
 offset_bottom = 74.0
 
-[node name="desc" type="Label" parent="CanvasLayer - scale 2/PropertyPanel/Description"]
+[node name="desc" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Description"]
 layout_mode = 0
 offset_right = 112.29031
 offset_bottom = 65.0
@@ -1190,7 +1219,7 @@ theme_override_font_sizes/font_size = 16
 text = "A medium length description a d dllkjd lkjld ljd ldkj ld ldjld jdldkj dlj d"
 autowrap_mode = 2
 
-[node name="SpawnToolbar" type="HBoxContainer" parent="CanvasLayer - scale 2"]
+[node name="SpawnToolbar" type="HBoxContainer" parent="CanvasLayer - scale 2_5"]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -1198,68 +1227,68 @@ offset_left = -33.0
 offset_right = 33.0
 offset_bottom = 40.0
 grow_horizontal = 2
-scale = Vector2(2, 2)
+scale = Vector2(2.5, 2.5)
 pivot_offset = Vector2(33, 0)
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="front" type="TextureRect" parent="CanvasLayer - scale 2/SpawnToolbar"]
+[node name="front" type="TextureRect" parent="CanvasLayer - scale 2_5/SpawnToolbar"]
 layout_mode = 2
 texture = ExtResource("11_ywsqi")
 stretch_mode = 2
 
-[node name="slot3" parent="CanvasLayer - scale 2/SpawnToolbar" instance=ExtResource("12_x5456")]
+[node name="slot3" parent="CanvasLayer - scale 2_5/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("12_k6861")
 
-[node name="slot4" parent="CanvasLayer - scale 2/SpawnToolbar" instance=ExtResource("12_x5456")]
+[node name="slot4" parent="CanvasLayer - scale 2_5/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("17_so1mv")
 
-[node name="slot5" parent="CanvasLayer - scale 2/SpawnToolbar" instance=ExtResource("12_x5456")]
+[node name="slot5" parent="CanvasLayer - scale 2_5/SpawnToolbar" instance=ExtResource("12_x5456")]
 layout_mode = 2
 gameUnitData = ExtResource("15_6puu6")
 
-[node name="end" type="TextureRect" parent="CanvasLayer - scale 2/SpawnToolbar"]
+[node name="end" type="TextureRect" parent="CanvasLayer - scale 2_5/SpawnToolbar"]
 layout_mode = 2
 texture = ExtResource("11_ywsqi")
 stretch_mode = 2
 flip_h = true
 
-[node name="Pause" type="Button" parent="CanvasLayer - scale 2"]
+[node name="Pause" type="Button" parent="CanvasLayer - scale 2_5"]
 offset_left = 32.999996
 offset_top = 22.999998
 offset_right = 101.0
 offset_bottom = 44.0
-scale = Vector2(2, 2)
+scale = Vector2(2.5, 2.5)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Pause/Play"
 script = ExtResource("13_x42w8")
 
-[node name="clear cursor" type="Button" parent="CanvasLayer - scale 2"]
+[node name="clear cursor" type="Button" parent="CanvasLayer - scale 2_5"]
 offset_left = 32.999996
 offset_top = 103.0
 offset_right = 113.0
 offset_bottom = 124.0
-scale = Vector2(2, 2)
+scale = Vector2(2.5, 2.5)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Clear Cursor"
 script = ExtResource("17_1vvmy")
 
-[node name="deselect all" type="Button" parent="CanvasLayer - scale 2"]
+[node name="deselect all" type="Button" parent="CanvasLayer - scale 2_5"]
 offset_left = 32.999996
 offset_top = 185.0
 offset_right = 113.0
 offset_bottom = 206.0
-scale = Vector2(2, 2)
+scale = Vector2(2.5, 2.5)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Deselect All"
 script = ExtResource("18_0aloa")
 
-[node name="UnitBar" type="Control" parent="CanvasLayer - scale 2" node_paths=PackedStringArray("slots")]
+[node name="UnitBar" type="Control" parent="CanvasLayer - scale 2_5" node_paths=PackedStringArray("slots")]
 layout_mode = 3
 anchors_preset = 7
 anchor_left = 0.5
@@ -1272,13 +1301,13 @@ offset_right = 16.0
 offset_bottom = -3.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(2, 2)
+scale = Vector2(2.5, 2.5)
 pivot_offset = Vector2(16, 29.125)
 script = ExtResource("19_35vvr")
 UnitBarSlotScene = ExtResource("19_0aloa")
 slots = NodePath("HBoxContainer")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer - scale 2/UnitBar"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer - scale 2_5/UnitBar"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -1295,13 +1324,24 @@ theme_override_constants/separation = 0
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_x42w8")
 
-[node name="unit" parent="." instance=ExtResource("22_6y7e7")]
-position = Vector2(-158, -51)
+[node name="Cusor" type="Node" parent="."]
+script = ExtResource("21_35vvr")
+mouseTexture = ExtResource("22_so1mv")
 
-[node name="AnimatedSprite2D" parent="." instance=ExtResource("23_6y7e7")]
-y_sort_enabled = true
-position = Vector2(-205, -55)
-animation = &"idle_left"
+[node name="fog" type="ColorRect" parent="."]
+z_index = 200
+material = SubResource("ShaderMaterial_lfyj4")
+offset_left = -421.0
+offset_top = -256.0
+offset_right = 454.0
+offset_bottom = 237.0
+mouse_filter = 2
 
-[node name="unit2" parent="." instance=ExtResource("21_so1mv")]
-position = Vector2(-199, -28)
+[node name="GodRays" type="ColorRect" parent="."]
+z_index = 200
+material = SubResource("ShaderMaterial_so1mv")
+offset_left = -240.0
+offset_top = -387.0
+offset_right = 406.0
+offset_bottom = 411.0
+mouse_filter = 2

@@ -454,9 +454,14 @@ public partial class UnitGroup : Node2D
         {
             RemoveStatus(StatusComponent.STATUS.dying);
         }
-        else if (this.UnitsRemaining.All(x => x.State == GameUnit.unitState.Idle))
+
+        if (this.UnitsRemaining.All(x => x.State == GameUnit.unitState.Idle))
         {
             TryAddStatus(StatusComponent.STATUS.idle);
+        }
+        else
+        {
+            RemoveStatus(StatusComponent.STATUS.idle);
         }
 
         // TODO other statuses
@@ -492,7 +497,6 @@ public partial class UnitGroup : Node2D
             case StatusComponent.STATUS.fresh:
                 AddStatusWithTimer(StatusComponent.STATUS.fresh, GlobalGameVariables.FRESH_STATUS_TIME);
                 break;
-            // TODO other statuses
             default:
                 AddStatus(status);
                 break;

@@ -38,6 +38,6 @@ public partial class UnitBarSlot : TextureRect
         if (this.group == null) { return; }
 
         statusComponent.UpdateHealthPercentage(this.group.GetHealthPercentage());
-        statusComponent.AddStatuses(this.group.GetActiveStatuses());
+        statusComponent.UpdateStatuses(this.group.GetActiveStatuses());
     }
 }
