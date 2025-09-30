@@ -19,7 +19,7 @@ public partial class UnitGroup : Node2D
     /// <summary>
     /// Units that are alive rn.
     /// </summary>
-    public List<GameUnit> UnitsRemaining => allUnits.Where(x => !x.IsDead || x.navAgent == null).ToList();
+    public List<GameUnit> UnitsRemaining => allUnits.Where(x => !x.IsDead && x.navAgent != null).ToList();
 
     private List<GameUnit> allUnits = new List<GameUnit>();
 
@@ -276,17 +276,103 @@ public partial class UnitGroup : Node2D
     }
 
     /// <summary>
+    /// given some target positions to be, and the units on the field. return the optimal list of pairs. Which is each unit Closest to each point is assigned that point.
+    /// </summary>
+    /// <returns></returns>
+    private List<(GameUnit, Vector2)> GetClosestPairs(List<Vector2> targetPositions)
+    {
+        // The lists must have the same count for a full assignment
+        if (UnitsRemaining.Count != targetPositions.Count || UnitsRemaining.Count == 0)
+        {
+            return new List<(GameUnit, Vector2)>();
+        }
+
+        // Step 1: Calculate the center position of all units.
+        Vector2 unitCenter = this.GetCentre();
+
+        // Step 2: Determine which target positions are 'furthest away' from the unit center.
+        // Create a list of (Position, DistanceSqFromCenter) and sort it descending.
+        var sortedTargetPositions = targetPositions
+            .Select(pos => new
+            {
+                Position = pos,
+                DistanceSq = pos.DistanceSquaredTo(unitCenter) // Assuming DistanceSquaredTo is available
+            })
+            .OrderByDescending(p => p.DistanceSq) // Furthest positions first
+            .ToList();
+
+        List<GameUnit> availableUnits = new List<GameUnit>(UnitsRemaining);
+        List<(GameUnit, Vector2)> assignedPairs = new List<(GameUnit, Vector2)>();
+
+        // Step 3: Iterate through the target positions, from furthest to closest.
+        foreach (var target in sortedTargetPositions)
+        {
+            Vector2 currentTargetPos = target.Position;
+
+            // Step 4: Find the AVAILABLE unit closest to the current target position.
+            GameUnit closestUnit = null;
+            float minDistanceSq = float.MaxValue;
+
+            foreach (var unit in availableUnits)
+            {
+                float distSq = unit.GlobalPosition.DistanceSquaredTo(currentTargetPos);
+
+                if (distSq < minDistanceSq)
+                {
+                    minDistanceSq = distSq;
+                    closestUnit = unit;
+                }
+            }
+
+            // Step 5: Assign the closest unit to this furthest target position.
+            if (closestUnit != null)
+            {
+                assignedPairs.Add((closestUnit, currentTargetPos));
+                availableUnits.Remove(closestUnit); // Unit is now assigned and unavailable
+            }
+
+            // Safety break if we somehow run out of units
+            if (availableUnits.Count == 0)
+                break;
+        }
+
+        return assignedPairs;
+    }
+
+    /// <summary>
+    /// Set new positions when clicked and dragged to set new position and a specific rotation.
+    /// </summary>
+    /// <param name="newPosition"></param>
+    /// <param name="directionToFace"></param>
+    /// <param name="cols"></param>
+    /// <param name="rows"></param>
+    public void SetNewTargetLocation(Vector2 newPosition, Vector2 directionToFace, int cols, int rows)
+    {
+        ClearTriangles();
+        var positionsArray = GetPositionsToPutUnitsInGrid(newPosition, cols, rows);
+        var optimalAssignments = GetClosestPairs(positionsArray);
+
+        foreach (var pair in optimalAssignments)
+        {
+            pair.Item1.SetTargetPosition(pair.Item2, directionToFace);
+        }
+
+        SpawnTriangleIndicators(positionsArray);
+    }
+
+    /// <summary>
     /// Set new location without specifying row, cols, would just be a click.
     /// </summary>
     /// <param name="newCentre"></param>
     public void SetNewTargetLocation(Vector2 newCentre)
     {
         ClearTriangles();
-
         var positionsArray = GetPositionsToPutUnitsInGrid(newCentre);
-        for (int i = 0; i < positionsArray.Count; i++)
+
+        var optimalAssignments = GetClosestPairs(positionsArray);
+        foreach (var pair in optimalAssignments)
         {
-            allUnits[i].SetTargetPosition(positionsArray[i], GlobalGameVariables.GetDefaultDirection(allUnits[i].GlobalPosition));
+            pair.Item1.SetTargetPosition(pair.Item2, GlobalGameVariables.GetDefaultDirection(pair.Item2));
         }
 
         SpawnTriangleIndicators(positionsArray);
@@ -306,25 +392,6 @@ public partial class UnitGroup : Node2D
             float angleRadians = Mathf.Atan2(directionUnitFacing.Y, directionUnitFacing.X);
             tri.GlobalRotation = angleRadians;
         }
-    }
-
-    /// <summary>
-    /// Set new positions when clicked and dragged to set new position and a specific rotation.
-    /// </summary>
-    /// <param name="newPosition"></param>
-    /// <param name="unitFacingDir"></param>
-    /// <param name="cols"></param>
-    /// <param name="rows"></param>
-    public void SetNewTargetLocation(Vector2 newPosition, Vector2 unitFacingDir, int cols, int rows)
-    {
-        ClearTriangles();
-        var positionsArray = GetPositionsToPutUnitsInGrid(newPosition, cols, rows);
-        for (int i = 0; i < positionsArray.Count; i++)
-        {
-            allUnits[i].SetTargetPosition(positionsArray[i], unitFacingDir);
-        }
-
-        SpawnTriangleIndicators(positionsArray);
     }
 
     private void ClearTriangles()
@@ -386,6 +453,10 @@ public partial class UnitGroup : Node2D
         else if (this.GetHealthPercentage() > 0.16)
         {
             RemoveStatus(StatusComponent.STATUS.dying);
+        }
+        else if (this.UnitsRemaining.All(x => x.State == GameUnit.unitState.Idle))
+        {
+            TryAddStatus(StatusComponent.STATUS.idle);
         }
 
         // TODO other statuses

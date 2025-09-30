@@ -2,9 +2,9 @@ using Godot;
 using Godot.Collections;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using WizardsVsMonster.scripts;
+#nullable enable
 
 /// <summary>
 /// Represents the game unit on the board.
@@ -12,7 +12,7 @@ using WizardsVsMonster.scripts;
 [GlobalClass]
 public partial class GameUnit : CharacterBody2D
 {
-    [Export] public NavigationAgent2D navAgent;
+    [Export] public NavigationAgent2D? navAgent;
 
     [Export] public ClickableUnitComponent ClickableUnitComponent { get; private set; }
 
@@ -197,6 +197,11 @@ public partial class GameUnit : CharacterBody2D
 
     public void SetTargetUnit(GameUnit enemyToTarget)
     {
+        if (navAgent == null)
+        {
+            return;
+        }
+
         CurrentCommand = COMMAND.AttackTarget;
         currentTarget = enemyToTarget.UnitBody;
         navAgent.TargetPosition = GetPositionWhereUnitIsJustInRange(currentTarget);
@@ -581,7 +586,7 @@ public partial class GameUnit : CharacterBody2D
 
     private void TryAddStatus(StatusComponent.STATUS status)
     {
-        if (activeStatuses.Contains(StatusComponent.STATUS.fresh))
+        if (activeStatuses.Contains(status))
         {
             return;
         }

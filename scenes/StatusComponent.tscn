@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cm35m1s4vbovj" path="res://art/statusIcons/skull.png" id="6_pblaw"]
 [ext_resource type="Texture2D" uid="uid://btqokk6h70t2c" path="res://ui/bottomUnitBar/RedTopStatuses.png" id="6_x3bdi"]
 
-[node name="StatusComponent" type="Control" node_paths=PackedStringArray("healthFill", "colLeft", "colMidle", "colRight")]
+[node name="StatusComponent" type="Control" node_paths=PackedStringArray("colLeft", "colMidle", "colRight")]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -19,16 +19,15 @@ grow_vertical = 2
 size_flags_vertical = 4
 mouse_filter = 2
 script = ExtResource("1_rvjdp")
-healthFill = NodePath("")
 statusTextures = Dictionary[int, Texture2D]({
 0: ExtResource("6_pblaw"),
 1: ExtResource("4_j6i8j"),
 2: ExtResource("3_pblaw"),
 3: ExtResource("5_j6i8j")
 })
-colLeft = NodePath("status-TODOtooltips/HBoxContainer/VBoxContainer")
-colMidle = NodePath("status-TODOtooltips/HBoxContainer/VBoxContainer2")
-colRight = NodePath("status-TODOtooltips/HBoxContainer/VBoxContainer3")
+colLeft = NodePath("HBoxContainer/VBoxContainer")
+colMidle = NodePath("HBoxContainer/VBoxContainer2")
+colRight = NodePath("HBoxContainer/VBoxContainer3")
 
 [node name="status-TODOtooltips" type="TextureRect" parent="."]
 layout_mode = 0
@@ -37,32 +36,32 @@ offset_bottom = 11.0
 texture = ExtResource("6_x3bdi")
 stretch_mode = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="status-TODOtooltips"]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -13.0
-offset_top = -34.5
-offset_right = 13.0
-offset_bottom = 4.5
+offset_left = 2.0
+offset_top = -28.0
+offset_right = 28.0
+offset_bottom = 11.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="status-TODOtooltips/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 1
 alignment = 2
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="status-TODOtooltips/HBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 1
 alignment = 2
 
-[node name="VBoxContainer3" type="VBoxContainer" parent="status-TODOtooltips/HBoxContainer"]
+[node name="VBoxContainer3" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 1
 alignment = 2

@@ -9,17 +9,17 @@ using WizardsVsMonster.scripts;
 public partial class StatusComponent : Control
 {
 	[Export] private TextureRect healthFill;
-
 	private float maxHealthBarSize;
-
     [Export] private Godot.Collections.Dictionary<STATUS, Texture2D> statusTextures;
 	[Export] private VBoxContainer colLeft;
 	[Export] private VBoxContainer colMidle;
 	[Export] private VBoxContainer colRight;
+	[Export] AnimationPlayer labelZZZAnimationPlayer;
 
     public override void _Ready()
     {
 		maxHealthBarSize = healthFill.Size.X;
+		labelZZZAnimationPlayer.Play("blank");
     }
 
 	public void AddStatuses(Array<STATUS> currentStatuses)
@@ -44,7 +44,7 @@ public partial class StatusComponent : Control
         healthFill.SetSize(newSize);
     }
 
-	public enum STATUS { dying, bracing, determined, fresh }
+	public enum STATUS { dying, bracing, determined, fresh, idle }
 
 	private Godot.Collections.Dictionary<STATUS, TextureRect> displayedStatuses = [];
 
@@ -53,6 +53,11 @@ public partial class StatusComponent : Control
 		if (displayedStatuses.ContainsKey(newStat))
 		{
 			return false;
+		}
+
+		if (newStat == STATUS.idle)
+		{
+			labelZZZAnimationPlayer.Play("loop");
 		}
 
 		Logger.Log($"Status added: {newStat}");
@@ -73,6 +78,11 @@ public partial class StatusComponent : Control
 			Logger.Log($"did not contain key: {stat}");
 			return;
 		}
+
+        if (stat == STATUS.idle)
+        {
+            labelZZZAnimationPlayer.Play("blank");
+        }
 
         var imageNode = displayedStatuses[stat];
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://gd1n7f872n6s"]
+[gd_scene load_steps=18 format=3 uid="uid://gd1n7f872n6s"]
 
 [ext_resource type="Texture2D" uid="uid://bwtnda0lemui" path="res://ui/bottomUnitBar/Slot.png" id="1_4yfli"]
 [ext_resource type="Texture2D" uid="uid://w0oqohcm8e7i" path="res://ui/bottomUnitBar/frame.png" id="2_bnj48"]
@@ -27,6 +27,61 @@ colors = PackedColorArray(0.38802183, 0.7681577, 5.0055983e-06, 1)
 gradient = SubResource("Gradient_bnj48")
 width = 16
 height = 6
+
+[sub_resource type="Animation" id="Animation_mae01"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": ["Zzz"]
+}
+
+[sub_resource type="Animation" id="Animation_3dkyx"]
+resource_name = "Blank"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [""]
+}
+
+[sub_resource type="Animation" id="Animation_iyvxc"]
+resource_name = "Loop"
+length = 1.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.13333334, 0.46666667, 0.8, 1.1333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": ["Z", "Zz", "Zzz", "Zzzz"]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3dkyx"]
+_data = {
+&"RESET": SubResource("Animation_mae01"),
+&"blank": SubResource("Animation_3dkyx"),
+&"loop": SubResource("Animation_iyvxc")
+}
 
 [node name="TextureRect" type="TextureRect" node_paths=PackedStringArray("statusComponent", "NumberText", "unitImage", "button")]
 texture = ExtResource("1_4yfli")
@@ -100,13 +155,14 @@ offset_bottom = 9.0
 texture = ExtResource("6_3dkyx")
 stretch_mode = 4
 
-[node name="StatusComponent" parent="." node_paths=PackedStringArray("healthFill") instance=ExtResource("12_u1kyl")]
+[node name="StatusComponent" parent="." node_paths=PackedStringArray("healthFill", "labelZZZAnimationPlayer") instance=ExtResource("12_u1kyl")]
 layout_mode = 1
 offset_left = -15.0
 offset_top = -33.0
 offset_right = -15.0
 offset_bottom = -33.0
 healthFill = NodePath("../healthbar/green")
+labelZZZAnimationPlayer = NodePath("../ZzzText/animateZzz")
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 0
@@ -114,3 +170,22 @@ offset_right = 29.0
 offset_bottom = 29.0
 flat = true
 script = ExtResource("9_mae01")
+
+[node name="ZzzText" type="Label" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 5.0
+offset_right = 29.527523
+offset_bottom = 19.663815
+rotation = -0.12071692
+scale = Vector2(0.87185913, 0.87185913)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
+theme_override_fonts/font = ExtResource("3_2qugi")
+text = "Zzz"
+
+[node name="animateZzz" type="AnimationPlayer" parent="ZzzText"]
+libraries = {
+&"": SubResource("AnimationLibrary_3dkyx")
+}
+autoplay = "blank"
