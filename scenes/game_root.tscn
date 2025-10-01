@@ -24,8 +24,8 @@
 [ext_resource type="Texture2D" uid="uid://cpaubvvh88ack" path="res://art/ui/cursor/SwordBlue34x34.png" id="22_so1mv"]
 [ext_resource type="Texture2D" uid="uid://h1rumy5oigbs" path="res://art/ui/cursor/pointer34x34.png" id="23_3isrv"]
 [ext_resource type="Shader" uid="uid://qjc1fb0nljwj" path="res://scripts/shaders/god_rays.gdshader" id="23_6y7e7"]
-[ext_resource type="Shader" uid="uid://cavopnb1jgxmk" path="res://scenes/screenSpaceFog.gdshader" id="25_lfyj4"]
-[ext_resource type="Texture2D" uid="uid://b5iss1msdvnld" path="res://noiseTex/Perlin_22-512x512.png" id="26_3isrv"]
+[ext_resource type="Shader" uid="uid://oqmkx7o4g6oh" path="res://scenes/parallaxFogShader.gdshader" id="25_lfyj4"]
+[ext_resource type="Texture2D" uid="uid://85ti7udjmuwt" path="res://noiseTex/Perlin_16-512x512.png" id="26_wt8xl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -949,11 +949,9 @@ agent_radius = 16.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3isrv"]
 shader = ExtResource("25_lfyj4")
-shader_parameter/fog_speed = 0.1
-shader_parameter/fog_density = 1.0
-shader_parameter/fog_color = Color(0, 0, 0, 0.40784314)
-shader_parameter/noise_texture = ExtResource("26_3isrv")
-shader_parameter/fog_scale = 0.0010000000475
+shader_parameter/noise_texture = ExtResource("26_wt8xl")
+shader_parameter/density = 1.0
+shader_parameter/speed = Vector2(0.008, 0.008)
 
 [node name="gameRoot" type="Node2D"]
 y_sort_enabled = true
@@ -1362,10 +1360,15 @@ defaultTexture = ExtResource("23_3isrv")
 swordTexture = ExtResource("22_so1mv")
 moveSelectedTexture = ExtResource("23_3isrv")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+layer = 200
+
+[node name="Parallax2D" type="Parallax2D" parent="ParallaxBackground"]
+
+[node name="ColorRect" type="ColorRect" parent="ParallaxBackground/Parallax2D"]
 material = SubResource("ShaderMaterial_3isrv")
-offset_left = -3076.0
-offset_top = -1711.0
-offset_right = 3730.0
-offset_bottom = 2440.0
-mouse_filter = 2
+offset_left = -2509.0
+offset_top = -1254.0
+offset_right = 3473.919
+offset_bottom = 2145.0
+color = Color(0.86467505, 0.86467516, 0.864675, 1)
