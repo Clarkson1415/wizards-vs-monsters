@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://g3pr8akyulje"
-path="res://.godot/imported/Forest Tileset.png-f457f3070dee68a09e51dc0070ee6afd.ctex"
+uid="uid://chqrg33haqpa"
+path="res://.godot/imported/RoundTree.png-7071a084a759c74d5313ca09b8930939.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/environment/Forest Tileset.png"
-dest_files=["res://.godot/imported/Forest Tileset.png-f457f3070dee68a09e51dc0070ee6afd.ctex"]
+source_file="res://art/environment/ForestTileset/RoundTree.png"
+dest_files=["res://.godot/imported/RoundTree.png-7071a084a759c74d5313ca09b8930939.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgg3voiypiwyx"
-path="res://.godot/imported/tiles.png-d7eb94361f6b57bb7ba0dc23c9e7630c.ctex"
+uid="uid://22tk3lvtj38w"
+path="res://.godot/imported/grass.png-479f56a8789ae6d74e7383a5af2a4b0e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/forTileGeneration/tiles.png"
-dest_files=["res://.godot/imported/tiles.png-d7eb94361f6b57bb7ba0dc23c9e7630c.ctex"]
+source_file="res://art/environment/ForestTileset/grass.png"
+dest_files=["res://.godot/imported/grass.png-479f56a8789ae6d74e7383a5af2a4b0e.ctex"]
 
 [params]
 

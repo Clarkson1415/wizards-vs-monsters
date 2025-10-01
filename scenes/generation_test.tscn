@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://3qsmwhn2sk47" path="res://addons/gaea/resources/gaea_layer.gd" id="3_25wst"]
 [ext_resource type="Script" uid="uid://dae6umbqb872e" path="res://addons/gaea/resources/gaea_graph.gd" id="4_f3ptl"]
 [ext_resource type="Script" uid="uid://b4x16tyyfihmb" path="res://addons/gaea/nodes/renderers/tilemap_renderer.gd" id="5_acy4u"]
-[ext_resource type="Texture2D" uid="uid://dgg3voiypiwyx" path="res://art/forTileGeneration/tiles.png" id="6_2c47f"]
+[ext_resource type="Texture2D" uid="uid://dgg3voiypiwyx" path="res://art/forTileGenerationTest/tiles.png" id="6_2c47f"]
 [ext_resource type="Script" uid="uid://du2gsd2o5qto4" path="res://scripts/GaeaWrapper.cs" id="7_tea42"]
 
 [sub_resource type="Resource" id="Resource_qsgdm"]
