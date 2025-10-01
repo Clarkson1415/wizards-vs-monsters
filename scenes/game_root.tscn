@@ -2319,6 +2319,7 @@ tile_map_data = PackedByteArray("AAB/AHAAAQAJAAwAAAB/AG8AAQAJAAsAAAB/AG4AAQAJAAo
 tile_set = SubResource("TileSet_x6uho")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(2128, 2128)
 process_callback = 0
 limit_enabled = false
 position_smoothing_enabled = true
@@ -2384,10 +2385,8 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -286.0
-offset_top = -162.0
-offset_right = 299.0
-offset_bottom = 168.0
+offset_right = 4096.0
+offset_bottom = 4096.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("5_x42w8")
@@ -2395,17 +2394,9 @@ script = ExtResource("5_x42w8")
 [node name="SpawnControl" type="Control" parent="Input" node_paths=PackedStringArray("unitBar")]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -978.5
-offset_top = -1027.0
-offset_right = 1007.5
-offset_bottom = 997.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 4096.0
+offset_bottom = 4096.0
 mouse_filter = 2
 script = ExtResource("16_6puu6")
 unitGroupScene = ExtResource("6_6puu6")
@@ -2413,17 +2404,9 @@ unitBar = NodePath("../../CanvasLayer - scale 2_5/UnitBar")
 
 [node name="MovementControls" type="Control" parent="Input"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -1019.5
-offset_top = -953.0
-offset_right = 1070.5
-offset_bottom = 1012.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 4096.0
+offset_bottom = 4096.0
 mouse_filter = 2
 script = ExtResource("17_k6861")
 
