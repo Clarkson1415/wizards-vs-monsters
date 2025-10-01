@@ -23,6 +23,10 @@ window/stretch/mode="viewport"
 
 project/assembly_name="WizardsVsMonster"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gaea/plugin.cfg")
+
 [input]
 
 drag={
