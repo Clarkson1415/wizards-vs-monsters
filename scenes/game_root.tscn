@@ -23,9 +23,9 @@
 [ext_resource type="Script" uid="uid://boymwl1cflepg" path="res://scripts/UIScripts/CustomCursorLoader.cs" id="21_35vvr"]
 [ext_resource type="Texture2D" uid="uid://cpaubvvh88ack" path="res://art/ui/cursor/SwordBlue34x34.png" id="22_so1mv"]
 [ext_resource type="Texture2D" uid="uid://h1rumy5oigbs" path="res://art/ui/cursor/pointer34x34.png" id="23_3isrv"]
-[ext_resource type="Shader" uid="uid://qjc1fb0nljwj" path="res://scenes/god_rays.gdshader" id="23_6y7e7"]
-[ext_resource type="Shader" uid="uid://dd4w45mh5hk6a" path="res://scenes/fog.gdshader" id="24_0ns5a"]
-[ext_resource type="Texture2D" uid="uid://b5iss1msdvnld" path="res://noiseTex/Perlin_22-512x512.png" id="25_lfyj4"]
+[ext_resource type="Shader" uid="uid://qjc1fb0nljwj" path="res://scripts/shaders/god_rays.gdshader" id="23_6y7e7"]
+[ext_resource type="Shader" uid="uid://cavopnb1jgxmk" path="res://scenes/screenSpaceFog.gdshader" id="25_lfyj4"]
+[ext_resource type="Texture2D" uid="uid://b5iss1msdvnld" path="res://noiseTex/Perlin_22-512x512.png" id="26_3isrv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jb3nc"]
 texture = ExtResource("1_uebra")
@@ -947,16 +947,13 @@ polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-392, 217, 423, 217, 396, -234, -362, -248)])
 agent_radius = 16.0
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_lfyj4"]
-shader = ExtResource("24_0ns5a")
-shader_parameter/color = Color(0, 0, 0, 1)
-shader_parameter/OCTAVES = 1
-shader_parameter/enable_pixelation = false
-shader_parameter/pixelation_amount = 128
-shader_parameter/fog_mask = ExtResource("25_lfyj4")
-shader_parameter/fog_direction = Vector2(1, 1)
-shader_parameter/scroll_noise_tex = true
-shader_parameter/noise_scroll_direction = Vector2(1, 0)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3isrv"]
+shader = ExtResource("25_lfyj4")
+shader_parameter/fog_speed = 0.1
+shader_parameter/fog_density = 1.0
+shader_parameter/fog_color = Color(0, 0, 0, 0.40784314)
+shader_parameter/noise_texture = ExtResource("26_3isrv")
+shader_parameter/fog_scale = 0.0010000000475
 
 [node name="gameRoot" type="Node2D"]
 y_sort_enabled = true
@@ -1365,26 +1362,10 @@ defaultTexture = ExtResource("23_3isrv")
 swordTexture = ExtResource("22_so1mv")
 moveSelectedTexture = ExtResource("23_3isrv")
 
-[node name="fog3" type="ColorRect" parent="."]
-visible = false
-z_index = 200
-texture_repeat = 2
-material = SubResource("ShaderMaterial_lfyj4")
-offset_left = -435.0
-offset_top = -238.0
-offset_right = 460.1037
-offset_bottom = 319.0
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_3isrv")
+offset_left = -3076.0
+offset_top = -1711.0
+offset_right = 3730.0
+offset_bottom = 2440.0
 mouse_filter = 2
-
-[node name="fog2" type="TextureRect" parent="."]
-visible = false
-z_index = 200
-texture_repeat = 2
-material = SubResource("ShaderMaterial_lfyj4")
-offset_left = -601.0
-offset_top = -343.0
-offset_right = 600.0
-offset_bottom = 350.0
-mouse_filter = 2
-texture = ExtResource("25_lfyj4")
-stretch_mode = 1
