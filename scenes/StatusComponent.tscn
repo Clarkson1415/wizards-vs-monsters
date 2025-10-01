@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://qv24khsrg61w" path="res://art/statusIcons/shield_bracing.png" id="4_j6i8j"]
 [ext_resource type="Texture2D" uid="uid://c83if8tvufvfx" path="res://art/statusIcons/GreenArrowUpSingle.png" id="5_j6i8j"]
 [ext_resource type="Texture2D" uid="uid://cm35m1s4vbovj" path="res://art/statusIcons/skull.png" id="6_pblaw"]
-[ext_resource type="Texture2D" uid="uid://btqokk6h70t2c" path="res://ui/bottomUnitBar/RedTopStatuses.png" id="6_x3bdi"]
+[ext_resource type="Texture2D" uid="uid://btqokk6h70t2c" path="res://art/ui/bottomUnitBar/RedTopStatuses.png" id="6_x3bdi"]
 
 [node name="StatusComponent" type="Control" node_paths=PackedStringArray("colLeft", "colMidle", "colRight")]
 layout_mode = 3

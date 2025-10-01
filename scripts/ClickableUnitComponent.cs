@@ -8,7 +8,7 @@ using WizardsVsMonster.scripts;
 [GlobalClass]
 public partial class ClickableUnitComponent : Button
 {
-    [Export] private UnitIndicator unitIndicatorLight;
+    [Export] private GameUnitAnimatedSprite animatedSprite;
 
     [Export] private Area2D area2d;
 
@@ -29,7 +29,7 @@ public partial class ClickableUnitComponent : Button
         Flat = true;
 
         // unit indicator light
-        unitIndicatorLight.SetupLight(unitSquareSize, this.resouce.GetFaction());
+        
 
         // area
         var areaShape = area2d.GetChild<CollisionShape2D>(0).Shape as RectangleShape2D;
@@ -44,13 +44,8 @@ public partial class ClickableUnitComponent : Button
         EmitSignal(SignalName.OnPressed);
     }
 
-    public void Highlight()
+    public void ToggleOutline(bool outlineOn)
     {
-        unitIndicatorLight.Visible = true;
-    }
-
-    public void UnHighlight()
-    {
-        unitIndicatorLight.Visible = false;
+        this.animatedSprite.ToggleOutline(outlineOn);
     }
 }

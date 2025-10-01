@@ -64,28 +64,23 @@ public partial class UnitGroup : Node2D
     /// </summary>
     public void OnUnitClicked()
     {
-        HighlightUnits();
+        ToggleOutlineAllUnits(true);
         GlobalCurrentSelection.GetInstance().OnGroupClicked(this);
         var added = GlobalCurrentSelection.GetInstance().IsGroupInSelection(this);
         if (!added)
         {
-            UnhighlightUnits();
+            ToggleOutlineAllUnits(false);
         }
     }
 
     public void TellGroupItWasRemovedFromSelection()
     {
-        this.UnhighlightUnits();
+        this.ToggleOutlineAllUnits(false);
     }
 
-    private void UnhighlightUnits()
+    private void ToggleOutlineAllUnits(bool outlineOn)
     {
-        this.allUnits.ForEach(x => x.ClickableUnitComponent.UnHighlight());
-    }
-
-    private void HighlightUnits()
-    {
-        this.allUnits.ForEach(x => x.ClickableUnitComponent.Highlight());
+        this.allUnits.ForEach(x => x.ClickableUnitComponent.ToggleOutline(outlineOn));
     }
 
     #region centre calc 

@@ -1,12 +1,12 @@
 [gd_scene load_steps=18 format=3 uid="uid://gd1n7f872n6s"]
 
-[ext_resource type="Texture2D" uid="uid://bwtnda0lemui" path="res://ui/bottomUnitBar/Slot.png" id="1_4yfli"]
-[ext_resource type="Texture2D" uid="uid://w0oqohcm8e7i" path="res://ui/bottomUnitBar/frame.png" id="2_bnj48"]
+[ext_resource type="Texture2D" uid="uid://bwtnda0lemui" path="res://art/ui/bottomUnitBar/Slot.png" id="1_4yfli"]
+[ext_resource type="Texture2D" uid="uid://w0oqohcm8e7i" path="res://art/ui/bottomUnitBar/frame.png" id="2_bnj48"]
 [ext_resource type="Script" uid="uid://ddhtgwroub23i" path="res://scripts/UnitBarSlot.cs" id="2_iyvxc"]
 [ext_resource type="Texture2D" uid="uid://dpbot6ws03h3d" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/BlueWitchButton.png" id="2_mbv4h"]
-[ext_resource type="FontFile" uid="uid://b8hbmmi6oyqch" path="res://ui/monogram.ttf" id="3_2qugi"]
-[ext_resource type="Texture2D" uid="uid://dtlmm80w20ghg" path="res://ui/bottomUnitBar/TopBit.png" id="4_1ra8c"]
-[ext_resource type="Texture2D" uid="uid://bmug8e5exti5y" path="res://ui/unitTypesIcons/Bow.png" id="6_3dkyx"]
+[ext_resource type="FontFile" uid="uid://b8hbmmi6oyqch" path="res://art/ui/monogram.ttf" id="3_2qugi"]
+[ext_resource type="Texture2D" uid="uid://dtlmm80w20ghg" path="res://art/ui/bottomUnitBar/TopBit.png" id="4_1ra8c"]
+[ext_resource type="Texture2D" uid="uid://bmug8e5exti5y" path="res://art/ui/unitTypesIcons/Bow.png" id="6_3dkyx"]
 [ext_resource type="Script" uid="uid://6l3sulk2opu5" path="res://scripts/UnitBarSlotButton.cs" id="9_mae01"]
 [ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="12_u1kyl"]
 

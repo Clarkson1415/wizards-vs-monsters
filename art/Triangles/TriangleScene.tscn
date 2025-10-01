@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://hutmif623vv3"]
 
 [ext_resource type="Script" uid="uid://cxvreqlbr6r2a" path="res://art/Triangles/TriangleScene.cs" id="1_30nbb"]
-[ext_resource type="Texture2D" uid="uid://ceptbvrr4v6y5" path="res://art/Triangles/16x16_1Unit_Triangle.png" id="1_nkrvf"]
+[ext_resource type="Texture2D" uid="uid://b316i8ooov0wk" path="res://art/Triangles/15x15Triangle.png" id="2_30nbb"]
 [ext_resource type="Texture2D" uid="uid://d4b251ugful20" path="res://art/Triangles/32x32_2_triangles.png" id="2_k10uc"]
 
 [node name="Node2D" type="Node2D" node_paths=PackedStringArray("size16_1Unit", "size32_2Unit")]
@@ -10,11 +10,12 @@ size16_1Unit = NodePath("16")
 size32_2Unit = NodePath("32")
 
 [node name="16" type="Sprite2D" parent="."]
-visible = false
+modulate = Color(1, 1, 1, 0.49803922)
 z_index = -4
-texture = ExtResource("1_nkrvf")
+texture = ExtResource("2_30nbb")
 
 [node name="32" type="Sprite2D" parent="."]
 visible = false
+modulate = Color(1, 1, 1, 0.49803922)
 z_index = -4
 texture = ExtResource("2_k10uc")

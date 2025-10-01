@@ -20,7 +20,7 @@ public partial class GameUnit : CharacterBody2D
 
     [Export] private AnimationComponent animationPlayer;
 
-    [Export] private AnimatedSprite2D animatedSprite2D;
+    [Export] private GameUnitAnimatedSprite animatedSprite2D;
 
     private int baseUnitDamagePerAnimation = 1;
 
@@ -106,7 +106,11 @@ public partial class GameUnit : CharacterBody2D
 
     public void Setup(GameUnitResource resource)
     {
-        base._Ready();
+        this.resource = resource;
+        if (resource == null)
+        {
+            Logger.LogError($"unit data resource not loaded for {this.Name}");
+        }
 
         var relevantSprite2d = resource.GetAnimatedSprite2D().Instantiate<AnimatedSprite2D>();
         AddChild(relevantSprite2d);
@@ -118,6 +122,9 @@ public partial class GameUnit : CharacterBody2D
 
         // make sure material is set as unique otherwise white flashes on all units.
         this.animatedSprite2D.Material = this.animatedSprite2D.Material.DuplicateDeep() as Material;
+
+        // after make unique. set color
+        this.animatedSprite2D.SetOutlineColor(this.resource.GetFaction());
 
         var listbefore = this.animationPlayer.GetAnimationLibraryList();
 
@@ -133,12 +140,6 @@ public partial class GameUnit : CharacterBody2D
         var aniamtoins = this.animationPlayer.GetAnimationList();
 
         this.animationPlayer.SetAnimationLibraryName(libraryName);
-
-        this.resource = resource;
-        if (resource == null)
-        {
-            Logger.LogError($"unit data resource not loaded for {this.Name}");
-        }
 
         unitBaseSpeed = this.resource.GetSpeed();
         baseUnitDamagePerAnimation = this.resource.GetDPS();
@@ -214,15 +215,7 @@ public partial class GameUnit : CharacterBody2D
         Logger.Log($"attackers targets {attacker.targetsInRange}");
         Logger.Log($"is this in attackers targets {attacker.targetsInRange.Contains(this.UnitBody)}");
 
-        var material = (ShaderMaterial)animatedSprite2D.Material;
-        // Flash white instantly
-        material.SetShaderParameter("flash_strength", 1.0f);
-        
-        // Reset after a short time
-        GetTree().CreateTimer(0.1).Timeout += () =>
-        {
-            material.SetShaderParameter("flash_strength", 0.0f);
-        };
+        this.animatedSprite2D.FlashDamage();
 
         // tell group were being attacked.
         var group = attacker.GetParent<UnitGroup>();
@@ -563,7 +556,8 @@ public partial class GameUnit : CharacterBody2D
         }
 
         // if there is a status on here that is not in active statuses remove it
-        var oldStatusesToRemove = activeStatuses.Where(x => !updatedActiveStatuses.Contains(x));
+        // if no new ones all the current ones are old. else check which are not in it.
+        var oldStatusesToRemove = updatedActiveStatuses.Count == 0 ? activeStatuses : activeStatuses.Where(x => !updatedActiveStatuses.Contains(x));
         foreach (var oldStatus in oldStatusesToRemove)
         {
             RemoveStatus(oldStatus);

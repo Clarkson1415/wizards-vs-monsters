@@ -3,15 +3,16 @@
 [ext_resource type="Script" uid="uid://bwuvxj280qfn7" path="res://scripts/Units/GameUnit.cs" id="1_g01vy"]
 [ext_resource type="Script" uid="uid://b8e3ra1ijmrgj" path="res://scripts/UnitBody.cs" id="2_qlqyl"]
 [ext_resource type="Script" uid="uid://5rlojexeef8u" path="res://scripts/ClickableUnitComponent.cs" id="3_ux2s3"]
-[ext_resource type="Script" uid="uid://pwwrb0yq7w2g" path="res://scripts/UnitIndicator.cs" id="4_qmf2c"]
 [ext_resource type="Script" uid="uid://cuu7j81dhm2h6" path="res://scripts/AnimationComponent.cs" id="5_iivwh"]
 [ext_resource type="AnimationLibrary" uid="uid://dw6a1i0av6rop" path="res://animationlibraries/ogreOfKershAnimationLibrary.res" id="5_qlqyl"]
 [ext_resource type="Texture2D" uid="uid://bcqjxm4cj122d" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - spell 2.png" id="7_4kqpf"]
 [ext_resource type="Texture2D" uid="uid://bm7mu6kpvdrl6" path="res://art/monsters/small monsters 1 - spritesheets/100x100 (48x48)/ogre_ogres of kerhs/dark outline/ogre - idle.png" id="7_qlqyl"]
+[ext_resource type="Shader" uid="uid://dv164wqjqx6ng" path="res://scripts/shaders/unit_combined_effects_shader.gdshader" id="7_ux2s3"]
 [ext_resource type="Texture2D" uid="uid://bv0lnnxe14ocx" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - death.png" id="8_5k8ke"]
 [ext_resource type="Texture2D" uid="uid://ifw72deitixl" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - hit.png" id="9_7dm4a"]
 [ext_resource type="Texture2D" uid="uid://06jmvfu4a5iw" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - idle.png" id="10_8ogao"]
 [ext_resource type="Texture2D" uid="uid://b47ugpsltahyn" path="res://art/heros/wizards_smaller_ukimian/black outline/100% (32x32)/Blue/good wizard - walk.png" id="11_jihbs"]
+[ext_resource type="Script" uid="uid://clkriy0jw8upl" path="res://scripts/Units/GameUnitAnimatedSprite.cs" id="14_qmf2c"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_g01vy"]
 radius = 4.0
@@ -20,14 +21,9 @@ height = 10.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hw5ae"]
 size = Vector2(16, 16)
 
-[sub_resource type="Gradient" id="Gradient_hw5ae"]
-offsets = PackedFloat32Array(0.0018903592, 0.27977315)
-colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1)
+[sub_resource type="Theme" id="Theme_iivwh"]
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_6yh18"]
-gradient = SubResource("Gradient_hw5ae")
-width = 16
-height = 16
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ux2s3"]
 
 [sub_resource type="Animation" id="Animation_ch327"]
 tracks/0/type = "value"
@@ -340,31 +336,12 @@ _data = {
 &"walk_up": SubResource("Animation_ujbpr")
 }
 
-[sub_resource type="Shader" id="Shader_g01vy"]
-code = "shader_type canvas_item;
-
-uniform float flash_strength : hint_range(0.0, 1.0) = 0.0;
-
-void vertex() {
-	// Called for every vertex the material is visible on.
-}
-
-void fragment() {
-	// Called for every pixel the material is visible on.
-	vec4 tex_color = texture(TEXTURE, UV);
-    // mix sprite color with white, controlled by flash_strength
-    COLOR = mix(tex_color, vec4(1.0, 1.0, 1.0, tex_color.a), flash_strength);
-}
-
-//void light() {
-//	// Called for every pixel for every light affecting the CanvasItem.
-//	// Uncomment to replace the default light processing function with this one.
-//}
-"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_g01vy"]
-shader = SubResource("Shader_g01vy")
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qmf2c"]
+shader = ExtResource("7_ux2s3")
 shader_parameter/flash_strength = 0.0
+shader_parameter/color = Color(0.489613, 0.11171765, 0.07618309, 1)
+shader_parameter/outline_color = Color(0.09367191, 0.45516163, 0.8350101, 1)
+shader_parameter/outline_on = false
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ux2s3"]
 atlas = ExtResource("7_qlqyl")
@@ -1147,7 +1124,7 @@ script = ExtResource("2_qlqyl")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="body"]
 shape = SubResource("RectangleShape2D_hw5ae")
 
-[node name="Control" type="Button" parent="." node_paths=PackedStringArray("unitIndicatorLight", "area2d")]
+[node name="Control" type="Button" parent="." node_paths=PackedStringArray("animatedSprite", "area2d")]
 custom_minimum_size = Vector2(16, 16)
 anchors_preset = 15
 anchor_right = 1.0
@@ -1159,15 +1136,12 @@ offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
+theme = SubResource("Theme_iivwh")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_ux2s3")
 flat = true
 script = ExtResource("3_ux2s3")
-unitIndicatorLight = NodePath("../UnitIndicator")
+animatedSprite = NodePath("../AnimatedSprite2D")
 area2d = NodePath("../body")
-
-[node name="UnitIndicator" type="PointLight2D" parent="."]
-texture = SubResource("GradientTexture2D_6yh18")
-script = ExtResource("4_qmf2c")
-metadata/_custom_type_script = "uid://pwwrb0yq7w2g"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -1178,10 +1152,11 @@ autoplay = "idle_right"
 script = ExtResource("5_iivwh")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-material = SubResource("ShaderMaterial_g01vy")
+material = SubResource("ShaderMaterial_qmf2c")
 position = Vector2(0, -4)
 sprite_frames = SubResource("SpriteFrames_qlqyl")
 animation = &"attack_1_left"
+script = ExtResource("14_qmf2c")
 
 [node name="range" type="Area2D" parent="."]
 collision_layer = 0

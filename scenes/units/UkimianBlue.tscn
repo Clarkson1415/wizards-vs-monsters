@@ -9,3 +9,4 @@ position = Vector2(0, 0)
 
 [node name="AnimatedSprite2D" parent="." index="5"]
 position = Vector2(0, -6)
+frame_progress = 0.29282737

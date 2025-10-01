@@ -1,11 +1,16 @@
 using Godot;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
 public partial class CameraController : Camera2D
 {
     private static int zoomAmount = 10;
 
     private static float moveSpeed = 50;
+
+    private static float maxZoomOutValue = 0.3f;
+
+    private static float maxZoomInValue = 15f;
 
     private bool mouseCurrentlyDragging = false;
     private Vector2 mouse_start_pos;
@@ -77,7 +82,7 @@ public partial class CameraController : Camera2D
                     Zoom *= zoomChange;
 
                     // Clamp zoom
-                    Zoom = Zoom.Clamp(new Vector2(0.1f, 0.1f), new Vector2(20f, 20f));
+                    Zoom = Zoom.Clamp(maxZoomOutValue, maxZoomInValue);
                 }
 
                 _lastDistance = currentDistance;
@@ -129,7 +134,7 @@ public partial class CameraController : Camera2D
 
     private void zoomIn()
     {
-        this.Zoom = this.Zoom + (Vector2.One / zoomAmount);
+        this.Zoom = (this.Zoom + (Vector2.One / zoomAmount)).Clamp(maxZoomOutValue, maxZoomInValue);
     }
 
 
@@ -159,12 +164,12 @@ public partial class CameraController : Camera2D
     }
 
 
-    #region WASD movement
     private void zoomOut()
     {
-        this.Zoom = this.Zoom - (Vector2.One / zoomAmount);
+        this.Zoom = (this.Zoom - (Vector2.One / zoomAmount)).Clamp(maxZoomOutValue, maxZoomInValue);
     }
 
+    #region WASD movement
     private void moveUp(float delta)
     {
         GlobalPosition += Vector2.Up * moveSpeed * delta;
