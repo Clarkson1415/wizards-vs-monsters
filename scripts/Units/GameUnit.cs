@@ -239,7 +239,6 @@ public partial class GameUnit : CharacterBody2D
         return areaToTarget.GlobalPosition;
 
         // TODO: not working.
-
         Vector2 currentPosition = GlobalPosition;
         Vector2 targetCenter = areaToTarget.GlobalPosition;
 
