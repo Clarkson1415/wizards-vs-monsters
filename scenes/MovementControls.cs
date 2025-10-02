@@ -28,7 +28,7 @@ public partial class MovementControls : Control, IGameInputControlNode
 
     private void TryMoveUnit(Vector2 touchOrTapPosition)
     {
-        if (GlobalCurrentSelection.GetInstance().LastSelectedUnitsInfo == null || GlobalCurrentSelection.UnitGroupsHighlighted.Count == 0)
+        if (GlobalCurrentSelection.GetInstance().LastSelectedUnitsInfo == null || GlobalCurrentSelection.PlayerGroupsSelected.Count == 0)
         {
             return;
         }
@@ -41,7 +41,7 @@ public partial class MovementControls : Control, IGameInputControlNode
         // What if i want to click and hold to create a formation rectangle of a size i want?
 
         var lastSelected = GlobalCurrentSelection.GetInstance().LastSelectedUnitsInfo.GetFaction();
-        var playersFactionsHighlighted = GlobalCurrentSelection.UnitGroupsHighlighted.Where(x => x.Faction == GlobalGameVariables.PlayerControlledFaction);
+        var playersFactionsHighlighted = GlobalCurrentSelection.PlayerGroupsSelected.Where(x => x.Faction == GlobalGameVariables.PlayerControlledFaction);
 
         if (lastSelected == GlobalGameVariables.PlayerControlledFaction)
         {

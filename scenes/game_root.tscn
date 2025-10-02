@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://cc8w0ietsb751" path="res://scripts/UIScripts/ToggleVisibilityButton.cs" id="13_35vvr"]
 [ext_resource type="Script" uid="uid://mdtteu5lpdeg" path="res://scripts/ToggleTime.cs" id="13_x42w8"]
 [ext_resource type="Resource" uid="uid://jyknnrb6of2w" path="res://resources/GameUnitDataResources/ogre.tres" id="15_6puu6"]
-[ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/ClickToSpawn.cs" id="16_6puu6"]
+[ext_resource type="Script" uid="uid://bvgj8mvpqhvyw" path="res://scripts/UnitGroupSpawnerControl.cs" id="16_6puu6"]
 [ext_resource type="Script" uid="uid://4ep8a4euauus" path="res://scripts/UIScripts/ClearCursor.cs" id="17_1vvmy"]
 [ext_resource type="Script" uid="uid://6gyf6e6op2tv" path="res://scenes/MovementControls.cs" id="17_k6861"]
 [ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://resources/GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
@@ -2293,7 +2293,7 @@ shader_parameter/speed = Vector2(0.002, 0.002)
 [node name="gameRoot" type="Node2D"]
 y_sort_enabled = true
 
-[node name="Input +5" type="Control" parent="." node_paths=PackedStringArray("spawnUnitControl", "movementControl")]
+[node name="Input +5 TopLevel" type="Control" parent="." node_paths=PackedStringArray("spawnUnitControl", "movementControl")]
 z_index = 5
 layout_mode = 3
 anchors_preset = 8
@@ -2306,20 +2306,22 @@ offset_bottom = 4096.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("5_x42w8")
-spawnUnitControl = NodePath("SpawnControl")
-movementControl = NodePath("MovementControls")
+spawnUnitControl = NodePath("../SpawnControl")
+movementControl = NodePath("../MovementControls")
 
-[node name="SpawnControl" type="Control" parent="Input +5" node_paths=PackedStringArray("unitBar")]
+[node name="SpawnControl" type="Control" parent="." node_paths=PackedStringArray("unitBar")]
 custom_minimum_size = Vector2(120, 120)
+layout_mode = 3
 anchors_preset = 0
 offset_right = 4096.0
 offset_bottom = 4096.0
 mouse_filter = 2
 script = ExtResource("16_6puu6")
 unitGroupScene = ExtResource("6_6puu6")
-unitBar = NodePath("../../CanvasLayer - scale 2_5/UnitBar")
+unitBar = NodePath("../CanvasLayer - scale 2_5/UnitBar")
 
-[node name="MovementControls" type="Control" parent="Input +5"]
+[node name="MovementControls" type="Control" parent="."]
+layout_mode = 3
 anchors_preset = 0
 offset_right = 4096.0
 offset_bottom = 4096.0

@@ -1,7 +1,5 @@
 using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using WizardsVsMonster.scripts;
 using WizardsVsMonster.scripts.UIScripts;
 
@@ -9,7 +7,7 @@ public partial class ReceieveInput : Control
 {
     private Vector2 initialTouchPosition;
     private const float DragThreshold = 10f; // pixels
-    [Export] ClickToSpawn spawnUnitControl;
+    [Export] UnitGroupSpawnerControl spawnUnitControl;
     [Export] MovementControls movementControl;
 
     /// <summary>
@@ -47,14 +45,13 @@ public partial class ReceieveInput : Control
         if (wasSelectionButtonJustPressed && !isRectActive) // Drag started
         {
             Logger.Log("drag started");
-            // GlobalCurrentSelection.OnDragStarted();
             isRectActive = true;
             rectDragStartPosition = thisInputsPosition;
         }
         else if (wasInputDrag && isRectActive)
         {
             Logger.Log($"dragging...pos = {GetInputPosition(@event)}");
-            // GlobalCurrentSelection.OnDragDragged();
+            GlobalCurrentSelection.GetInstance().DragSelectionUpdate(selectionRect);
             float topLeftX = Mathf.Min(rectDragStartPosition.X, thisInputsPosition.X);
             float topLeftY = Mathf.Min(rectDragStartPosition.Y, thisInputsPosition.Y);
 
@@ -189,6 +186,7 @@ public partial class ReceieveInput : Control
                 return dist < DragThreshold;
             }
         }
+
         return false;
     }
 }

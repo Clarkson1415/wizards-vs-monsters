@@ -2,8 +2,10 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 #nullable enable
 
@@ -14,43 +16,24 @@ namespace WizardsVsMonster.scripts
     /// </summary>
     public partial class GlobalCurrentSelection : Node
     {
-        public void ClearCursor()
-        {
-            this.DeselectAll();
-
-            SelectedUnitToSpawn = null;
-            LastSelectedUnitsInfo = null;
-        }
-
-        private static GlobalCurrentSelection instance = new GlobalCurrentSelection();
-
-        public static GlobalCurrentSelection GetInstance()
-        {
-            return instance;
-        }
-
-        /// <summary>
-        /// Deselcts all highlighted unit groups.
-        /// </summary>
-        public void DeselectAll()
-        {
-            foreach (var group in UnitGroupsHighlighted)
-            {
-                group.TellGroupItWasRemovedFromSelection();
-            }
-
-            UnitGroupsHighlighted.Clear();
-        }
-
-        [Signal]
-        public delegate void OnItemLastSelectedChangedEventHandler();
+        private static GlobalCurrentSelection? instance;
 
         /// <summary>
         /// Units selected on the battlefield.
         /// </summary>
-        public static List<UnitGroup> UnitGroupsHighlighted { get; private set; } = [];
+        public static List<UnitGroup> PlayerGroupsSelected { get; private set; } = [];
 
         private static GameUnitResource? _lastSelectedToolbarUnit;
+
+        [Signal]
+        public delegate void OnItemLastSelectedChangedEventHandler();
+
+        private bool IsGroupEnemyOfPlayer(UnitGroup group)
+        {
+            return GlobalGameVariables.FactionEnemies[GlobalGameVariables.PlayerControlledFaction].Contains(group.Faction);
+        }
+
+        private static GameUnitResource? _lastSelectedUnitsInfo;
 
         /// <summary>
         /// The unit to spawn next.
@@ -65,7 +48,6 @@ namespace WizardsVsMonster.scripts
             }
         }
 
-        private static GameUnitResource? _lastSelectedUnitsInfo;
 
         /// <summary>
         /// Last selected unit whether from toolbar or the battlefield.
@@ -80,53 +62,115 @@ namespace WizardsVsMonster.scripts
             }
         }
 
+        public static GlobalCurrentSelection GetInstance()
+        {
+            if (instance == null)
+            {
+                instance = new GlobalCurrentSelection();
+            }
+
+            return instance;
+        }
+
+        /// <summary>
+        /// Deselcts all highlighted unit groups.
+        /// </summary>
+        public void DeselectAll()
+        {
+            foreach (var group in PlayerGroupsSelected)
+            {
+                group.ToggleOutlineAllUnits(false);
+            }
+
+            PlayerGroupsSelected.Clear();
+        }
+
+        public void ClearCursor()
+        {
+            this.DeselectAll();
+
+            SelectedUnitToSpawn = null;
+            LastSelectedUnitsInfo = null;
+        }
+
+        private UnitGroup? EnemyGroupHighlighted;
+
         public void OnGroupClicked(UnitGroup group)
         {
             SelectedUnitToSpawn = null;
             LastSelectedUnitsInfo = group.UnitResource;
 
-            // remove or add group to highlighted groups.
-            if (!UnitGroupsHighlighted.Contains(group))
+            // if enemy then send players units to attack it. If no player units are highlighted though return.
+            if (IsGroupEnemyOfPlayer(group) && PlayerGroupsSelected.Count > 0)
             {
-                UnitGroupsHighlighted.Add(group);
-                OnGroupAddedToSelected(group);
+                if (EnemyGroupHighlighted != null)
+                {
+                    EnemyGroupHighlighted.ToggleOutlineAllUnits(false);
+                }
+
+                EnemyGroupHighlighted = group;
+                group.ToggleOutlineAllUnits(true);
+                PlayerGroupsSelected.ForEach(x => x.SetNewTargetEnemy(group));
+                return;
             }
-            else
+
+            // if only the clicked on is highlighted -> toggle it off.
+            if (PlayerGroupsSelected.Count == 1 && PlayerGroupsSelected.Contains(group))
             {
-                UnitGroupsHighlighted.Remove(group);
-                OnGroupAddedToSelected(group);
+                RemoveGroup(group);
+                return;
+            }
+
+            TryAddGroup(group);
+
+            if (Input.IsActionPressed("multi select"))
+            {
+                // if multi select on then can unhilight a single group from collection while maintaining the rest highlighted
+                if (PlayerGroupsSelected.Contains(group))
+                {
+                    RemoveGroup(group);
+                }
+
+                return;
+            }
+
+            // if shift not held, deseelect all and just add the one clicked on.
+            DeselectAll();
+
+            TryAddGroup(group);
+        }
+
+        private void TryAddGroup(UnitGroup group)
+        {
+            if (!PlayerGroupsSelected.Contains(group))
+            {
+                PlayerGroupsSelected.Add(group);
+                group.ToggleOutlineAllUnits(true);
             }
         }
 
-        private void OnGroupAddedToSelected(UnitGroup group)
+        private void RemoveGroup(UnitGroup group)
         {
-            if (!IsGroupEnemyOfPlayer(group)) // if unit group added is players group.
+            group.ToggleOutlineAllUnits(false);
+            PlayerGroupsSelected.Remove(group);
+        }
+
+        public void DragSelectionUpdate(Rect2 selectionArea)
+        {
+            foreach (var troop in UnitGroupSpawnerControl.SpawnedUnitGroups)
             {
-                // deselect the enemy groups
-                var enemyGroups = UnitGroupsHighlighted.Where(x => IsGroupEnemyOfPlayer(x)).ToList();
-                UnitGroupsHighlighted.RemoveAll(x => IsGroupEnemyOfPlayer(x));
-                enemyGroups.ForEach(x => x.TellGroupItWasRemovedFromSelection());
+                if (troop.UnitsRemaining.Any(x => selectionArea.HasPoint(x.GlobalPosition)))
+                {
+                    SelectedUnitToSpawn = null;
+                    LastSelectedUnitsInfo = troop.UnitResource;
+
+                    TryAddGroup(troop);
+                }
+                else
+                {
+                    RemoveGroup(troop);
+                }
             }
-            else if (UnitGroupsHighlighted.Any(x => !IsGroupEnemyOfPlayer(x))) // If enemy selected and player has groups selected. set group target to attack it.
-            {
-                var playersGroups = UnitGroupsHighlighted.Where(x => !IsGroupEnemyOfPlayer(x)).ToList();
-                playersGroups.ForEach(x => x.SetNewTargetEnemy(group));
-            }
-        }
-
-        private void OnGroupRemovedFromSelected(UnitGroup group)
-        {
-            group.TellGroupItWasRemovedFromSelection();
-        }
-
-        public bool IsGroupInSelection(UnitGroup group)
-        {
-            return UnitGroupsHighlighted.Contains(group);
-        }
-
-        private bool IsGroupEnemyOfPlayer(UnitGroup group)
-        {
-            return GlobalGameVariables.FactionEnemies[GlobalGameVariables.PlayerControlledFaction].Contains(group.Faction);
         }
     }
 }

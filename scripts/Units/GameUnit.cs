@@ -556,7 +556,7 @@ public partial class GameUnit : CharacterBody2D
 
         // if there is a status on here that is not in active statuses remove it
         // if no new ones all the current ones are old. else check which are not in it.
-        var oldStatusesToRemove = updatedActiveStatuses.Count == 0 ? activeStatuses : activeStatuses.Where(x => !updatedActiveStatuses.Contains(x));
+        var oldStatusesToRemove = updatedActiveStatuses.Count == 0 ? activeStatuses.ToList() : activeStatuses.Where(x => !updatedActiveStatuses.Contains(x)).ToList();
         foreach (var oldStatus in oldStatusesToRemove)
         {
             RemoveStatus(oldStatus);

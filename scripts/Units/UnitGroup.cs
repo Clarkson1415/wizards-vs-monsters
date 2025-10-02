@@ -64,21 +64,10 @@ public partial class UnitGroup : Node2D
     /// </summary>
     public void OnUnitClicked()
     {
-        ToggleOutlineAllUnits(true);
         GlobalCurrentSelection.GetInstance().OnGroupClicked(this);
-        var added = GlobalCurrentSelection.GetInstance().IsGroupInSelection(this);
-        if (!added)
-        {
-            ToggleOutlineAllUnits(false);
-        }
     }
 
-    public void TellGroupItWasRemovedFromSelection()
-    {
-        this.ToggleOutlineAllUnits(false);
-    }
-
-    private void ToggleOutlineAllUnits(bool outlineOn)
+    public void ToggleOutlineAllUnits(bool outlineOn)
     {
         this.allUnits.ForEach(x => x.ClickableUnitComponent.ToggleOutline(outlineOn));
     }

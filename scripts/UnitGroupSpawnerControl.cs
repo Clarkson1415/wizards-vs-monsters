@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 using WizardsVsMonster.scripts;
 using WizardsVsMonster.scripts.UIScripts;
 
@@ -7,8 +8,10 @@ using WizardsVsMonster.scripts.UIScripts;
 /// Children of this are the unit groups in game. rn.
 /// Only present in the setup phase
 /// </summary>
-public partial class ClickToSpawn : Control, IGameInputControlNode
+public partial class UnitGroupSpawnerControl : Control, IGameInputControlNode
 {
+    public static List<UnitGroup> SpawnedUnitGroups { get; private set; } = new();
+
     [Export] private PackedScene unitGroupScene;
 
     [Export] private UnitBar unitBar;
@@ -48,6 +51,7 @@ public partial class ClickToSpawn : Control, IGameInputControlNode
 
         var newUnitGroup = this.unitGroupScene.Instantiate<UnitGroup>();
         AddChild(newUnitGroup);
+        SpawnedUnitGroups.Add(newUnitGroup);
         Logger.Log($"unit put at: {newUnitGroup.GlobalPosition}");
         newUnitGroup.GlobalPosition = mouseClickPosition;
         SnapToGrid(newUnitGroup, unitData);
