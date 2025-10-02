@@ -1,27 +1,134 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using WizardsVsMonster.scripts;
 using WizardsVsMonster.scripts.UIScripts;
 
 public partial class ReceieveInput : Control
 {
-    private Vector2 _pressPos;
-    private bool _pressed = false;
+    private Vector2 initialTouchPosition;
     private const float DragThreshold = 10f; // pixels
+    [Export] ClickToSpawn spawnUnitControl;
+    [Export] MovementControls movementControl;
+
+    /// <summary>
+    /// If mouse drag selection button down or touch input valid.
+    /// For the white rectangle used to mass select units.
+    /// </summary>
+    private bool wasSelectionButtonJustPressed;
+
+    // TODO have a global option button for mobile to toggle map dragging / unit selection box dragging.
+
+    Rect2 selectionRect;
+
+    private bool isRectActive;
+
+    private Vector2 rectDragStartPosition;
 
     public override void _GuiInput(InputEvent @event)
     {
-        if (WasInputTap(@event))
-        {
-            var position = GetInputPosition(@event);
-            var inputs = GetChildren();
-            foreach (var child in inputs.Cast<IGameInputControlNode>())
-            {
-                if (child == null) { return; }
+        var thisInputsPosition = GetInputPosition(@event);
+        var moveAndSpawnControls = new List<IGameInputControlNode>() { spawnUnitControl, movementControl };
+        var wasInputTap = WasInputTap(@event);
+        var wasInputDrag = IsInputADragMotion(@event);
 
-                child.InputTap(position);
+        foreach (var child in moveAndSpawnControls)
+        {
+            if (child == null) { return; }
+
+            if (wasInputTap)
+            {
+                child.InputTap(thisInputsPosition);
+                Logger.Log("input was tap");
             }
         }
+
+        if (wasSelectionButtonJustPressed && !isRectActive) // Drag started
+        {
+            Logger.Log("drag started");
+            // GlobalCurrentSelection.OnDragStarted();
+            isRectActive = true;
+            rectDragStartPosition = thisInputsPosition;
+        }
+        else if (wasInputDrag && isRectActive)
+        {
+            Logger.Log($"dragging...pos = {GetInputPosition(@event)}");
+            // GlobalCurrentSelection.OnDragDragged();
+            float topLeftX = Mathf.Min(rectDragStartPosition.X, thisInputsPosition.X);
+            float topLeftY = Mathf.Min(rectDragStartPosition.Y, thisInputsPosition.Y);
+
+            // 2. Calculate the width and height (max - min)
+            float width = Mathf.Max(rectDragStartPosition.X, thisInputsPosition.X) - topLeftX;
+            float height = Mathf.Max(rectDragStartPosition.Y, thisInputsPosition.Y) - topLeftY;
+
+            selectionRect = new Rect2(topLeftX, topLeftY, width, height);
+            QueueRedraw();
+        }
+
+        if (IsDragButtonReleased(@event))
+        {
+            isRectActive = false;
+            Logger.Log("drag released.");
+            //GlobalCurrentSelection.OnDragReleased();
+            //movementControl.OnDragReleased();
+            wasSelectionButtonJustPressed = false;
+            QueueRedraw();
+        }
+    }
+
+    private Color selectionRectFill = new Color("#ffffff66");
+    private Color selectionRectBoarder = new Color("#ffffff");
+    private float boarderThickness = 2f;
+
+    public override void _Draw()
+    {
+        if (!wasSelectionButtonJustPressed || !isRectActive)
+        {
+            return;
+        }
+
+        DrawRect(selectionRect, selectionRectFill);
+        DrawRect(selectionRect, selectionRectBoarder, false, boarderThickness);
+    }
+
+    /// <summary>
+    /// return true if drag button usually left click. is not held down. or if touch screen is not touched.
+    /// </summary>
+    /// <param name="event"></param>
+    /// <returns></returns>
+    private bool IsDragButtonReleased(InputEvent @event)
+    {
+        // Touch input
+        if (@event is InputEventScreenTouch touchEvent)
+        {
+            return touchEvent.IsReleased();
+        }
+
+        // Mouse input
+        if (@event is InputEventMouseButton mouseEvent && mouseEvent.IsAction("leftClick"))
+        {
+            return mouseEvent.IsReleased();
+        }
+
+        return false;
+    }
+
+    private bool IsInputADragMotion(InputEvent @event)
+    {
+        var dist = 0f;
+
+        if (@event is InputEventScreenTouch touchEvent)
+        {
+            dist = initialTouchPosition.DistanceTo(touchEvent.Position);
+            
+        }
+        else if (@event is InputEventMouseMotion mouseEvent)
+        {
+            dist = initialTouchPosition.DistanceTo(mouseEvent.GlobalPosition);
+        }
+
+        return dist >= DragThreshold;
     }
 
     private Vector2 GetInputPosition(InputEvent @event)
@@ -30,8 +137,11 @@ public partial class ReceieveInput : Control
         {
             return touchEvent.Position;
         }
-
-        if (@event is InputEventMouseButton mouseEvent && mouseEvent.IsAction("leftClick"))
+        else if (@event is InputEventMouseButton mouseEvent && mouseEvent.IsAction("leftClick"))
+        {
+            return GetGlobalMousePosition();
+        }
+        else if (@event is InputEventMouseMotion mouseMotion)
         {
             return GetGlobalMousePosition();
         }
@@ -39,6 +149,11 @@ public partial class ReceieveInput : Control
         return Vector2.Zero;
     }
 
+    /// <summary>
+    /// Also updates _pressPos and isSelctionButtonDown.
+    /// </summary>
+    /// <param name="event"></param>
+    /// <returns></returns>
     private bool WasInputTap(InputEvent @event)
     {
         // Touch input
@@ -46,13 +161,13 @@ public partial class ReceieveInput : Control
         {
             if (touchEvent.Pressed)
             {
-                _pressPos = touchEvent.Position;
-                _pressed = true;
+                initialTouchPosition = touchEvent.Position;
+                wasSelectionButtonJustPressed = true;
             }
-            else if (_pressed) // release
+            else if (!touchEvent.Pressed) // release
             {
-                float dist = _pressPos.DistanceTo(touchEvent.Position);
-                _pressed = false;
+                float dist = initialTouchPosition.DistanceTo(touchEvent.Position);
+                wasSelectionButtonJustPressed = false;
                 return dist < DragThreshold;
             }
         }
@@ -62,17 +177,18 @@ public partial class ReceieveInput : Control
         {
             if (mouseEvent.Pressed)
             {
-                _pressPos = mouseEvent.GlobalPosition;
-                _pressed = true;
+                initialTouchPosition = mouseEvent.GlobalPosition;
+                wasSelectionButtonJustPressed = true;
+                Logger.Log("pressed");
             }
-            else if (_pressed) // release
+            else if (mouseEvent.IsReleased()) // release
             {
-                float dist = _pressPos.DistanceTo(mouseEvent.GlobalPosition);
-                _pressed = false;
+                float dist = initialTouchPosition.DistanceTo(mouseEvent.GlobalPosition);
+                wasSelectionButtonJustPressed = false;
+                Logger.Log("released");
                 return dist < DragThreshold;
             }
         }
-
         return false;
     }
 }

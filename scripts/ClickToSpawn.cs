@@ -1,11 +1,10 @@
 using Godot;
-using System;
 using WizardsVsMonster.scripts;
 using WizardsVsMonster.scripts.UIScripts;
-using static Godot.TabContainer;
 
 /// <summary>
 /// Things the player can do like clicking on the board to spawn items.
+/// Children of this are the unit groups in game. rn.
 /// Only present in the setup phase
 /// </summary>
 public partial class ClickToSpawn : Control, IGameInputControlNode
