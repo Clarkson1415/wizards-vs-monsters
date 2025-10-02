@@ -100,14 +100,15 @@ namespace WizardsVsMonster.scripts
             SelectedUnitToSpawn = null;
             LastSelectedUnitsInfo = group.UnitResource;
 
+            // unhilight last selected enemy reguardless.
+            if (EnemyGroupHighlighted != null)
+            {
+                EnemyGroupHighlighted.ToggleOutlineAllUnits(false);
+            }
+
             // if enemy then send players units to attack it. If no player units are highlighted though return.
             if (IsGroupEnemyOfPlayer(group) && PlayerGroupsSelected.Count > 0)
             {
-                if (EnemyGroupHighlighted != null)
-                {
-                    EnemyGroupHighlighted.ToggleOutlineAllUnits(false);
-                }
-
                 EnemyGroupHighlighted = group;
                 group.ToggleOutlineAllUnits(true);
                 PlayerGroupsSelected.ForEach(x => x.SetNewTargetEnemy(group));
