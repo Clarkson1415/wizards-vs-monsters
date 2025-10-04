@@ -47,7 +47,7 @@ namespace WizardsVsMonster.scripts
         /// <returns></returns>
         public static Vector2 GetDefaultDirection(Vector2 position)
         {
-            // TODO use the tilemap size and calc half.
+            // TODO use the tilemap size and calc half. could be north or south? instead of left right
             return position.X > 0 ? Vector2.Left : Vector2.Right;
         }
     }

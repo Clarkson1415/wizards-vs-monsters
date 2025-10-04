@@ -1,30 +1,23 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using WizardsVsMonster.scripts;
 using WizardsVsMonster.scripts.UIScripts;
 
 public partial class MovementControls : Control, IGameInputControlNode
 {
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-
-	}
-
 	// TODO group selection logic stuff.
 	// IDK where the logic for targeting should go maybe here?
 	// if group == enemy
 	// set target for all units in players groups to that enemy group?
-	public void InputTap(Vector2 positionTappedOrClicked)
+	public void OnTapInput(Vector2 positionTappedOrClicked)
 	{
         TryMoveUnit(positionTappedOrClicked);
     }
+
+    // TODO if clicked or dragged need to positions units at the new 'ghost' positions. Then set new target location on the groups on release of that button.
+
 
     private void TryMoveUnit(Vector2 touchOrTapPosition)
     {
@@ -41,20 +34,34 @@ public partial class MovementControls : Control, IGameInputControlNode
         // What if i want to click and hold to create a formation rectangle of a size i want?
 
         var lastSelected = GlobalCurrentSelection.GetInstance().LastSelectedUnitsInfo.GetFaction();
-        var playersFactionsHighlighted = GlobalCurrentSelection.PlayerGroupsSelected.Where(x => x.Faction == GlobalGameVariables.PlayerControlledFaction);
+        var playersFactionsHighlighted = GlobalCurrentSelection.PlayerGroupsSelected;
 
         if (lastSelected == GlobalGameVariables.PlayerControlledFaction)
         {
             Logger.Log("Moving unit");
-            playersFactionsHighlighted.ToList().ForEach(x => x.SetNewTargetLocation(touchOrTapPosition));
 
-            // TODO if clicked or dragged need to positions units at the new 'ghost' positions.
-            // TODO if multiple groups calculate group layout size. then put them next to each other but still in formation.
+            // if multiple groups calculate group layout size. then put them next to each other but still in formation.
+            if (playersFactionsHighlighted.Count > 1)
+            {
+                Logger.Log("doing this:");
+                var centrePosition = touchOrTapPosition;
+                // Check width and height of the units basic formation positions.
+                // position each troops centre the 1/2 width of tropop plus 1/2 width of the other troop away.
+                List<Vector2> troopHeightWidth = new();
+                foreach (var troop in playersFactionsHighlighted)
+                {
+                    //troopHeightWidth.Add(troop.GetBasicFormation);
+                }
+            }
+            else
+            {
+                playersFactionsHighlighted.ToList().ForEach(x => x.SetNewTargetLocation(touchOrTapPosition));
+            }
+
         }
         else
         {
             Logger.Log("cant move an enemy unit.");
         }
-
     }
 }

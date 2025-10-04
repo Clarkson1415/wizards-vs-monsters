@@ -8,6 +8,6 @@ namespace WizardsVsMonster.scripts.UIScripts
 {
     public interface IGameInputControlNode
     {
-        public abstract void InputTap(Vector2 tapPosition);
+        public abstract void OnTapInput(Vector2 tapPosition);
     }
 }

@@ -7,7 +7,14 @@ public partial class CameraController : Camera2D
 {
     private static int zoomAmount = 10;
 
-    private static float moveSpeed = 50;
+    private static float moveSpeed = 300;
+
+    private static bool ShiftSpeedKeyDown;
+
+    /// <summary>
+    /// When the shift key is held down.
+    /// </summary>
+    private static float moveSpeedShiftMultiplier => ShiftSpeedKeyDown ? 4f : 1f;
 
     private static float maxZoomOutValue = 0.3f;
 
@@ -27,7 +34,7 @@ public partial class CameraController : Camera2D
 
     public override void _Input(InputEvent @event)
     {
-        base._Input(@event);
+        ShiftSpeedKeyDown = @event.IsActionPressed("panSpeedKey");
 
         // mouse drag
         handleMousePan(@event);
@@ -178,22 +185,22 @@ public partial class CameraController : Camera2D
     #region WASD movement
     private void moveUp(float delta)
     {
-        GlobalPosition += Vector2.Up * moveSpeed * delta;
+        GlobalPosition += Vector2.Up * moveSpeed * delta * moveSpeedShiftMultiplier;
     }
 
     private void moveDown(float delta)
     {
-        GlobalPosition += Vector2.Down * moveSpeed * delta;
+        GlobalPosition += Vector2.Down * moveSpeed * delta * moveSpeedShiftMultiplier;
     }
 
     private void moveLeft(float delta)
     {
-        GlobalPosition += Vector2.Left * moveSpeed * delta;
+        GlobalPosition += Vector2.Left * moveSpeed * delta * moveSpeedShiftMultiplier;
     }
 
     private void moveRight(float delta)
     {
-        GlobalPosition += Vector2.Right * moveSpeed * delta;
+        GlobalPosition += Vector2.Right * moveSpeed * delta * moveSpeedShiftMultiplier;
     }
     #endregion
 }

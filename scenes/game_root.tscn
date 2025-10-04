@@ -2241,14 +2241,23 @@ metadata/_custom_type_script = "uid://b4x16tyyfihmb"
 [node name="CanvasLayer - scale 2_5" type="CanvasLayer" parent="."]
 follow_viewport_scale = 3.0
 
-[node name="PropertyPanelControlNode" type="Control" parent="CanvasLayer - scale 2_5"]
+[node name="PropertyPanelControlNode" type="Control" parent="CanvasLayer - scale 2_5" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range", "speed", "size")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 scale = Vector2(3, 3)
+script = ExtResource("11_1vvmy")
+name = NodePath("PropertyPanelPane/Name")
+description = NodePath("PropertyPanelPane/Description/desc")
+armour = NodePath("PropertyPanelPane/Stats/VBoxContainer/HBoxContainer/astat")
+health = NodePath("PropertyPanelPane/Stats/VBoxContainer/HBoxContainer2/healthstat")
+dps = NodePath("PropertyPanelPane/Stats/VBoxContainer/HBoxContainer3/dpsstat")
+range = NodePath("PropertyPanelPane/Stats/VBoxContainer/HBoxContainer4/rangestat")
+speed = NodePath("PropertyPanelPane/Stats/VBoxContainer/speed/rangestat2")
+size = NodePath("PropertyPanelPane/Stats/VBoxContainer/size/sizestat")
 
-[node name="PropertyPanelPane" type="TextureRect" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range", "speed", "size")]
+[node name="PropertyPanelPane" type="TextureRect" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -2260,15 +2269,6 @@ grow_horizontal = 0
 pivot_offset = Vector2(95, 0)
 texture = ExtResource("13_6puu6")
 stretch_mode = 4
-script = ExtResource("11_1vvmy")
-name = NodePath("Name")
-description = NodePath("Description/desc")
-armour = NodePath("Stats/VBoxContainer/HBoxContainer/astat")
-health = NodePath("Stats/VBoxContainer/HBoxContainer2/healthstat")
-dps = NodePath("Stats/VBoxContainer/HBoxContainer3/dpsstat")
-range = NodePath("Stats/VBoxContainer/HBoxContainer4/rangestat")
-speed = NodePath("Stats/VBoxContainer/speed/rangestat2")
-size = NodePath("Stats/VBoxContainer/size/rangestat2")
 
 [node name="Name" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane"]
 layout_mode = 0
@@ -2394,7 +2394,7 @@ autowrap_mode = 2
 [node name="size" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/size"]
+[node name="size" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/size"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2402,7 +2402,7 @@ theme_override_font_sizes/font_size = 16
 text = "Size"
 autowrap_mode = 2
 
-[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/size"]
+[node name="sizestat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/size"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2424,7 +2424,6 @@ description = NodePath("../Description")
 stats = NodePath("../Stats")
 
 [node name="Description" type="Control" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane"]
-visible = false
 anchors_preset = 0
 offset_left = 11.0
 offset_top = 34.0
@@ -2432,6 +2431,7 @@ offset_right = 51.0
 offset_bottom = 74.0
 
 [node name="desc" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Description"]
+visible = false
 layout_mode = 0
 offset_right = 112.29031
 offset_bottom = 65.0

@@ -40,7 +40,7 @@ public partial class ReceieveInput : Control
 
             if (wasInputTap)
             {
-                child.InputTap(thisInputsPosition);
+                child.OnTapInput(thisInputsPosition);
                 Logger.Log("input was tap");
             }
         }

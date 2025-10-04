@@ -4,7 +4,7 @@ using WizardsVsMonster.scripts;
 #nullable enable
 
 [GlobalClass]
-public partial class PropertyPanel : TextureRect
+public partial class PropertyPanel : Control
 {
 	[Export] private Label name;
 	[Export] private Label description;

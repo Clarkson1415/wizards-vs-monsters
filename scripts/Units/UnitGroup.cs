@@ -459,7 +459,6 @@ public partial class UnitGroup : Node2D
             RemoveStatus(StatusComponent.STATUS.Hidden);
         }
 
-
         // TODO other statuses
     }
 

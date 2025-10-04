@@ -24,7 +24,7 @@ public partial class UnitGroupSpawnerControl : Control, IGameInputControlNode
         unit.GlobalPosition = newPos;
     }
 
-    public void InputTap(Vector2 tapPosition)
+    public void OnTapInput(Vector2 tapPosition)
     {
         var spawned = TrySpawnUnit(tapPosition);
         if (spawned)
