@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using WizardsVsMonster.scripts;
 using WizardsVsMonster.scripts.UIScripts;
 
+/// <summary>
+/// Main input control passes to movement and spawn control node. and draws the selection box.
+/// </summary>
 public partial class ReceieveInput : Control
 {
     private Vector2 initialTouchPosition;
@@ -40,6 +43,11 @@ public partial class ReceieveInput : Control
                 child.InputTap(thisInputsPosition);
                 Logger.Log("input was tap");
             }
+        }
+
+        if (@event is InputEventScreenTouch && !GlobalGameVariables.TouchScreenDragSetting_DragSelectOn)
+        {
+            return;
         }
 
         if (wasSelectionButtonJustPressed && !isRectActive) // Drag started

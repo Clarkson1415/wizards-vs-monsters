@@ -8,6 +8,11 @@ namespace WizardsVsMonster.scripts
         public static int CELL_SIZE = 16;
 
         /// <summary>
+        /// The drag map setting. if true, touch drags draws the selection box. if false touch pans the map.
+        /// </summary>
+        public static bool TouchScreenDragSetting_DragSelectOn;
+
+        /// <summary>
         /// Collision layer the the area2ds of the trees or other view obstructors are on.
         /// </summary>
         public static int ViewBlockingAreaCollisionLayer = 2;

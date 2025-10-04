@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=4 uid="uid://ca8br0m3c03eo"]
+[gd_scene load_steps=60 format=4 uid="uid://ca8br0m3c03eo"]
 
 [ext_resource type="Texture2D" uid="uid://cwjj0iflj6nqd" path="res://art/environment/ForestTileset/forestTileset.png" id="3_1ybbh"]
 [ext_resource type="Script" uid="uid://88kl3wkbs7mp" path="res://scenes/ReceieveInput.cs" id="5_x42w8"]
@@ -20,13 +20,17 @@
 [ext_resource type="Resource" uid="uid://0pudq4ck7mun" path="res://resources/GameUnitDataResources/fladnagian.tres" id="17_so1mv"]
 [ext_resource type="Script" uid="uid://cdneyk6se25bd" path="res://scripts/UIScripts/DeselectAll.cs" id="18_0aloa"]
 [ext_resource type="PackedScene" uid="uid://gd1n7f872n6s" path="res://scenes/unitBarSlot.tscn" id="19_0aloa"]
+[ext_resource type="Texture2D" uid="uid://ddme55oxyr0dy" path="res://art/ui/ArrowButtonRight.png" id="19_1ybbh"]
 [ext_resource type="Script" uid="uid://dftp2nwcj0ql" path="res://scripts/UnitBar.cs" id="19_35vvr"]
+[ext_resource type="Script" uid="uid://bsm755mjdu0u8" path="res://scripts/UIScripts/TogglePropertyPanelButton.cs" id="19_xf5nq"]
 [ext_resource type="Script" uid="uid://boymwl1cflepg" path="res://scripts/UIScripts/CustomCursorLoader.cs" id="21_35vvr"]
+[ext_resource type="Texture2D" uid="uid://bicjjj8puoimj" path="res://art/ui/ArrowButtonLeft.png" id="21_yjs5w"]
 [ext_resource type="Shader" uid="uid://qjc1fb0nljwj" path="res://scripts/shaders/god_rays.gdshader" id="23_6y7e7"]
 [ext_resource type="Shader" uid="uid://oqmkx7o4g6oh" path="res://scenes/parallaxFogShader.gdshader" id="25_lfyj4"]
 [ext_resource type="Texture2D" uid="uid://cq4hgu1k31yfn" path="res://noiseTex/noise8k256cells.png" id="26_3isrv"]
 [ext_resource type="Script" uid="uid://d4feanreabm81" path="res://addons/gaea/nodes/generator.gd" id="26_wt8xl"]
 [ext_resource type="Script" uid="uid://3qsmwhn2sk47" path="res://addons/gaea/resources/gaea_layer.gd" id="27_nj3bt"]
+[ext_resource type="Script" uid="uid://sgu1cyk33pn" path="res://scripts/UIScripts/DragSettingToggle.cs" id="27_tp2pr"]
 [ext_resource type="Script" uid="uid://e45byecr4gi6" path="res://addons/gaea/resources/materials/data/tilemap_material.gd" id="27_x6uho"]
 [ext_resource type="Script" uid="uid://dae6umbqb872e" path="res://addons/gaea/resources/gaea_graph.gd" id="28_ens0h"]
 [ext_resource type="Script" uid="uid://b4x16tyyfihmb" path="res://addons/gaea/nodes/renderers/tilemap_renderer.gd" id="29_nj3bt"]
@@ -1861,6 +1865,261 @@ _parameters = Dictionary[StringName, Variant]({
 })
 save_version = 4
 
+[sub_resource type="Animation" id="Animation_xf5nq"]
+resource_name = "SlideIn"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(2, 0),
+"points": PackedFloat32Array(388.33334, 0, 0, 0, 0, 289, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(2, 0),
+"points": PackedFloat32Array(0, 0, 0, 0.0888889, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Button:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(2, 0),
+"points": PackedFloat32Array(359.66666, 0, 0, 0.0888889, -11.666668, 289.66666, -0.07833334, -0.11110941, 0, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Button:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(2, 0),
+"points": PackedFloat32Array(131.33334, 0, 0, 0.0888889, 0, 131.33334, -0.07833334, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Button/TextureRect:texture")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("19_1ybbh")]
+}
+
+[sub_resource type="Animation" id="Animation_yjs5w"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 2),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 289, -0.00016666666, -48.16667, 0, 0),
+"times": PackedFloat32Array(0, 0.0009999999)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 2),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.00016666666, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.0009999999)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Button:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(289, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Button:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(131.33334, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Button/TextureRect:texture")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("19_1ybbh")]
+}
+
+[sub_resource type="Animation" id="Animation_rm5wl"]
+resource_name = "SlideOut"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(289, -0.25, 0, 0.25, 0, 388.33334, 0, 0, 0.0888889, -16.55556),
+"times": PackedFloat32Array(0, 0.5)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, 0, 0, 0.0888889, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Button:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 2),
+"points": PackedFloat32Array(289.66666, -0.07833334, -0.11110941, 0, 0, 359.66666, -0.08333685, -11.666667, 0, 0),
+"times": PackedFloat32Array(0, 0.5000211)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Button:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0, 2),
+"points": PackedFloat32Array(131.33334, -0.07833334, 0, 0, 0, 131.33334, -0.08333685, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.5000211)
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Button/TextureRect:texture")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("21_yjs5w")]
+}
+
+[sub_resource type="Animation" id="Animation_2jolb"]
+resource_name = "In"
+length = 0.1
+loop_mode = 1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(289, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Button:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(289.66666, -0.07833334, -0.11110941, 0, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Button:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(131.33334, -0.07833334, 0, 0, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../Button/TextureRect:texture")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("19_1ybbh")]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_yjs5w"]
+_data = {
+&"In": SubResource("Animation_2jolb"),
+&"RESET": SubResource("Animation_yjs5w"),
+&"SlideIn": SubResource("Animation_xf5nq"),
+&"SlideOut": SubResource("Animation_rm5wl")
+}
+
+[sub_resource type="Gradient" id="Gradient_uqkft"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0.31, 0.31, 0.31, 0.6666667)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_tp2pr"]
+gradient = SubResource("Gradient_uqkft")
+width = 324
+height = 304
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_3isrv"]
 shader = ExtResource("25_lfyj4")
 shader_parameter/noise_texture = ExtResource("26_3isrv")
@@ -1982,14 +2241,22 @@ metadata/_custom_type_script = "uid://b4x16tyyfihmb"
 [node name="CanvasLayer - scale 2_5" type="CanvasLayer" parent="."]
 follow_viewport_scale = 3.0
 
-[node name="PropertyPanel" type="TextureRect" parent="CanvasLayer - scale 2_5" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range", "speed", "size")]
+[node name="PropertyPanelControlNode" type="Control" parent="CanvasLayer - scale 2_5"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(3, 3)
+
+[node name="PropertyPanelPane" type="TextureRect" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode" node_paths=PackedStringArray("name", "description", "armour", "health", "dps", "range", "speed", "size")]
+layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -95.0
+offset_left = -40.0
+offset_right = 55.0
 offset_bottom = 130.0
 grow_horizontal = 0
-scale = Vector2(3, 3)
 pivot_offset = Vector2(95, 0)
 texture = ExtResource("13_6puu6")
 stretch_mode = 4
@@ -2003,7 +2270,7 @@ range = NodePath("Stats/VBoxContainer/HBoxContainer4/rangestat")
 speed = NodePath("Stats/VBoxContainer/speed/rangestat2")
 size = NodePath("Stats/VBoxContainer/size/rangestat2")
 
-[node name="Name" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel"]
+[node name="Name" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane"]
 layout_mode = 0
 offset_left = 14.333332
 offset_top = 7.666667
@@ -2016,12 +2283,12 @@ theme_override_font_sizes/font_size = 16
 text = "Ukimian Ice Mage"
 autowrap_mode = 2
 
-[node name="Stats" type="Control" parent="CanvasLayer - scale 2_5/PropertyPanel"]
+[node name="Stats" type="Control" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane"]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats"]
 layout_mode = 0
 offset_left = 14.666659
 offset_top = 34.333332
@@ -2029,10 +2296,10 @@ offset_right = 92.66666
 offset_bottom = 132.33334
 scale = Vector2(0.7185835, 0.7185835)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="armour" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
+[node name="armour" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2040,7 +2307,7 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="astat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer"]
+[node name="astat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2048,10 +2315,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="health" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
+[node name="health" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2059,7 +2326,7 @@ theme_override_font_sizes/font_size = 16
 text = "Health"
 autowrap_mode = 2
 
-[node name="healthstat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer2"]
+[node name="healthstat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2067,10 +2334,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="dps" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
+[node name="dps" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/HBoxContainer3"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2078,7 +2345,7 @@ theme_override_font_sizes/font_size = 16
 text = "DPS"
 autowrap_mode = 2
 
-[node name="dpsstat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer3"]
+[node name="dpsstat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/HBoxContainer3"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2086,10 +2353,10 @@ theme_override_font_sizes/font_size = 16
 text = "Armour"
 autowrap_mode = 2
 
-[node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
+[node name="HBoxContainer4" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
+[node name="range" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/HBoxContainer4"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2097,7 +2364,7 @@ theme_override_font_sizes/font_size = 16
 text = "Range"
 autowrap_mode = 2
 
-[node name="rangestat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/HBoxContainer4"]
+[node name="rangestat" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/HBoxContainer4"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2105,10 +2372,10 @@ theme_override_font_sizes/font_size = 16
 text = "Range"
 autowrap_mode = 2
 
-[node name="speed" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
+[node name="speed" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/speed"]
+[node name="range2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/speed"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2116,7 +2383,7 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/speed"]
+[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/speed"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2124,10 +2391,10 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="size" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer"]
+[node name="size" type="HBoxContainer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer"]
 layout_mode = 2
 
-[node name="range2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/size"]
+[node name="range2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/size"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2135,7 +2402,7 @@ theme_override_font_sizes/font_size = 16
 text = "Size"
 autowrap_mode = 2
 
-[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Stats/VBoxContainer/size"]
+[node name="rangestat2" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Stats/VBoxContainer/size"]
 custom_minimum_size = Vector2(37, 0)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("11_x42w8")
@@ -2143,7 +2410,7 @@ theme_override_font_sizes/font_size = 16
 text = "Speed"
 autowrap_mode = 2
 
-[node name="SwitchView" type="Button" parent="CanvasLayer - scale 2_5/PropertyPanel" node_paths=PackedStringArray("description", "stats")]
+[node name="SwitchView" type="Button" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane" node_paths=PackedStringArray("description", "stats")]
 layout_mode = 0
 offset_left = 50.333344
 offset_top = 106.66667
@@ -2156,7 +2423,7 @@ script = ExtResource("13_35vvr")
 description = NodePath("../Description")
 stats = NodePath("../Stats")
 
-[node name="Description" type="Control" parent="CanvasLayer - scale 2_5/PropertyPanel"]
+[node name="Description" type="Control" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane"]
 visible = false
 anchors_preset = 0
 offset_left = 11.0
@@ -2164,7 +2431,7 @@ offset_top = 34.0
 offset_right = 51.0
 offset_bottom = 74.0
 
-[node name="desc" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanel/Description"]
+[node name="desc" type="Label" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/PropertyPanelPane/Description"]
 layout_mode = 0
 offset_right = 112.29031
 offset_bottom = 65.0
@@ -2174,6 +2441,29 @@ theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "A medium length description a d dllkjd lkjld ljd ldkj ld ldjld jdldkj dlj d"
 autowrap_mode = 2
+
+[node name="Button" type="Button" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode" node_paths=PackedStringArray("propertyPanelAnimator")]
+layout_mode = 0
+offset_left = 289.0
+offset_top = 131.33334
+offset_right = 313.0
+offset_bottom = 155.33334
+flat = true
+script = ExtResource("19_xf5nq")
+propertyPanelAnimator = NodePath("../AnimationPlayer")
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode/Button"]
+layout_mode = 0
+offset_right = 24.333344
+offset_bottom = 24.333344
+texture = ExtResource("19_1ybbh")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer - scale 2_5/PropertyPanelControlNode"]
+root_node = NodePath("../PropertyPanelPane")
+libraries = {
+&"": SubResource("AnimationLibrary_yjs5w")
+}
+autoplay = "In"
 
 [node name="SpawnToolbar" type="HBoxContainer" parent="CanvasLayer - scale 2_5"]
 anchors_preset = 5
@@ -2243,6 +2533,51 @@ theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Deselect All"
 script = ExtResource("18_0aloa")
+
+[node name="DragSetting" type="Control" parent="CanvasLayer - scale 2_5"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 278.0
+offset_top = 251.0
+offset_right = 318.0
+offset_bottom = 291.0
+scale = Vector2(3, 3)
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer - scale 2_5/DragSetting"]
+layout_mode = 0
+offset_left = -89.0
+offset_top = 3.3333383
+offset_right = 4.333336
+offset_bottom = 41.33334
+texture = SubResource("GradientTexture2D_tp2pr")
+expand_mode = 1
+
+[node name="CheckButton" type="CheckButton" parent="CanvasLayer - scale 2_5/DragSetting"]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 48.0
+offset_bottom = 24.0
+rotation = 1.5707964
+flat = true
+script = ExtResource("27_tp2pr")
+
+[node name="Label" type="Label" parent="CanvasLayer - scale 2_5/DragSetting"]
+layout_mode = 0
+offset_left = -68.0
+offset_top = 6.333334
+offset_right = -20.0
+offset_bottom = 19.333336
+theme_override_fonts/font = ExtResource("11_x42w8")
+text = "Drag map"
+
+[node name="Label2" type="Label" parent="CanvasLayer - scale 2_5/DragSetting"]
+layout_mode = 0
+offset_left = -86.0
+offset_top = 21.666666
+offset_right = -20.0
+offset_bottom = 34.666664
+theme_override_fonts/font = ExtResource("11_x42w8")
+text = "Drag select"
 
 [node name="UnitBar" type="Control" parent="CanvasLayer - scale 2_5" node_paths=PackedStringArray("slots")]
 layout_mode = 3

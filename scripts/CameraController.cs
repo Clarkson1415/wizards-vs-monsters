@@ -1,6 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using WizardsVsMonster.scripts;
 
 public partial class CameraController : Camera2D
 {
@@ -39,6 +40,11 @@ public partial class CameraController : Camera2D
         // dragging
         if (@event is InputEventScreenDrag fingerDrag) // mobile drag
         {
+            if (GlobalGameVariables.TouchScreenDragSetting_DragSelectOn)
+            {
+                return;
+            }
+
             Vector2 fingerDeltaScreen = -fingerDrag.Relative;
             panAny(fingerDeltaScreen);
         }
