@@ -7,6 +7,11 @@ namespace WizardsVsMonster.scripts
     {
         public static int CELL_SIZE = 16;
 
+        /// <summary>
+        /// Collision layer the the area2ds of the trees or other view obstructors are on.
+        /// </summary>
+        public static int ViewBlockingAreaCollisionLayer = 2;
+
         public enum FACTION { humans, monsters };
 
         public static FACTION PlayerControlledFaction = FACTION.humans;

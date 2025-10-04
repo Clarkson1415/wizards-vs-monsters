@@ -1949,9 +1949,10 @@ mouse_filter = 2
 
 [node name="battleFieldGeneration" type="Node" parent="."]
 
-[node name="generateOnPlay" type="Node" parent="battleFieldGeneration" node_paths=PackedStringArray("GaeaGenerator")]
+[node name="generateOnPlay" type="Node" parent="battleFieldGeneration" node_paths=PackedStringArray("GaeaGenerator", "layerWithTrees")]
 script = ExtResource("30_ens0h")
 GaeaGenerator = NodePath("../GaeaGenerator")
+layerWithTrees = NodePath("../TileMapLayerTrees")
 
 [node name="TileMapLayer -5" type="TileMapLayer" parent="battleFieldGeneration"]
 z_index = -5
@@ -1988,7 +1989,7 @@ anchor_right = 1.0
 offset_left = -95.0
 offset_bottom = 130.0
 grow_horizontal = 0
-scale = Vector2(2.5, 2.5)
+scale = Vector2(3, 3)
 pivot_offset = Vector2(95, 0)
 texture = ExtResource("13_6puu6")
 stretch_mode = 4
@@ -2182,7 +2183,7 @@ offset_left = -33.0
 offset_right = 33.0
 offset_bottom = 40.0
 grow_horizontal = 2
-scale = Vector2(2.5, 2.5)
+scale = Vector2(3, 3)
 pivot_offset = Vector2(33, 0)
 theme_override_constants/separation = 0
 alignment = 1
@@ -2215,7 +2216,7 @@ offset_left = 32.999996
 offset_top = 22.999998
 offset_right = 101.0
 offset_bottom = 44.0
-scale = Vector2(2.5, 2.5)
+scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Pause/Play"
@@ -2226,7 +2227,7 @@ offset_left = 32.999996
 offset_top = 103.0
 offset_right = 113.0
 offset_bottom = 124.0
-scale = Vector2(2.5, 2.5)
+scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Clear Cursor"
@@ -2237,7 +2238,7 @@ offset_left = 32.999996
 offset_top = 185.0
 offset_right = 113.0
 offset_bottom = 206.0
-scale = Vector2(2.5, 2.5)
+scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("11_x42w8")
 theme_override_font_sizes/font_size = 16
 text = "Deselect All"
@@ -2256,7 +2257,7 @@ offset_right = 16.0
 offset_bottom = -3.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(2.5, 2.5)
+scale = Vector2(3, 3)
 pivot_offset = Vector2(16, 29.125)
 script = ExtResource("19_35vvr")
 UnitBarSlotScene = ExtResource("19_0aloa")

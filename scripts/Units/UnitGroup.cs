@@ -448,6 +448,18 @@ public partial class UnitGroup : Node2D
             RemoveStatus(StatusComponent.STATUS.idle);
         }
 
+        // if most units are under trees then the unit is hidden.
+        var unitsHidden = this.UnitsRemaining.Where(x => x.UnitBody.IsOnTreeCell).Count();
+        if ((unitsHidden / this.UnitsRemaining.Count) > 0.5f)
+        {
+            TryAddStatus(StatusComponent.STATUS.Hidden);
+        }
+        else
+        {
+            RemoveStatus(StatusComponent.STATUS.Hidden);
+        }
+
+
         // TODO other statuses
     }
 

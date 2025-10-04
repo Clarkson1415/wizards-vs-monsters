@@ -3,6 +3,7 @@ using Godot.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using WizardsVsMonster.scripts;
 #nullable enable
 
@@ -98,6 +99,7 @@ public partial class GameUnit : CharacterBody2D
             currentTarget.TakeDamage(this.baseUnitDamagePerAnimation, this);
         }
 
+        // TODO: Aoe attacks?
         //foreach (var tar in targetsInRange)
         //{
         //    tar.TakeDamage(this.baseUnitDamagePerAnimation);
@@ -153,10 +155,8 @@ public partial class GameUnit : CharacterBody2D
         rangeInPixels = ((this.resource.GetSizeInUnits() * GlobalGameVariables.CELL_SIZE) / 2) + (this.resource.GetRange() * GlobalGameVariables.CELL_SIZE);
 
         UnitBody.OnThisHit += OnHit;
-
         inRangeArea.AreaEntered += OnUnitAreaEnteredChunk;
         inRangeArea.AreaExited += OnUnitAreaExitedChunk;
-
         navAgent.VelocityComputed += OnVelocityComputed;
     }
 

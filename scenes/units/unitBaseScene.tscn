@@ -1119,6 +1119,7 @@ position = Vector2(0, 3)
 shape = SubResource("CapsuleShape2D_g01vy")
 
 [node name="body" type="Area2D" parent="."]
+collision_mask = 3
 script = ExtResource("2_qlqyl")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="body"]

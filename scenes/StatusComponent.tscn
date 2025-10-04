@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://dldl2d58k72h1"]
 
 [ext_resource type="Script" uid="uid://bkhahjpsm0b2b" path="res://scripts/StatusComponent.cs" id="1_rvjdp"]
+[ext_resource type="Texture2D" uid="uid://bge1mat6bmxsq" path="res://art/statusIcons/HiddenIcon.png" id="2_pblaw"]
 [ext_resource type="Texture2D" uid="uid://n1wjp300dvbl" path="res://art/statusIcons/Determined.png" id="3_pblaw"]
 [ext_resource type="Texture2D" uid="uid://qv24khsrg61w" path="res://art/statusIcons/shield_bracing.png" id="4_j6i8j"]
 [ext_resource type="Texture2D" uid="uid://c83if8tvufvfx" path="res://art/statusIcons/GreenArrowUpSingle.png" id="5_j6i8j"]
-[ext_resource type="Texture2D" uid="uid://cm35m1s4vbovj" path="res://art/statusIcons/skull.png" id="6_pblaw"]
 [ext_resource type="Texture2D" uid="uid://btqokk6h70t2c" path="res://art/ui/bottomUnitBar/RedTopStatuses.png" id="6_x3bdi"]
 
 [node name="StatusComponent" type="Control" node_paths=PackedStringArray("colLeft", "colMidle", "colRight")]
@@ -20,7 +20,7 @@ size_flags_vertical = 4
 mouse_filter = 2
 script = ExtResource("1_rvjdp")
 statusTextures = Dictionary[int, Texture2D]({
-0: ExtResource("6_pblaw"),
+0: ExtResource("2_pblaw"),
 1: ExtResource("4_j6i8j"),
 2: ExtResource("3_pblaw"),
 3: ExtResource("5_j6i8j")

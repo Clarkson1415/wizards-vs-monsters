@@ -50,6 +50,11 @@ public partial class StatusComponent : Control
     public enum STATUS 
     {
         /// <summary>
+        /// When most units in a group are under a tree the unit group is hidden.
+        /// </summary>
+        Hidden,
+
+        /// <summary>
         /// Health is very low <= 1/6th
         /// </summary>
         dying, 
@@ -96,6 +101,13 @@ public partial class StatusComponent : Control
 
         Logger.Log($"Status added: {newStat}");
         var newTexture = new TextureRect();
+
+        if (!statusTextures.ContainsKey(newStat))
+        {
+            Logger.Log($"MISSIN KEY: {newStat}");
+            return;
+        }
+
         newTexture.Texture = statusTextures[newStat];
         displayedStatuses.Add(newStat, newTexture);
 

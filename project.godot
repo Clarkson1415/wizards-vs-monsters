@@ -45,6 +45,11 @@ leftClick={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="unit body area"
+2d_physics/layer_2="view obstructors like trees"
+
 [navigation]
 
 2d/default_cell_size=0.001

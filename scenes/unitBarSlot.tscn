@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://gd1n7f872n6s"]
+[gd_scene load_steps=23 format=3 uid="uid://gd1n7f872n6s"]
 
 [ext_resource type="Texture2D" uid="uid://bwtnda0lemui" path="res://art/ui/bottomUnitBar/Slot.png" id="1_4yfli"]
 [ext_resource type="Texture2D" uid="uid://w0oqohcm8e7i" path="res://art/ui/bottomUnitBar/frame.png" id="2_bnj48"]
@@ -7,7 +7,12 @@
 [ext_resource type="FontFile" uid="uid://b8hbmmi6oyqch" path="res://art/ui/monogram.ttf" id="3_2qugi"]
 [ext_resource type="Texture2D" uid="uid://dtlmm80w20ghg" path="res://art/ui/bottomUnitBar/TopBit.png" id="4_1ra8c"]
 [ext_resource type="Texture2D" uid="uid://bmug8e5exti5y" path="res://art/ui/unitTypesIcons/Bow.png" id="6_3dkyx"]
+[ext_resource type="Texture2D" uid="uid://bge1mat6bmxsq" path="res://art/statusIcons/HiddenIcon.png" id="9_267d6"]
 [ext_resource type="Script" uid="uid://6l3sulk2opu5" path="res://scripts/UnitBarSlotButton.cs" id="9_mae01"]
+[ext_resource type="Texture2D" uid="uid://qv24khsrg61w" path="res://art/statusIcons/shield_bracing.png" id="10_cvqbm"]
+[ext_resource type="Texture2D" uid="uid://cm35m1s4vbovj" path="res://art/statusIcons/skull.png" id="10_hgi53"]
+[ext_resource type="Texture2D" uid="uid://n1wjp300dvbl" path="res://art/statusIcons/Determined.png" id="11_hgi53"]
+[ext_resource type="Texture2D" uid="uid://c83if8tvufvfx" path="res://art/statusIcons/GreenArrowUpSingle.png" id="12_57v3c"]
 [ext_resource type="PackedScene" uid="uid://dldl2d58k72h1" path="res://scenes/StatusComponent.tscn" id="12_u1kyl"]
 
 [sub_resource type="Gradient" id="Gradient_1ra8c"]
@@ -162,6 +167,13 @@ offset_top = -33.0
 offset_right = -15.0
 offset_bottom = -33.0
 healthFill = NodePath("../healthbar/green")
+statusTextures = Dictionary[int, Texture2D]({
+0: ExtResource("9_267d6"),
+1: ExtResource("10_hgi53"),
+2: ExtResource("10_cvqbm"),
+3: ExtResource("11_hgi53"),
+4: ExtResource("12_57v3c")
+})
 labelZZZAnimationPlayer = NodePath("../ZzzText/animateZzz")
 
 [node name="Button" type="Button" parent="."]
