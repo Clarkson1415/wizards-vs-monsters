@@ -29,12 +29,17 @@ public partial class UnitBarSlot : TextureRect
         unitImage.Texture = data.GetUnitSmallImage();
 
         button.Setup(group);
+
+        this.group.SelectionChanged += OnTheGroupSelectionChanged;
+    }
+
+    public void OnTheGroupSelectionChanged(bool isSelected)
+    {
+        Logger.Log("TODO custom min size +10 if selected save initial etc.");
     }
 
     public override void _Process(double delta)
     {
-        base._Process(delta);
-
         if (this.group == null) { return; }
 
         statusComponent.UpdateHealthPercentage(this.group.GetHealthPercentage());

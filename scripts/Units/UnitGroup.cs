@@ -67,9 +67,14 @@ public partial class UnitGroup : Node2D
         GlobalCurrentSelection.GetInstance().OnGroupClicked(this);
     }
 
+    [Signal] public delegate void SelectionChangedEventHandler(bool isSelected);
+
     public void ToggleOutlineAllUnits(bool outlineOn)
     {
         this.allUnits.ForEach(x => x.ClickableUnitComponent.ToggleOutline(outlineOn));
+
+        // emit signal so that the unit toolbar icon is in sync also.
+        EmitSignal(SignalName.SelectionChanged, outlineOn);
     }
 
     #region centre calc 
