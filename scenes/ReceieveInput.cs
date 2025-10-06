@@ -34,14 +34,11 @@ public partial class ReceieveInput : Control
         var wasInputTap = WasInputTap(@event);
         var wasInputDrag = IsInputADragMotion(@event);
 
-        foreach (var child in moveAndSpawnControls)
+        if (wasInputTap)
         {
-            if (child == null) { return; }
-
-            if (wasInputTap)
+            foreach (var inputNode in moveAndSpawnControls)
             {
-                child.OnTapInput(thisInputsPosition);
-                Logger.Log("input was tap");
+                inputNode.OnTapInput(thisInputsPosition);
             }
         }
 
@@ -190,8 +187,9 @@ public partial class ReceieveInput : Control
             {
                 float dist = initialTouchPosition.DistanceTo(mouseEvent.GlobalPosition);
                 wasSelectionButtonJustPressed = false;
-                Logger.Log("released");
-                return dist < DragThreshold;
+                var wasTap = dist < DragThreshold;
+                Logger.Log($"released, was tap = {wasTap}");
+                return wasTap;
             }
         }
 

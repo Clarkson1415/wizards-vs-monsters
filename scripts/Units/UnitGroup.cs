@@ -74,6 +74,7 @@ public partial class UnitGroup : Node2D
         this.allUnits.ForEach(x => x.ClickableUnitComponent.ToggleOutline(outlineOn));
 
         // emit signal so that the unit toolbar icon is in sync also.
+        Logger.Log("signal emitted from unit group to say selection changed.");
         EmitSignal(SignalName.SelectionChanged, outlineOn);
     }
 

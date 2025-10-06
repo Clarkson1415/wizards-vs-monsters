@@ -30,12 +30,15 @@ public partial class UnitBarSlot : TextureRect
 
         button.Setup(group);
 
+        initialMinimumSize = this.CustomMinimumSize;
         this.group.SelectionChanged += OnTheGroupSelectionChanged;
     }
 
+    private Vector2 initialMinimumSize;
+
     public void OnTheGroupSelectionChanged(bool isSelected)
     {
-        Logger.Log("TODO custom min size +10 if selected save initial etc.");
+        this.CustomMinimumSize = isSelected ? (this.initialMinimumSize + new Vector2(0, 10)) : this.initialMinimumSize;
     }
 
     public override void _Process(double delta)

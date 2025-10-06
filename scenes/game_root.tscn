@@ -2613,10 +2613,6 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 0
 
-[node name="TextureRect" parent="CanvasLayer - scale 2_5/UnitBar/HBoxContainer" instance=ExtResource("19_0aloa")]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-
 [node name="fog +2000" type="ColorRect" parent="."]
 visible = false
 z_index = 2000
