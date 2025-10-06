@@ -90,6 +90,7 @@ _data = {
 
 [node name="TextureRect" type="TextureRect" node_paths=PackedStringArray("statusComponent", "NumberText", "unitImage", "button")]
 custom_minimum_size = Vector2(0, 30)
+size_flags_vertical = 8
 texture = ExtResource("1_4yfli")
 stretch_mode = 4
 script = ExtResource("2_iyvxc")
