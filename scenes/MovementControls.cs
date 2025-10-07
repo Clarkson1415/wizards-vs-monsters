@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using WizardsVsMonster.scripts;
@@ -26,13 +25,6 @@ public partial class MovementControls : Control, IGameInputControlNode
             return;
         }
 
-        // not sure if gui input will register if i click on another unit instead tho?
-
-        // TODO logic like:
-        // if last selected group was enemy group: move plays groups to fight enemy groups
-        // if last selected group was a player, then i clicked on the ground. move players to that positoin.
-        // What if i want to click and hold to create a formation rectangle of a size i want?
-
         var lastSelected = GlobalCurrentSelection.GetInstance().LastSelectedUnitsInfo.GetFaction();
         var playersFactionsHighlighted = GlobalCurrentSelection.PlayerGroupsSelected;
 
@@ -45,12 +37,24 @@ public partial class MovementControls : Control, IGameInputControlNode
             {
                 Logger.Log("doing this:");
                 var centrePosition = touchOrTapPosition;
-                // Check width and height of the units basic formation positions.
-                // position each troops centre the 1/2 width of tropop plus 1/2 width of the other troop away.
+
+                // position troops evenly spaced around the centre position
+                // calculate centre positions based on troops BasicFormation size vector 2d
+                // if odd or even the positions either include the centre or not.
+                // if even = [troop] [centrepos] [troop]
+                // if odd = [troop] [troop at center position] [troop]
+
+                // in a straight line in the default direction if none given. 
+                // also when troops are a certain amount in the col or row. then put in behind it.
+
+
                 List<Vector2> troopHeightWidth = new();
                 foreach (var troop in playersFactionsHighlighted)
                 {
-                    //troopHeightWidth.Add(troop.GetBasicFormation);
+                    // troopHeightWidth.Add(troop.GetBasicFormation);
+                    //GlobalGameVariables.GetDefaultDirection(troop.GetCentre());
+
+
                 }
             }
             else
