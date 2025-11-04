@@ -2536,6 +2536,7 @@ text = "Deselect All"
 script = ExtResource("18_0aloa")
 
 [node name="DragSetting" type="Control" parent="CanvasLayer - scale 2_5"]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 278.0
