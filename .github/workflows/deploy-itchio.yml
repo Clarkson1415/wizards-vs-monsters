@@ -1,0 +1,57 @@
+name: Deploy Builds to Itch.io
+
+on:
+  workflow_run:
+    workflows: ["godot-ci export"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    env:
+      ITCHIO_USERNAME: ${{ secrets.ITCHIO_USERNAME }}
+      ITCHIO_GAME: ${{ secrets.ITCHIO_GAME }}
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+
+    steps:
+      - name: Download artifacts from export workflow
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          run_id: ${{ github.event.workflow_run.id }}
+          path: build
+
+      - name: Install Butler (Itch.io uploader)
+        run: |
+          sudo apt-get update && sudo apt-get install -y unzip wget
+          wget -O butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+          unzip butler.zip
+          chmod +x butler
+          sudo mv butler /usr/local/bin/
+          butler -V
+
+      - name: Deploy Windows build to Itch.io
+        run: |
+          echo "Deploying Windows build to Itch.io..."
+          butler push "build/windows" "$ITCHIO_USERNAME/$ITCHIO_GAME:windows"
+
+      - name: Deploy Linux build to Itch.io
+        run: |
+          echo "Deploying Linux build to Itch.io..."
+          butler push "build/linux" "$ITCHIO_USERNAME/$ITCHIO_GAME:linux"
+          
+      - name: Deploy Mac build to Itch.io
+        run: |
+          echo "Deploying Mac build to Itch.io..."
+          butler push "build/mac" "$ITCHIO_USERNAME/$ITCHIO_GAME:mac"
+          
+      - name: Deploy Android build to Itch.io
+        run: |
+          echo "Deploying Android build to Itch.io..."
+          butler push "build/android" "$ITCHIO_USERNAME/$ITCHIO_GAME:android"
