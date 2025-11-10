@@ -91,6 +91,7 @@ _data = {
 [node name="TextureRect" type="TextureRect" node_paths=PackedStringArray("statusComponent", "NumberText", "unitImage", "button")]
 custom_minimum_size = Vector2(0, 30)
 size_flags_vertical = 8
+mouse_filter = 2
 texture = ExtResource("1_4yfli")
 stretch_mode = 4
 script = ExtResource("2_iyvxc")
@@ -100,13 +101,23 @@ unitImage = NodePath("VBoxContainer/centre/image")
 button = NodePath("Button")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_top = -19.0
-offset_right = 30.0
-offset_bottom = 30.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -15.0
+offset_top = -34.0
+offset_right = 15.0
+offset_bottom = 13.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
 
 [node name="StatusComponent" parent="VBoxContainer" node_paths=PackedStringArray("healthFill", "labelZZZAnimationPlayer") instance=ExtResource("12_u1kyl")]
-custom_minimum_size = Vector2(0, 14)
+custom_minimum_size = Vector2(30, 11)
 layout_mode = 2
 healthFill = NodePath("../healthbar/green")
 statusTextures = Dictionary[int, Texture2D]({
@@ -119,59 +130,109 @@ statusTextures = Dictionary[int, Texture2D]({
 labelZZZAnimationPlayer = NodePath("../centre/ZzzText/animateZzz")
 
 [node name="healthbar" type="Control" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 3)
+custom_minimum_size = Vector2(30, 8)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/healthbar"]
-layout_mode = 0
-offset_left = 1.0
-offset_top = -6.0
-offset_right = 29.0
+[node name="BG" type="TextureRect" parent="VBoxContainer/healthbar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -2.5
+offset_right = 14.0
+offset_bottom = 3.5
+grow_horizontal = 2
+grow_vertical = 2
 texture = SubResource("GradientTexture2D_bnj48")
 
 [node name="green" type="TextureRect" parent="VBoxContainer/healthbar"]
-layout_mode = 0
-offset_left = 1.0
-offset_top = -6.0
-offset_right = 29.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -3.5
+offset_right = 14.0
+offset_bottom = 2.5
+grow_horizontal = 2
+grow_vertical = 2
 texture = SubResource("GradientTexture2D_giw6m")
 expand_mode = 1
 
 [node name="frame" type="TextureRect" parent="VBoxContainer/healthbar"]
-layout_mode = 0
-offset_top = -9.0
-offset_right = 30.0
-offset_bottom = 1.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -15.0
+offset_top = -6.0
+offset_right = 15.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_bnj48")
 stretch_mode = 4
 
 [node name="Label" type="Label" parent="VBoxContainer/healthbar"]
-layout_mode = 0
-offset_left = 12.0
-offset_top = -8.0
-offset_right = 24.0
-offset_bottom = 5.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -5.0
+offset_right = 30.012299
+offset_bottom = 9.14681
+grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(0.6361859, 0.6361859)
 theme_override_fonts/font = ExtResource("3_2qugi")
 theme_override_font_sizes/font_size = 16
 text = "11"
+horizontal_alignment = 1
 
 [node name="centre" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 
 [node name="image" type="TextureRect" parent="VBoxContainer/centre"]
-layout_mode = 0
-offset_left = 7.0
-offset_top = -3.0
-offset_right = 23.0
-offset_bottom = 13.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -11.0
+offset_right = 8.0
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_mbv4h")
 
 [node name="type indicator (melee ranged etc)" type="TextureRect" parent="VBoxContainer/centre"]
-layout_mode = 0
-offset_top = 13.0
-offset_right = 30.0
-offset_bottom = 24.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -15.0
+offset_top = 5.0
+offset_right = 15.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("4_1ra8c")
 
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer/centre/type indicator (melee ranged etc)"]
@@ -184,10 +245,18 @@ texture = ExtResource("6_3dkyx")
 stretch_mode = 4
 
 [node name="ZzzText" type="Label" parent="VBoxContainer/centre"]
-layout_mode = 0
-offset_left = 5.0
-offset_right = 30.527523
-offset_bottom = 14.663815
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -9.0
+offset_top = -7.3319077
+offset_right = 16.527523
+offset_bottom = 7.3319073
+grow_horizontal = 2
+grow_vertical = 2
 rotation = -0.12071692
 scale = Vector2(0.87185913, 0.87185913)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -202,8 +271,17 @@ libraries = {
 autoplay = "blank"
 
 [node name="Button" type="Button" parent="."]
-layout_mode = 0
-offset_right = 29.0
-offset_bottom = 29.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.5
+offset_top = -34.0
+offset_right = 14.5
+offset_bottom = 14.5
+grow_horizontal = 2
+grow_vertical = 2
 flat = true
 script = ExtResource("9_mae01")

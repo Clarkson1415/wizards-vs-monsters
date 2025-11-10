@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://bge1mat6bmxsq" path="res://art/statusIcons/HiddenIcon.png" id="2_pblaw"]
 [ext_resource type="Texture2D" uid="uid://n1wjp300dvbl" path="res://art/statusIcons/Determined.png" id="3_pblaw"]
 [ext_resource type="Texture2D" uid="uid://qv24khsrg61w" path="res://art/statusIcons/shield_bracing.png" id="4_j6i8j"]
-[ext_resource type="Texture2D" uid="uid://c83if8tvufvfx" path="res://art/statusIcons/GreenArrowUpSingle.png" id="5_j6i8j"]
 [ext_resource type="Texture2D" uid="uid://btqokk6h70t2c" path="res://art/ui/bottomUnitBar/RedTopStatuses.png" id="6_x3bdi"]
+[ext_resource type="Texture2D" uid="uid://cm35m1s4vbovj" path="res://art/statusIcons/skull.png" id="7_x3bdi"]
 
 [node name="StatusComponent" type="Control" node_paths=PackedStringArray("colLeft", "colMidle", "colRight")]
 layout_mode = 3
@@ -21,18 +21,27 @@ mouse_filter = 2
 script = ExtResource("1_rvjdp")
 statusTextures = Dictionary[int, Texture2D]({
 0: ExtResource("2_pblaw"),
-1: ExtResource("4_j6i8j"),
-2: ExtResource("3_pblaw"),
-3: ExtResource("5_j6i8j")
+1: ExtResource("7_x3bdi"),
+2: ExtResource("4_j6i8j"),
+3: ExtResource("3_pblaw")
 })
 colLeft = NodePath("HBoxContainer/VBoxContainer")
 colMidle = NodePath("HBoxContainer/VBoxContainer2")
 colRight = NodePath("HBoxContainer/VBoxContainer3")
 
 [node name="status-TODOtooltips" type="TextureRect" parent="."]
-layout_mode = 0
-offset_right = 30.0
-offset_bottom = 11.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -15.0
+offset_top = -5.5
+offset_right = 15.0
+offset_bottom = 5.5
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("6_x3bdi")
 stretch_mode = 4
 
@@ -43,10 +52,8 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 2.0
-offset_top = -28.0
-offset_right = 28.0
-offset_bottom = 11.0
+offset_left = -1.0
+offset_right = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 1
