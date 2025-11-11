@@ -157,7 +157,9 @@ jobs:
           cd $ANDROID_HOME/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
           unzip cmdline-tools.zip -d latest
-          rm cmdline-tools.zip
+          mv latest/cmdline-tools/* latest/
+          rm -rf latest/cmdline-tools cmdline-tools.zip
+          chmod +x latest/bin/sdkmanager
 
           # Accept licenses & install required components
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses
